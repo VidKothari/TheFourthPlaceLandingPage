@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 import { useRef, useState, useEffect } from 'react';
@@ -59,6 +60,29 @@ const lyricFragments = [
   "Timeless",
   "The echo of a feeling"
 ];
+
+const LyricFragment = ({ text, index, scrollYProgress, start, end }) => {
+  const x = useTransform(scrollYProgress, [start, end], [0, (index % 2 === 0 ? 100 : -100)]);
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        top: `${20 + (index * 12)}%`,
+        left: `${10 + (index * 8)}%`,
+        fontFamily: 'var(--serif)',
+        fontSize: '1rem',
+        fontStyle: 'italic',
+        color: 'var(--text-soft)',
+        opacity: 0.2,
+        whiteSpace: 'nowrap',
+        pointerEvents: 'none',
+        x
+      }}
+    >
+      {text}
+    </motion.div>
+  );
+};
 
 
 const GalleryImage = ({ src, preserveRatio, track, index, sizeScale = 1, isMobile = false, style = {}, scrollYProgress, start, end }) => {
@@ -173,24 +197,7 @@ const ConstellationGallery = ({ imgSrc, preserveRatio, scrollYProgress, start, e
       }}>
         
         {isCutout && lyricFragments.map((text, i) => (
-          <motion.div
-            key={`lyric-${i}`}
-            style={{
-              position: 'absolute',
-              top: `${20 + (i * 12)}%`,
-              left: `${10 + (i * 8)}%`,
-              fontFamily: 'var(--serif)',
-              fontSize: '1rem',
-              fontStyle: 'italic',
-              color: 'var(--text-soft)',
-              opacity: 0.2,
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-              x: useTransform(scrollYProgress, [start, end], [0, (i % 2 === 0 ? 100 : -100)])
-            }}
-          >
-            {text}
-          </motion.div>
+          <LyricFragment key={`lyric-${i}`} text={text} index={i} scrollYProgress={scrollYProgress} start={start} end={end} />
         ))}
         
         <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap3}px`, x: x3, y: '-50%', alignItems: 'center', pointerEvents: 'none' }}>
@@ -390,6 +397,33 @@ const STOPS = [
   { label: 'V',   mid: 0.85 },
 ];
 
+const StopMarkerLabel = ({ stop, index, scrollYProgress }) => {
+  const yPos = (index / (STOPS.length - 1)) * 900 + 50;
+  const opacity = useTransform(
+    scrollYProgress,
+    [stop.mid - 0.08, stop.mid, stop.mid + 0.08],
+    [0.2, 1, 0.2]
+  );
+
+  return (
+    <motion.text
+      x="30"
+      y={yPos}
+      textAnchor="middle"
+      dominantBaseline="middle"
+      style={{
+        fontFamily: 'var(--serif)',
+        fontSize: '11px',
+        fontWeight: 400,
+        fill: 'var(--text-pure)',
+        opacity
+      }}
+    >
+      {stop.label}
+    </motion.text>
+  );
+};
+
 // A bold, organic calligraphic brushstroke — varied width SVG path
 const StopMarkers = ({ scrollYProgress }) => {
   const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
@@ -414,31 +448,9 @@ const StopMarkers = ({ scrollYProgress }) => {
           </filter>
         </defs>
         {/* Roman numeral stops along the stroke */}
-        {STOPS.map((stop, i) => {
-          const yPos = (i / (STOPS.length - 1)) * 900 + 50;
-          return (
-            <motion.text
-              key={i}
-              x="30"
-              y={yPos}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              style={{
-                fontFamily: 'var(--serif)',
-                fontSize: '11px',
-                fontWeight: 400,
-                fill: 'var(--text-pure)',
-                opacity: useTransform(
-                  scrollYProgress,
-                  [stop.mid - 0.08, stop.mid, stop.mid + 0.08],
-                  [0.2, 1, 0.2]
-                )
-              }}
-            >
-              {stop.label}
-            </motion.text>
-          );
-        })}
+        {STOPS.map((stop, i) => (
+          <StopMarkerLabel key={i} stop={stop} index={i} scrollYProgress={scrollYProgress} />
+        ))}
       </svg>
     </div>
   );
