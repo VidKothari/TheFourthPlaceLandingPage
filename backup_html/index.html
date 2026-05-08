@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fourth Place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --white: #ffffff;
+  --off-white: #f8f6f2;
+  --paper: #f3f0ea;
+  --ink: #111110;
+  --ink-60: rgba(17,17,16,0.6);
+  --ink-40: rgba(17,17,16,0.4);
+  --ink-20: rgba(17,17,16,0.2);
+  --ink-08: rgba(17,17,16,0.08);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Jost', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  font-weight: 300;
+  color: var(--ink);
+  background: var(--white);
+  cursor: none;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ─── CUSTOM CURSOR ─── */
+#cursor {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+  transform: translate(-50%, -50%);
+}
+#cursor.expanded { transform: translate(-50%,-50%) scale(4); opacity: 0.12; }
+#cursor-ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(17,17,16,0.25);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.55s cubic-bezier(.23,1,.32,1), opacity 0.3s;
+  transform: translate(-50%,-50%);
+}
+
+/* ─── NAV ─── */
+#nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  z-index: 1000;
+  transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+  border-bottom: 1px solid transparent;
+}
+#nav.scrolled {
+  background: rgba(248,246,242,0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: var(--ink-08);
+}
+#nav-logo {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+#nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+.nav-link {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+  transition: color 0.2s;
+}
+.nav-link:hover { color: var(--ink); }
+.nav-cta {
+  height: 34px;
+  padding: 0 20px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: none;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.78; }
+
+/* ─── HERO ─── */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  background: var(--off-white);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 40px 72px;
+}
+#hero-cards-area {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 68%;
+  pointer-events: none;
+}
+#hero-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(to bottom, transparent, var(--off-white) 85%);
+  z-index: 2;
+}
+.hero-card {
+  position: absolute;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  box-shadow: 0 6px 32px rgba(17,17,16,0.14), 0 1px 4px rgba(17,17,16,0.08);
+  z-index: 1;
+}
+.hero-card.visible { opacity: 1; transform: translateY(0); }
+
+/* Film cards */
+.hc-film {
+  width: 92px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--serif);
+}
+.hc-film-img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  display: flex;
+  align-items: flex-end;
+  padding: 10px 8px;
+  position: relative;
+  overflow: hidden;
+}
+.hc-film-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.4;
+}
+.hc-film-title {
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--white);
+}
+
+/* Album cards */
+.hc-album {
+  width: 88px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+}
+.hc-album-art {
+  width: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hc-album-info {
+  padding: 7px 8px;
+  border-top: 1px solid var(--ink-08);
+}
+.hc-album-title {
+  font-family: var(--serif);
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.hc-album-artist {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+  margin-top: 2px;
+}
+
+/* Book cards */
+.hc-book {
+  width: 70px;
+  background: var(--white);
+  border-left: 4px solid var(--ink);
+  padding: 10px 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 105px;
+}
+.hc-book-title {
+  font-family: var(--serif);
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.hc-book-author {
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+
+/* Wiki card */
+.hc-wiki {
+  width: 148px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  padding: 10px 11px;
+}
+.hc-wiki-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.hc-wiki-w {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.hc-wiki-source {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+.hc-wiki-title {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 5px;
+  line-height: 1.25;
+}
+.hc-wiki-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--ink-60);
+}
+.hc-wiki-excerpt {
+  font-size: 0.62rem;
+  line-height: 1.6;
+  color: var(--ink-60);
+  font-family: var(--sans);
+  margin-top: 6px;
+}
+
+/* YouTube card */
+.hc-yt {
+  width: 156px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  overflow: hidden;
+}
+.hc-yt-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.hc-yt-play {
+  width: 28px;
+  height: 20px;
+  background: #ff0000;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hc-yt-play::after {
+  content: '';
+  border-left: 9px solid white;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-left: 2px;
+}
+.hc-yt-info {
+  padding: 8px 9px;
+}
+.hc-yt-channel {
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+  margin-bottom: 3px;
+}
+.hc-yt-title {
+  font-family: var(--serif);
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+/* Note card */
+.hc-note {
+  width: 152px;
+  background: #fffde7;
+  border: 1px solid rgba(17,17,16,0.1);
+  padding: 12px 13px;
+}
+.hc-note-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(17,17,16,0.35);
+  font-family: var(--sans);
+  margin-bottom: 7px;
+}
+.hc-note-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+#hero-text {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+#hero-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(3.2rem, 7.5vw, 6.4rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 760px;
+}
+#hero-headline em {
+  font-style: italic;
+}
+#hero-right {
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+#hero-sub {
+  font-size: 0.85rem;
+  line-height: 1.72;
+  color: var(--ink-60);
+  text-align: right;
+}
+#hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 26px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: none;
+  cursor: none;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.8; }
+.hero-launch-note {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+
+/* ─── MARQUEE ─── */
+#marquee-strip {
+  background: var(--ink);
+  padding: 18px 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.marquee-track {
+  display: flex;
+  gap: 0;
+  animation: marqueeMove 48s linear infinite;
+  will-change: transform;
+}
+.marquee-content {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding-right: 0;
+}
+.marquee-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.65);
+  padding: 0 28px;
+}
+.marquee-dot {
+  width: 3px;
+  height: 3px;
+  background: rgba(255,255,255,0.22);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+@keyframes marqueeMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─── SECTIONS COMMON ─── */
+.section-eyebrow {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+.section-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.section-headline em { font-style: italic; }
+
+/* reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.22s; }
+.reveal-delay-3 { transition-delay: 0.34s; }
+.reveal-delay-4 { transition-delay: 0.46s; }
+
+/* ─── MANIFESTO ─── */
+#manifesto {
+  background: var(--white);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  border-top: 1px solid var(--ink-08);
+}
+#manifesto-left {
+  padding: 100px 60px;
+  border-right: 1px solid var(--ink-08);
+  position: sticky;
+  top: 64px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#manifesto-right {
+  padding: 100px 64px 100px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+.manifesto-para {
+  font-size: 1.04rem;
+  line-height: 1.82;
+  color: var(--ink-60);
+  font-weight: 300;
+}
+.manifesto-para em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink);
+  font-size: 1.08em;
+}
+.manifesto-close {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.4;
+  padding-top: 16px;
+  border-top: 1px solid var(--ink-08);
+}
+
+/* ─── PULL QUOTE ─── */
+#pull-quote {
+  background: var(--ink);
+  padding: 120px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+#pull-quote blockquote {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  max-width: 820px;
+}
+#pull-quote blockquote em { font-style: italic; }
+#pull-quote cite {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-top: 36px;
+  display: block;
+}
+
+/* ─── TASTE SHELF ─── */
+#shelf {
+  background: var(--off-white);
+  padding: 100px 0;
+  border-top: 1px solid var(--ink-08);
+  overflow: hidden;
+}
+#shelf-header {
+  padding: 0 40px;
+  margin-bottom: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+#shelf-track-wrap {
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  padding: 12px 0 20px;
+  -webkit-overflow-scrolling: touch;
+}
+#shelf-track-wrap:active { cursor: grabbing; }
+#shelf-track {
+  display: flex;
+  gap: 18px;
+  padding: 0 40px;
+  width: max-content;
+}
+.shelf-card {
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(.23,1,.32,1), box-shadow 0.3s;
+  box-shadow: 0 2px 16px rgba(17,17,16,0.08), 0 1px 3px rgba(17,17,16,0.05);
+}
+.shelf-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 36px rgba(17,17,16,0.13), 0 2px 6px rgba(17,17,16,0.06);
+}
+
+/* Shelf card types */
+.sc-film {
+  width: 120px;
+  background: var(--ink);
+  color: var(--white);
+}
+.sc-film-art {
+  width: 100%;
+  aspect-ratio: 2/3;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px 10px;
+}
+.sc-film-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%);
+}
+.sc-film-meta {
+  position: relative;
+  z-index: 1;
+}
+.sc-film-type {
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  font-family: var(--sans);
+  margin-bottom: 4px;
+}
+.sc-film-title {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.2;
+}
+.sc-film-year {
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.38);
+  font-family: var(--sans);
+  margin-top: 2px;
+}
+
+.sc-album {
+  width: 120px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+}
+.sc-album-art {
+  width: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.sc-album-info {
+  padding: 9px 10px 11px;
+  border-top: 1px solid var(--ink-08);
+}
+.sc-album-title {
+  font-family: var(--serif);
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+.sc-album-artist {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+
+.sc-book {
+  width: 100px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  display: flex;
+  flex-direction: column;
+}
+.sc-book-spine {
+  width: 7px;
+  background: var(--ink);
+  flex-shrink: 0;
+  display: none;
+}
+.sc-book-cover {
+  flex: 1;
+  padding: 18px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  border-left: 5px solid var(--ink);
+}
+.sc-book-title {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.sc-book-author {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+
+.sc-wiki {
+  width: 196px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  padding: 14px 15px;
+}
+.sc-wiki-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ink-08);
+}
+.sc-wiki-w {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.sc-wiki-source {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+.sc-wiki-title {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.25;
+}
+.sc-wiki-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--ink-60);
+  margin-bottom: 8px;
+}
+.sc-wiki-excerpt {
+  font-size: 0.68rem;
+  line-height: 1.65;
+  color: var(--ink-60);
+  font-family: var(--sans);
+}
+
+.sc-yt {
+  width: 204px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  overflow: hidden;
+}
+.sc-yt-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.sc-yt-play {
+  width: 34px;
+  height: 24px;
+  background: #ff0000;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sc-yt-play::after {
+  content: '';
+  border-left: 10px solid white;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  margin-left: 2px;
+}
+.sc-yt-info { padding: 10px 11px 13px; }
+.sc-yt-channel {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+  margin-bottom: 4px;
+}
+.sc-yt-title {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.sc-note {
+  width: 196px;
+  background: #fffde7;
+  border: 1px solid rgba(17,17,16,0.09);
+  padding: 16px 15px;
+}
+.sc-note-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(17,17,16,0.3);
+  font-family: var(--sans);
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sc-note-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(17,17,16,0.15);
+  display: inline-block;
+}
+.sc-note-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.sc-reddit {
+  width: 196px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  padding: 14px 15px;
+}
+.sc-reddit-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.sc-reddit-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ff4500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sc-reddit-icon svg { width: 11px; height: 11px; fill: white; }
+.sc-reddit-sub {
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-60);
+  font-family: var(--sans);
+}
+.sc-reddit-title {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.sc-reddit-meta {
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+
+.sc-tweet {
+  width: 220px;
+  background: var(--white);
+  border: 1px solid var(--ink-08);
+  padding: 14px 15px;
+}
+.sc-tweet-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.sc-tweet-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink-08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  color: var(--ink-60);
+  flex-shrink: 0;
+}
+.sc-tweet-meta { flex: 1; }
+.sc-tweet-name {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.2;
+}
+.sc-tweet-handle {
+  font-size: 0.6rem;
+  color: var(--ink-40);
+  font-family: var(--sans);
+}
+.sc-tweet-x {
+  font-size: 0.9rem;
+  color: var(--ink-40);
+}
+.sc-tweet-text {
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ─── TASTE MAP SECTION ─── */
+#tastemap-section {
+  background: var(--ink);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+#tastemap-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 48px;
+  padding: 88px 60px 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.tm-eyebrow {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 18px;
+}
+.tm-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.tm-headline em { font-style: italic; }
+.tm-desc {
+  font-size: 0.85rem;
+  line-height: 1.78;
+  color: rgba(255,255,255,0.4);
+  font-weight: 300;
+  padding-top: 4px;
+}
+#tastemap-iframe {
+  width: 100%;
+  height: 100vh;
+  border: none;
+  display: block;
+}
+#tastemap-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 60px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.tm-footer-hint {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  font-family: var(--sans);
+}
+.tm-footer-caption {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.35);
+}
+
+/* ─── FEATURES ─── */
+#features {
+  background: var(--white);
+  padding: 110px 60px;
+  border-top: 1px solid var(--ink-08);
+}
+#features-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 60px;
+}
+#features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1px;
+  background: var(--ink-08);
+  border: 1px solid var(--ink-08);
+}
+.feat-card {
+  background: var(--white);
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background 0.25s;
+}
+.feat-card:hover { background: var(--off-white); }
+.feat-num {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--ink-20);
+  letter-spacing: 0.04em;
+}
+.feat-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.feat-title em { font-style: italic; }
+.feat-body {
+  font-size: 0.82rem;
+  line-height: 1.76;
+  color: var(--ink-60);
+  font-weight: 300;
+  flex: 1;
+}
+.feat-tag {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+  font-family: var(--sans);
+  padding-top: 12px;
+  border-top: 1px solid var(--ink-08);
+}
+.feat-dark {
+  background: var(--ink);
+  grid-column: 1 / -1;
+  padding: 48px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: none;
+}
+.feat-dark:hover { background: var(--ink); }
+.feat-dark .feat-num { color: rgba(255,255,255,0.15); }
+.feat-dark .feat-title {
+  color: var(--white);
+  font-size: 1.8rem;
+}
+.feat-dark .feat-body {
+  color: rgba(255,255,255,0.45);
+  max-width: 580px;
+}
+.feat-dark .feat-tag {
+  color: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.08);
+}
+
+/* ─── REAL WORLD ─── */
+#real-world {
+  background: var(--off-white);
+  padding: 110px 60px;
+  border-top: 1px solid var(--ink-08);
+}
+#rw-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-bottom: 68px;
+}
+#rw-right { padding-top: 8px; }
+#rw-body {
+  font-size: 1rem;
+  line-height: 1.78;
+  color: var(--ink-60);
+  font-weight: 300;
+}
+#rw-mosaic {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 320px 280px;
+  gap: 12px;
+}
+.mosaic-cell {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.45s cubic-bezier(.23,1,.32,1);
+}
+.mosaic-cell:hover { transform: scale(1.025); }
+.mosaic-big { grid-row: 1 / 3; }
+.mosaic-cell svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mosaic-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 16px 18px;
+  background: linear-gradient(to top, rgba(17,17,16,0.72) 0%, transparent 100%);
+}
+.mosaic-caption-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+.mosaic-caption-meta {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  font-family: var(--sans);
+}
+
+/* ─── USER JOURNEY ─── */
+#journey {
+  background: var(--white);
+  padding: 110px 60px;
+  border-top: 1px solid var(--ink-08);
+}
+#journey-header {
+  margin-bottom: 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+#journey-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.journey-step {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0;
+  border-top: 1px solid var(--ink-08);
+  padding: 52px 0;
+}
+.journey-step:last-child { border-bottom: 1px solid var(--ink-08); }
+.journey-num {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 2.6rem;
+  color: var(--ink-20);
+  letter-spacing: -0.02em;
+  padding-top: 4px;
+}
+.journey-content { padding-right: 60px; }
+.journey-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 1.9rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.journey-title em { font-style: italic; }
+.journey-body {
+  font-size: 0.88rem;
+  line-height: 1.82;
+  color: var(--ink-60);
+  font-weight: 300;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+.journey-quote {
+  border-left: 2px solid var(--ink-20);
+  padding: 12px 0 12px 24px;
+  margin-top: 4px;
+  max-width: 560px;
+}
+.journey-quote p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink);
+  font-weight: 300;
+}
+
+/* ─── WAITLIST ─── */
+#waitlist {
+  background: var(--off-white);
+  padding: 130px 60px;
+  border-top: 1px solid var(--ink-08);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#wl-watermark {
+  position: absolute;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(12rem, 30vw, 24rem);
+  color: rgba(17,17,16,0.028);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.06em;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+  white-space: nowrap;
+}
+#waitlist-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+#wl-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+#wl-headline em { font-style: italic; }
+#wl-sub {
+  font-size: 0.88rem;
+  line-height: 1.72;
+  color: var(--ink-60);
+  font-weight: 300;
+  max-width: 380px;
+}
+#wl-form {
+  display: flex;
+  width: 100%;
+  max-width: 420px;
+  gap: 0;
+  border: 1px solid var(--ink-20);
+}
+#wl-input {
+  flex: 1;
+  height: 48px;
+  padding: 0 18px;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--white);
+  border: none;
+  outline: none;
+  letter-spacing: 0.02em;
+}
+#wl-input::placeholder { color: var(--ink-40); }
+#wl-btn {
+  height: 48px;
+  padding: 0 22px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: none;
+  cursor: none;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+#wl-btn:hover { opacity: 0.8; }
+#wl-note {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+#wl-cities {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--ink-60);
+  letter-spacing: 0.02em;
+}
+#wl-cities em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* ─── FOOTER ─── */
+#footer {
+  background: var(--ink);
+  padding: 32px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+#footer-logo {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 0.88rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+#footer-tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.28);
+}
+#footer-copy {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  font-family: var(--sans);
+}
+
+/* ─── SECTION NUMBER WATERMARKS ─── */
+.section-num-bg {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(8rem, 18vw, 14rem);
+  color: rgba(17,17,16,0.03);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  position: absolute;
+  right: 40px;
+  top: 60px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  #manifesto { grid-template-columns: 1fr; }
+  #manifesto-left { position: relative; top: auto; padding: 60px 40px 32px; border-right: none; border-bottom: 1px solid var(--ink-08); }
+  #manifesto-right { padding: 40px; }
+  #features-grid { grid-template-columns: repeat(2, 1fr); }
+  #tastemap-header { grid-template-columns: 1fr 1fr; }
+  #rw-header { grid-template-columns: 1fr; gap: 24px; }
+  #rw-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .mosaic-big { grid-row: auto; }
+}
+@media (max-width: 768px) {
+  #nav { padding: 0 20px; }
+  #nav-links { display: none; }
+  #hero { padding: 0 20px 52px; }
+  #hero-text { flex-direction: column; gap: 24px; align-items: flex-start; }
+  #hero-right { align-items: flex-start; max-width: 100%; }
+  #hero-sub { text-align: left; }
+  #pull-quote { padding: 80px 24px; }
+  #shelf-header { padding: 0 20px; }
+  #shelf-track { padding: 0 20px; }
+  #tastemap-header { grid-template-columns: 1fr; padding: 56px 24px 36px; }
+  #tastemap-footer { padding: 14px 24px; flex-direction: column; gap: 8px; text-align: center; }
+  #features { padding: 72px 24px; }
+  #features-grid { grid-template-columns: 1fr; }
+  #real-world { padding: 72px 24px; }
+  #rw-mosaic { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .mosaic-cell { height: 200px; }
+  #journey { padding: 72px 24px; }
+  .journey-step { grid-template-columns: 72px 1fr; }
+  .journey-content { padding-right: 0; }
+  #waitlist { padding: 90px 24px; }
+  #footer { padding: 24px 20px; flex-direction: column; gap: 12px; text-align: center; }
+  #manifesto-left { padding: 56px 24px 28px; }
+  #manifesto-right { padding: 28px 24px 56px; }
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <div id="nav-logo">The Fourth Place</div>
+  <div id="nav-links">
+    <a href="#manifesto" class="nav-link">Philosophy</a>
+    <a href="#shelf" class="nav-link">What people add</a>
+    <a href="#tastemap-section" class="nav-link">Taste map</a>
+    <a href="#real-world" class="nav-link">Real world</a>
+    <a href="#waitlist" class="nav-cta">Join waitlist</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div id="hero-cards-area">
+
+    <!-- Solaris poster -->
+    <div class="hero-card hc-film" style="left:7%;top:10%;transform:rotate(-2.5deg)" data-delay="0">
+      <div class="hc-film-img" style="background:linear-gradient(160deg,#0a0a14 0%,#1a0a2e 40%,#0d1a2e 70%,#060a12 100%);">
+        <div style="position:absolute;inset:0;opacity:0.4;background:radial-gradient(ellipse at 50% 60%,#3a4a8a 0%,transparent 60%)"></div>
+        <div class="hc-film-meta" style="position:relative;z-index:1;">
+          <div class="hc-film-label">1972 · Tarkovsky</div>
+          <div class="hc-film-title">Solaris</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona poster -->
+    <div class="hero-card hc-film" style="left:18%;top:6%;transform:rotate(1.8deg)" data-delay="180">
+      <div class="hc-film-img" style="background:linear-gradient(180deg,#f0ede8 0%,#c8c0b4 60%,#1a1a1a 100%);">
+        <div style="position:absolute;top:20%;left:15%;right:15%;bottom:30%;display:flex;align-items:center;justify-content:center;opacity:0.7;">
+          <div style="width:100%;height:100%;background:linear-gradient(to bottom,rgba(26,26,26,0.6),transparent);border-radius:50%"></div>
+        </div>
+        <div class="hc-film-meta" style="position:relative;z-index:1;">
+          <div class="hc-film-label">1966 · Bergman</div>
+          <div class="hc-film-title">Persona</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pink Moon album -->
+    <div class="hero-card hc-album" style="left:32%;top:8%;transform:rotate(-1.2deg)" data-delay="90">
+      <div class="hc-album-art" style="background:linear-gradient(135deg,#e8dfc8 0%,#c8b898 50%,#b8a888 100%);">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;">
+          <div style="width:8px;height:8px;border-radius:50%;background:rgba(100,80,60,0.6)"></div>
+        </div>
+      </div>
+      <div class="hc-album-info">
+        <div class="hc-album-title">Pink Moon</div>
+        <div class="hc-album-artist">Nick Drake</div>
+      </div>
+    </div>
+
+    <!-- Boxer album -->
+    <div class="hero-card hc-album" style="left:44%;top:4%;transform:rotate(2.4deg)" data-delay="260">
+      <div class="hc-album-art" style="background:linear-gradient(160deg,#1a1a2a 0%,#2a2a3a 50%,#0a0a14 100%);">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15)"></div>
+      </div>
+      <div class="hc-album-info">
+        <div class="hc-album-title">Boxer</div>
+        <div class="hc-album-artist">The National</div>
+      </div>
+    </div>
+
+    <!-- Left Hand of Darkness book -->
+    <div class="hero-card hc-book" style="left:57%;top:9%;transform:rotate(-3deg)" data-delay="140">
+      <div class="hc-book-title">The Left Hand of Darkness</div>
+      <div class="hc-book-author">Ursula K. Le Guin</div>
+    </div>
+
+    <!-- Norwegian Wood book -->
+    <div class="hero-card hc-book" style="left:66%;top:5%;transform:rotate(1.5deg)" data-delay="320">
+      <div class="hc-book-title">Norwegian Wood</div>
+      <div class="hc-book-author">Haruki Murakami</div>
+    </div>
+
+    <!-- Wikipedia card -->
+    <div class="hero-card hc-wiki" style="right:18%;top:8%;transform:rotate(-1.8deg)" data-delay="60">
+      <div class="hc-wiki-header">
+        <span class="hc-wiki-w">W</span>
+        <span class="hc-wiki-source">Wikipedia</span>
+      </div>
+      <div class="hc-wiki-title">Mono no aware</div>
+      <div class="hc-wiki-sub">物の哀れ · the pathos of things</div>
+      <div class="hc-wiki-excerpt">The bittersweet awareness of impermanence — a sensitivity to ephemera and a gentle sadness at their passing.</div>
+    </div>
+
+    <!-- YouTube card -->
+    <div class="hero-card hc-yt" style="right:5%;top:14%;transform:rotate(2.2deg)" data-delay="210">
+      <div class="hc-yt-thumb" style="background:linear-gradient(160deg,#0a0a0a,#1a1a1a);">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,0.015) 3px,rgba(255,255,255,0.015) 4px);opacity:0.4"></div>
+        <div class="hc-yt-play"></div>
+      </div>
+      <div class="hc-yt-info">
+        <div class="hc-yt-channel">Every Frame a Painting</div>
+        <div class="hc-yt-title">Akira Kurosawa — Composing Movement</div>
+      </div>
+    </div>
+
+    <!-- Note card -->
+    <div class="hero-card hc-note" style="left:38%;top:40%;transform:rotate(-1.5deg)" data-delay="380">
+      <div class="hc-note-label">Personal note</div>
+      <div class="hc-note-text">"watched this the night before my first day in a new city. felt like someone had written it just for me."</div>
+    </div>
+
+    <div id="hero-fade"></div>
+  </div>
+
+  <div id="hero-text">
+    <h1 id="hero-headline" class="reveal">
+      You are not the<br>
+      content you scroll.<br>
+      You are the <em>art</em><br>
+      that moved you.
+    </h1>
+    <div id="hero-right">
+      <p id="hero-sub" class="reveal reveal-delay-2">The Fourth Place maps your inner world, finds the people nearby who resonate, and brings you together in the real one.</p>
+      <div id="hero-cta" class="reveal reveal-delay-3">
+        <a href="#waitlist" class="btn-primary">Join the waitlist</a>
+        <span class="hero-launch-note">Launching in Pune &amp; Mumbai</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div id="marquee-strip">
+  <div class="marquee-track">
+    <div class="marquee-content" aria-hidden="true">
+      <span class="marquee-text">Films that changed how you see the world</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Albums you only play when you need to feel something</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Books you've been trying to give everyone you love</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Wikipedia articles you read at 2am</span><span class="marquee-dot"></span>
+      <span class="marquee-text">YouTube videos you've watched a dozen times</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Reddit threads that made you feel less alone</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Tweets you've thought about for years</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Notes you'd only write if no one was watching</span><span class="marquee-dot"></span>
+    </div>
+    <div class="marquee-content" aria-hidden="true">
+      <span class="marquee-text">Films that changed how you see the world</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Albums you only play when you need to feel something</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Books you've been trying to give everyone you love</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Wikipedia articles you read at 2am</span><span class="marquee-dot"></span>
+      <span class="marquee-text">YouTube videos you've watched a dozen times</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Reddit threads that made you feel less alone</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Tweets you've thought about for years</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Notes you'd only write if no one was watching</span><span class="marquee-dot"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MANIFESTO ─── -->
+<section id="manifesto">
+  <div id="manifesto-left" class="reveal">
+    <span class="section-eyebrow">The belief</span>
+    <h2 class="section-headline">Social media forgot what <em>social</em> means.</h2>
+  </div>
+  <div id="manifesto-right">
+    <p class="manifesto-para reveal reveal-delay-1">
+      You don't open Instagram to connect. You open it to consume. The feed is a machine designed to hold your attention, not to introduce you to your people. Every platform optimised for reach and got performance. For engagement and got addiction.
+    </p>
+    <p class="manifesto-para reveal reveal-delay-2">
+      Meanwhile, the truest parts of you — <em>the film that broke something open, the album you only play when you need to feel something real, the book you've been trying to give everyone you love</em> — have nowhere to live. They sit in private notes apps and dog-eared pages and conversations that end too soon.
+    </p>
+    <p class="manifesto-para reveal reveal-delay-3">
+      We think the self you are in those private moments is the most interesting one. And we think that self is the best basis for finding people who actually matter to you.
+    </p>
+    <p class="manifesto-close reveal reveal-delay-4">
+      "Not everyone. Just the ones that make sense."
+    </p>
+  </div>
+</section>
+
+<!-- ─── PULL QUOTE ─── -->
+<section id="pull-quote">
+  <blockquote class="reveal">
+    "Not everything, but the things that make sense.<br>
+    Not everyone, but <em>the ones</em> that make sense."
+  </blockquote>
+  <cite class="reveal reveal-delay-2">— The Fourth Place</cite>
+</section>
+
+<!-- ─── TASTE SHELF ─── -->
+<section id="shelf">
+  <div id="shelf-header">
+    <span class="section-eyebrow reveal">What people add</span>
+    <h2 class="section-headline reveal reveal-delay-1">Everything that has ever <em>moved</em> you.</h2>
+  </div>
+
+  <div id="shelf-track-wrap">
+    <div id="shelf-track">
+
+      <!-- Solaris -->
+      <div class="shelf-card sc-film">
+        <div class="sc-film-art" style="background:linear-gradient(160deg,#06060e 0%,#12103a 40%,#0a1828 70%,#040408 100%);">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 65%,rgba(60,80,160,0.45) 0%,transparent 55%)"></div>
+          <div class="sc-film-overlay"></div>
+          <div class="sc-film-meta">
+            <div class="sc-film-type">Film</div>
+            <div class="sc-film-title">Solaris</div>
+            <div class="sc-film-year">Tarkovsky · 1972</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Persona -->
+      <div class="shelf-card sc-film">
+        <div class="sc-film-art" style="background:linear-gradient(180deg,#f0ede8 0%,#d4ccc0 40%,#181818 100%);">
+          <div style="position:absolute;top:18%;left:0;right:0;height:50%;background:linear-gradient(to bottom,transparent,rgba(26,26,26,0.9))"></div>
+          <div class="sc-film-overlay"></div>
+          <div class="sc-film-meta">
+            <div class="sc-film-type">Film</div>
+            <div class="sc-film-title">Persona</div>
+            <div class="sc-film-year">Bergman · 1966</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pink Moon -->
+      <div class="shelf-card sc-album">
+        <div class="sc-album-art" style="background:linear-gradient(135deg,#e8e0cc 0%,#d0c4a8 40%,#bca890 100%);">
+          <svg viewBox="0 0 120 120" width="60" height="60">
+            <circle cx="60" cy="60" r="55" fill="rgba(255,255,255,0.3)" stroke="rgba(140,120,90,0.3)" stroke-width="1"/>
+            <circle cx="60" cy="60" r="8" fill="rgba(120,100,75,0.5)"/>
+            <line x1="60" y1="5" x2="60" y2="115" stroke="rgba(140,120,90,0.12)" stroke-width="1"/>
+            <line x1="5" y1="60" x2="115" y2="60" stroke="rgba(140,120,90,0.12)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="sc-album-info">
+          <div class="sc-album-title">Pink Moon</div>
+          <div class="sc-album-artist">Nick Drake</div>
+        </div>
+      </div>
+
+      <!-- Boxer -->
+      <div class="shelf-card sc-album">
+        <div class="sc-album-art" style="background:linear-gradient(160deg,#0c0c1a 0%,#1a1a2e 50%,#080810 100%);">
+          <svg viewBox="0 0 120 120" width="64" height="64" style="opacity:0.7">
+            <rect x="10" y="48" width="100" height="2" fill="rgba(255,255,255,0.15)" rx="1"/>
+            <rect x="30" y="56" width="60" height="1" fill="rgba(255,255,255,0.08)" rx="0.5"/>
+            <rect x="20" y="40" width="80" height="1" fill="rgba(255,255,255,0.06)" rx="0.5"/>
+          </svg>
+        </div>
+        <div class="sc-album-info">
+          <div class="sc-album-title">Boxer</div>
+          <div class="sc-album-artist">The National</div>
+        </div>
+      </div>
+
+      <!-- Left Hand of Darkness -->
+      <div class="shelf-card sc-book">
+        <div class="sc-book-cover">
+          <div class="sc-book-title">The Left Hand of Darkness</div>
+          <div class="sc-book-author">Ursula K. Le Guin</div>
+        </div>
+      </div>
+
+      <!-- Norwegian Wood -->
+      <div class="shelf-card sc-book" style="width:96px;">
+        <div class="sc-book-cover" style="border-left-color:#8b0000;">
+          <div class="sc-book-title">Norwegian Wood</div>
+          <div class="sc-book-author">Haruki Murakami</div>
+        </div>
+      </div>
+
+      <!-- Wikipedia -->
+      <div class="shelf-card sc-wiki">
+        <div class="sc-wiki-header">
+          <span class="sc-wiki-w">W</span>
+          <span class="sc-wiki-source">Wikipedia</span>
+        </div>
+        <div class="sc-wiki-title">Mono no aware</div>
+        <div class="sc-wiki-sub">物の哀れ · the pathos of things</div>
+        <div class="sc-wiki-excerpt">The bittersweet awareness of impermanence — a sensitivity to ephemera and a gentle sadness at their passing, exemplified in cherry blossoms.</div>
+      </div>
+
+      <!-- YouTube -->
+      <div class="shelf-card sc-yt">
+        <div class="sc-yt-thumb" style="background:#0a0a0a;">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,255,255,0.018) 4px,rgba(255,255,255,0.018) 5px)"></div>
+          <div class="sc-yt-play"></div>
+        </div>
+        <div class="sc-yt-info">
+          <div class="sc-yt-channel">Every Frame a Painting</div>
+          <div class="sc-yt-title">Akira Kurosawa — Composing Movement</div>
+        </div>
+      </div>
+
+      <!-- Personal note -->
+      <div class="shelf-card sc-note">
+        <div class="sc-note-label">Personal note</div>
+        <div class="sc-note-text">"watched this the night before my first day in a new city. felt like someone had written it just for me."</div>
+      </div>
+
+      <!-- Reddit -->
+      <div class="shelf-card sc-reddit">
+        <div class="sc-reddit-header">
+          <div class="sc-reddit-icon">
+            <svg viewBox="0 0 20 20"><path d="M10 0C4.478 0 0 4.478 0 10s4.478 10 10 10 10-4.478 10-10S15.522 0 10 0zm5.878 10.63a1.73 1.73 0 01.122.635c0 2.47-2.88 4.47-6.43 4.47S3.14 13.735 3.14 11.265c0-.219.04-.43.12-.63a1.05 1.05 0 01-.29-.73 1.07 1.07 0 011.07-1.07c.29 0 .55.11.75.3a6.12 6.12 0 013.34-.96l.56-2.64c.03-.12.13-.2.26-.18l1.86.39a.74.74 0 011.44.27.74.74 0 01-.74.74.74.74 0 01-.73-.62l-1.65-.35-.5 2.36a6.14 6.14 0 013.31.96c.19-.18.45-.29.74-.29a1.07 1.07 0 011.07 1.07 1.05 1.05 0 01-.3.72zM7.45 10.8a.73.73 0 100 1.46.73.73 0 000-1.46zm5.1 0a.73.73 0 100 1.46.73.73 0 000-1.46zm-1.05 2.67a.18.18 0 01-.18.18c-.32.3-.84.45-1.32.45s-1-.15-1.32-.45a.18.18 0 01-.26-.26c.4-.4 1-.6 1.58-.6s1.18.2 1.58.6a.18.18 0 01-.08.08z"/></svg>
+          </div>
+          <span class="sc-reddit-sub">r/slatestarcodex</span>
+        </div>
+        <div class="sc-reddit-title">What are some ideas that, once understood, change how you see the world forever?</div>
+        <div class="sc-reddit-meta">2.4k comments · saved 3 years ago</div>
+      </div>
+
+      <!-- Tweet -->
+      <div class="shelf-card sc-tweet">
+        <div class="sc-tweet-header">
+          <div class="sc-tweet-avatar">M</div>
+          <div class="sc-tweet-meta">
+            <div class="sc-tweet-name">Mandy Brown</div>
+            <div class="sc-tweet-handle">@aworkinglibrary</div>
+          </div>
+          <div class="sc-tweet-x">𝕏</div>
+        </div>
+        <div class="sc-tweet-text">"Reading is a practice of attention. Every book you finish is proof that you can sit with something hard long enough to understand it."</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── TASTE MAP ─── -->
+<section id="tastemap-section">
+  <div id="tastemap-header">
+    <div class="reveal">
+      <p class="tm-eyebrow">The taste map</p>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <h2 class="tm-headline">Your <em>cultural constellation.</em></h2>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <p class="tm-desc">Every node is something that moved you. Every cluster is a part of your inner world. Switch between two people. Hit Merge — watch what you share glow gold.</p>
+    </div>
+  </div>
+  <iframe id="tastemap-iframe" src="tastemap.html" title="TasteMap — interactive cultural constellation"></iframe>
+  <div id="tastemap-footer">
+    <span class="tm-footer-hint">Drag to rotate · scroll to zoom · click any node</span>
+    <span class="tm-footer-caption">This is what two people's inner worlds look like together.</span>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section id="features">
+  <div style="position:relative;">
+    <div id="features-header">
+      <span class="section-eyebrow reveal">What it is</span>
+      <h2 class="section-headline reveal reveal-delay-1">Four things that work together.</h2>
+    </div>
+    <div id="features-grid">
+      <div class="feat-card reveal">
+        <div class="feat-num">01</div>
+        <div class="feat-title">Your <em>taste map</em></div>
+        <div class="feat-body">Add the films, music, books, articles, threads — anything that has genuinely meant something to you. Write what it did to you, not what you think of it. The map builds itself from your honesty.</div>
+        <div class="feat-tag">Living portrait</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-num">02</div>
+        <div class="feat-title">Your <em>collections</em></div>
+        <div class="feat-body">Cabinet-of-curiosities style boards. A folder for what makes loneliness feel smaller. A chapter of your life. Everything that reminds you of someone. Links, images, writing, videos — held together by feeling.</div>
+        <div class="feat-tag">Private archive</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-num">03</div>
+        <div class="feat-title">What you <em>want to do</em></div>
+        <div class="feat-body">Write the things you want to do that feel too big or too odd to say most places. Build a startup. Go on a solo trip. Find someone to explore this city with properly. These shape who we find for you.</div>
+        <div class="feat-tag">Intentional future</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-num">04</div>
+        <div class="feat-title">The <em>people nearby</em></div>
+        <div class="feat-body">When your map has enough of you in it, we find the people in your city whose inner world rhymes with yours. Not by age or profession — by what moves them, and what they want. Then we suggest something real you could do together.</div>
+        <div class="feat-tag">Resonant matching</div>
+      </div>
+      <div class="feat-card feat-dark reveal">
+        <div class="feat-num">—</div>
+        <div class="feat-title">"The whole point." <em></em></div>
+        <div class="feat-body">The social outcome is the surprise, not the goal. You come to add things and reflect. The finding of people happens as a consequence of being honest about who you are.</div>
+        <div class="feat-tag">No followers. No feed. No performance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REAL WORLD ─── -->
+<section id="real-world">
+  <div id="rw-header">
+    <div>
+      <span class="section-eyebrow reveal">The real world</span>
+      <h2 class="section-headline reveal reveal-delay-1" style="margin-top:16px;">The map finds them.<br><em>You find each other.</em></h2>
+    </div>
+    <div id="rw-right">
+      <p id="rw-body" class="reveal reveal-delay-2">The Fourth Place suggests things to do together — a film screening, a bookstore, a walk, a venue that fits the specific texture of who you both are. The rest is up to you.</p>
+    </div>
+  </div>
+
+  <div id="rw-mosaic">
+    <!-- Big left: bookstore -->
+    <div class="mosaic-cell mosaic-big reveal">
+      <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="600" fill="#1a1208"/>
+        <!-- Warm ambient light -->
+        <radialGradient id="rg1" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="#f5d08a" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#1a1208" stop-opacity="0"/>
+        </radialGradient>
+        <rect width="400" height="600" fill="url(#rg1)"/>
+        <!-- Bookshelf rows -->
+        <g opacity="0.55">
+          <!-- shelf 1 -->
+          <rect x="20" y="80" width="360" height="2" fill="#4a3820"/>
+          <rect x="20" y="82" width="28" height="58" fill="#8b4513" rx="1"/>
+          <rect x="50" y="82" width="18" height="58" fill="#5c3317" rx="1"/>
+          <rect x="70" y="82" width="24" height="58" fill="#7a5c2e" rx="1"/>
+          <rect x="96" y="82" width="20" height="58" fill="#3d2b0f" rx="1"/>
+          <rect x="118" y="82" width="32" height="58" fill="#6b4226" rx="1"/>
+          <rect x="152" y="82" width="16" height="58" fill="#8b6914" rx="1"/>
+          <rect x="170" y="82" width="26" height="58" fill="#5a3a1a" rx="1"/>
+          <rect x="198" y="82" width="22" height="58" fill="#4a2d10" rx="1"/>
+          <rect x="222" y="82" width="30" height="58" fill="#7c5228" rx="1"/>
+          <rect x="254" y="82" width="18" height="58" fill="#3e2a0d" rx="1"/>
+          <rect x="274" y="82" width="24" height="58" fill="#8a5630" rx="1"/>
+          <rect x="300" y="82" width="20" height="58" fill="#5e3e1c" rx="1"/>
+          <rect x="322" y="82" width="28" height="58" fill="#7a4a22" rx="1"/>
+          <rect x="352" y="82" width="26" height="58" fill="#3d2510" rx="1"/>
+          <!-- shelf 2 -->
+          <rect x="20" y="185" width="360" height="2" fill="#4a3820"/>
+          <rect x="20" y="187" width="22" height="62" fill="#5a3010" rx="1"/>
+          <rect x="44" y="187" width="30" height="62" fill="#7c4e24" rx="1"/>
+          <rect x="76" y="187" width="16" height="62" fill="#4a2c0e" rx="1"/>
+          <rect x="94" y="187" width="26" height="62" fill="#8b5028" rx="1"/>
+          <rect x="122" y="187" width="20" height="62" fill="#3c2410" rx="1"/>
+          <rect x="144" y="187" width="28" height="62" fill="#6a4418" rx="1"/>
+          <rect x="174" y="187" width="24" height="62" fill="#5c3e1a" rx="1"/>
+          <rect x="200" y="187" width="32" height="62" fill="#7e5430" rx="1"/>
+          <rect x="234" y="187" width="18" height="62" fill="#4e3018" rx="1"/>
+          <rect x="254" y="187" width="26" height="62" fill="#8a5a2c" rx="1"/>
+          <rect x="282" y="187" width="20" height="62" fill="#3e2a0c" rx="1"/>
+          <rect x="304" y="187" width="30" height="62" fill="#6c4420" rx="1"/>
+          <rect x="336" y="187" width="22" height="62" fill="#56361a" rx="1"/>
+          <!-- shelf 3 -->
+          <rect x="20" y="298" width="360" height="2" fill="#4a3820"/>
+          <rect x="20" y="300" width="26" height="60" fill="#7a4e28" rx="1"/>
+          <rect x="48" y="300" width="18" height="60" fill="#4c2e12" rx="1"/>
+          <rect x="68" y="300" width="30" height="60" fill="#6a4020" rx="1"/>
+          <rect x="100" y="300" width="22" height="60" fill="#8c5830" rx="1"/>
+          <rect x="124" y="300" width="28" height="60" fill="#3e2810" rx="1"/>
+          <rect x="154" y="300" width="16" height="60" fill="#7c5430" rx="1"/>
+          <rect x="172" y="300" width="24" height="60" fill="#5a3a18" rx="1"/>
+          <rect x="198" y="300" width="32" height="60" fill="#4a2c0e" rx="1"/>
+          <rect x="232" y="300" width="20" height="60" fill="#8a5620" rx="1"/>
+          <rect x="254" y="300" width="28" height="60" fill="#5e3e1c" rx="1"/>
+          <rect x="284" y="300" width="18" height="60" fill="#3e2810" rx="1"/>
+          <rect x="304" y="300" width="26" height="60" fill="#7a4c26" rx="1"/>
+          <rect x="332" y="300" width="22" height="60" fill="#6a4218" rx="1"/>
+        </g>
+        <!-- Two silhouettes, facing each other slightly -->
+        <g opacity="0.82">
+          <!-- Person left -->
+          <ellipse cx="145" cy="500" rx="20" ry="32" fill="#111"/>
+          <circle cx="145" cy="456" r="14" fill="#1a1208"/>
+          <ellipse cx="145" cy="456" rx="13" ry="14" fill="#111"/>
+          <!-- Person right -->
+          <ellipse cx="225" cy="500" rx="20" ry="32" fill="#111"/>
+          <circle cx="225" cy="456" r="14" fill="#1a1208"/>
+          <ellipse cx="225" cy="456" rx="13" ry="14" fill="#111"/>
+        </g>
+        <!-- Warm floor light -->
+        <radialGradient id="rg2" cx="50%" cy="100%" r="60%">
+          <stop offset="0%" stop-color="#f5c060" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#1a1208" stop-opacity="0"/>
+        </radialGradient>
+        <rect y="450" width="400" height="150" fill="url(#rg2)"/>
+        <!-- Light spill from top lamp -->
+        <radialGradient id="rg3" cx="50%" cy="0%" r="45%">
+          <stop offset="0%" stop-color="#f9e0a0" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#1a1208" stop-opacity="0"/>
+        </radialGradient>
+        <rect width="400" height="300" fill="url(#rg3)"/>
+      </svg>
+      <div class="mosaic-caption">
+        <div class="mosaic-caption-text">"We talked for three hours. It felt like a conversation that was already in progress."</div>
+        <div class="mosaic-caption-meta">Arjun &amp; Nadia · Pune · bookstore</div>
+      </div>
+    </div>
+
+    <!-- Top middle: cinema -->
+    <div class="mosaic-cell reveal reveal-delay-1">
+      <svg viewBox="0 0 300 320" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="320" fill="#0a080e"/>
+        <!-- Screen glow -->
+        <linearGradient id="sg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#c8d4e8" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#8090c0" stop-opacity="0.1"/>
+        </linearGradient>
+        <rect x="20" y="20" width="260" height="150" fill="url(#sg)" rx="2"/>
+        <rect x="20" y="20" width="260" height="150" fill="#b8c8e0" opacity="0.22" rx="2"/>
+        <!-- Seat rows -->
+        <g fill="#1a1520" opacity="0.9">
+          <rect x="10" y="200" width="280" height="16" rx="3"/>
+          <rect x="14" y="222" width="272" height="16" rx="3"/>
+          <rect x="18" y="244" width="264" height="16" rx="3"/>
+          <rect x="22" y="266" width="256" height="16" rx="3"/>
+          <rect x="26" y="288" width="248" height="16" rx="3"/>
+        </g>
+        <!-- Screen light falloff -->
+        <linearGradient id="slg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#a0b8d8" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#0a080e" stop-opacity="0"/>
+        </linearGradient>
+        <rect width="300" height="320" fill="url(#slg)"/>
+        <!-- Two lit faces in dark -->
+        <ellipse cx="110" cy="255" rx="10" ry="5" fill="rgba(180,200,230,0.18)"/>
+        <ellipse cx="180" cy="255" rx="10" ry="5" fill="rgba(180,200,230,0.18)"/>
+      </svg>
+      <div class="mosaic-caption">
+        <div class="mosaic-caption-text">"A film the app suggested. A conversation after."</div>
+        <div class="mosaic-caption-meta">Mumbai · independent cinema</div>
+      </div>
+    </div>
+
+    <!-- Top right: chai -->
+    <div class="mosaic-cell reveal reveal-delay-2">
+      <svg viewBox="0 0 300 320" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="320" fill="#1a1008"/>
+        <radialGradient id="tg" cx="50%" cy="55%" r="50%">
+          <stop offset="0%" stop-color="#f0a030" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#1a1008" stop-opacity="0"/>
+        </radialGradient>
+        <rect width="300" height="320" fill="url(#tg)"/>
+        <!-- Table surface -->
+        <rect x="40" y="220" width="220" height="8" fill="#2a1a08" rx="2" opacity="0.9"/>
+        <!-- Chai cups -->
+        <g fill="none" stroke-width="2">
+          <!-- Cup left -->
+          <path d="M100 195 Q96 205 98 215 L122 215 Q124 205 120 195 Z" fill="#c8781e" opacity="0.85"/>
+          <ellipse cx="110" cy="195" rx="10" ry="3" fill="#e89040" opacity="0.9"/>
+          <path d="M122 205 Q132 205 132 210 Q132 215 122 215" fill="none" stroke="#b06010" stroke-width="1.5"/>
+          <!-- Cup right -->
+          <path d="M178 195 Q174 205 176 215 L200 215 Q202 205 198 195 Z" fill="#c8781e" opacity="0.85"/>
+          <ellipse cx="188" cy="195" rx="10" ry="3" fill="#e89040" opacity="0.9"/>
+          <path d="M200 205 Q210 205 210 210 Q210 215 200 215" fill="none" stroke="#b06010" stroke-width="1.5"/>
+        </g>
+        <!-- Steam -->
+        <g stroke="rgba(240,200,130,0.3)" stroke-width="1.2" fill="none" stroke-linecap="round">
+          <path d="M104 188 Q101 180 104 172 Q107 164 104 156"/>
+          <path d="M112 186 Q115 178 112 170 Q109 162 112 154"/>
+          <path d="M182 188 Q179 180 182 172 Q185 164 182 156"/>
+          <path d="M190 186 Q193 178 190 170 Q187 162 190 154"/>
+        </g>
+        <!-- Two silhouettes at table -->
+        <ellipse cx="95" cy="265" rx="28" ry="22" fill="#0e0808" opacity="0.9"/>
+        <ellipse cx="205" cy="265" rx="28" ry="22" fill="#0e0808" opacity="0.9"/>
+        <circle cx="95" cy="238" r="14" fill="#0e0808" opacity="0.9"/>
+        <circle cx="205" cy="238" r="14" fill="#0e0808" opacity="0.9"/>
+      </svg>
+      <div class="mosaic-caption">
+        <div class="mosaic-caption-text">"The first meeting that didn't feel like one."</div>
+        <div class="mosaic-caption-meta">Pune · Koregaon Park</div>
+      </div>
+    </div>
+
+    <!-- Bottom middle: walking -->
+    <div class="mosaic-cell reveal reveal-delay-1">
+      <svg viewBox="0 0 300 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="280" fill="#1a1610"/>
+        <!-- Narrow street walls -->
+        <rect x="0" y="0" width="80" height="280" fill="#1e1a12"/>
+        <rect x="220" y="0" width="80" height="280" fill="#1e1a12"/>
+        <!-- Wall texture -->
+        <g opacity="0.15">
+          <rect x="10" y="20" width="50" height="2" fill="#8a7860"/>
+          <rect x="10" y="40" width="50" height="2" fill="#8a7860"/>
+          <rect x="10" y="60" width="50" height="2" fill="#8a7860"/>
+          <rect x="10" y="80" width="50" height="2" fill="#8a7860"/>
+          <rect x="240" y="20" width="50" height="2" fill="#8a7860"/>
+          <rect x="240" y="40" width="50" height="2" fill="#8a7860"/>
+          <rect x="240" y="60" width="50" height="2" fill="#8a7860"/>
+          <rect x="240" y="80" width="50" height="2" fill="#8a7860"/>
+        </g>
+        <!-- Path glow from end -->
+        <linearGradient id="pg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f5d890" stop-opacity="0.35"/>
+          <stop offset="70%" stop-color="#c8a050" stop-opacity="0.1"/>
+          <stop offset="100%" stop-color="#1a1610" stop-opacity="0"/>
+        </linearGradient>
+        <rect x="80" y="0" width="140" height="280" fill="url(#pg)"/>
+        <!-- Cobblestone texture hint -->
+        <g opacity="0.06" stroke="#8a7860" stroke-width="0.5">
+          <line x1="80" y1="100" x2="220" y2="100"/>
+          <line x1="80" y1="140" x2="220" y2="140"/>
+          <line x1="80" y1="180" x2="220" y2="180"/>
+          <line x1="80" y1="220" x2="220" y2="220"/>
+          <line x1="150" y1="80" x2="150" y2="280"/>
+          <line x1="120" y1="80" x2="120" y2="280"/>
+          <line x1="180" y1="80" x2="180" y2="280"/>
+        </g>
+        <!-- Two walking figures -->
+        <g opacity="0.85" fill="#0e0c08">
+          <ellipse cx="133" cy="230" rx="12" ry="20" />
+          <circle cx="133" cy="205" r="10"/>
+          <ellipse cx="163" cy="232" rx="12" ry="20"/>
+          <circle cx="163" cy="207" r="10"/>
+        </g>
+      </svg>
+      <div class="mosaic-caption">
+        <div class="mosaic-caption-text">"An old part of the city. Neither of them had been."</div>
+        <div class="mosaic-caption-meta">Bengaluru · walking</div>
+      </div>
+    </div>
+
+    <!-- Bottom right: live music -->
+    <div class="mosaic-cell reveal reveal-delay-2">
+      <svg viewBox="0 0 300 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="280" fill="#0a080e"/>
+        <!-- Stage spotlight -->
+        <radialGradient id="spg" cx="50%" cy="30%" r="40%">
+          <stop offset="0%" stop-color="#f0d090" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#0a080e" stop-opacity="0"/>
+        </radialGradient>
+        <rect width="300" height="280" fill="url(#spg)"/>
+        <!-- Stage platform -->
+        <rect x="60" y="130" width="180" height="12" fill="#1e1820" rx="2"/>
+        <!-- Performer silhouette -->
+        <ellipse cx="150" cy="118" rx="10" ry="18" fill="#1a1620"/>
+        <circle cx="150" cy="96" r="9" fill="#1a1620"/>
+        <!-- Guitar shape hint -->
+        <ellipse cx="160" cy="115" rx="5" ry="7" fill="#0e0c12" opacity="0.8"/>
+        <!-- Microphone stand -->
+        <line x1="150" y1="96" x2="150" y2="80" stroke="#2a2430" stroke-width="1.5"/>
+        <circle cx="150" cy="79" r="3" fill="#2a2430"/>
+        <!-- Audience silhouettes -->
+        <g fill="#0e0c12" opacity="0.7">
+          <ellipse cx="80" cy="200" rx="18" ry="16"/>
+          <circle cx="80" cy="180" r="11"/>
+          <ellipse cx="130" cy="195" rx="18" ry="16"/>
+          <circle cx="130" cy="175" r="11"/>
+          <ellipse cx="180" cy="200" rx="18" ry="16"/>
+          <circle cx="180" cy="180" r="11"/>
+          <ellipse cx="230" cy="195" rx="18" ry="16"/>
+          <circle cx="230" cy="175" r="11"/>
+        </g>
+        <!-- Warm haze -->
+        <radialGradient id="hg" cx="50%" cy="100%" r="60%">
+          <stop offset="0%" stop-color="#8040c0" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#0a080e" stop-opacity="0"/>
+        </radialGradient>
+        <rect width="300" height="280" fill="url(#hg)"/>
+      </svg>
+      <div class="mosaic-caption">
+        <div class="mosaic-caption-text">"A band they'd both saved but never told anyone about."</div>
+        <div class="mosaic-caption-meta">Mumbai · live music</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── USER JOURNEY ─── -->
+<section id="journey">
+  <div id="journey-header">
+    <span class="section-eyebrow reveal">A story</span>
+    <h2 class="section-headline reveal reveal-delay-1">Meet Arjun. 26, Pune.</h2>
+  </div>
+
+  <div id="journey-steps">
+    <div class="journey-step reveal">
+      <div class="journey-num">I.</div>
+      <div class="journey-content">
+        <h3 class="journey-title">The first <em>night.</em></h3>
+        <p class="journey-body">He opens the app and it asks him one question. Not "add your favourite movies." Just — what's something you consumed recently that stayed with you longer than you expected?</p>
+        <div class="journey-quote">
+          <p>"Paterson. The Jim Jarmusch film. It made me feel like ordinary life was secretly enormous, and that scared me because I wasn't sure I was living it that way."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey-step reveal reveal-delay-1">
+      <div class="journey-num">II.</div>
+      <div class="journey-content">
+        <h3 class="journey-title">The first <em>week.</em></h3>
+        <p class="journey-body">He comes back not because of a notification — because he thought of something he wanted to add. The taste map is forming. He notices almost everything he loves has something to do with quiet, and time, and the dignity of small things. The map showed him a pattern in himself.</p>
+      </div>
+    </div>
+
+    <div class="journey-step reveal reveal-delay-1">
+      <div class="journey-num">III.</div>
+      <div class="journey-content">
+        <h3 class="journey-title">The <em>resonance.</em></h3>
+        <p class="journey-body">The app tells him — someone nearby resonates with your map. Not a face and a bio. Just the shape of what they share. Same film. Same particular melancholy in music. Both wrote something about wanting to build something.</p>
+        <div class="journey-quote">
+          <p>"Her name is Nadia. Her map has things he doesn't recognise and wants to."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey-step reveal reveal-delay-1">
+      <div class="journey-num">IV.</div>
+      <div class="journey-content">
+        <h3 class="journey-title">The <em>meeting.</em></h3>
+        <p class="journey-body">A restored Italian film at a small theatre in Koregaon Park. Afterwards, chai. Two hours. About the film, about the city, about what they're both quietly trying to build. At no point does it feel like a first meeting. It feels like a conversation that was already in progress and they just found where it had been waiting.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WAITLIST ─── -->
+<section id="waitlist">
+  <div id="wl-watermark">IV</div>
+  <div id="waitlist-inner">
+    <h2 id="wl-headline" class="reveal">Your inner world deserves a <em>home.</em></h2>
+    <p id="wl-sub" class="reveal reveal-delay-1">We're building this slowly and carefully, starting in Pune. Join the waitlist and we'll reach out when your city is ready.</p>
+    <form id="wl-form" class="reveal reveal-delay-2" onsubmit="handleWaitlist(event)">
+      <input id="wl-input" type="email" placeholder="your@email.com" required>
+      <button id="wl-btn" type="submit">Join</button>
+    </form>
+    <p id="wl-note" class="reveal reveal-delay-3">No spam · no noise · just a note when it's ready</p>
+    <p id="wl-cities" class="reveal reveal-delay-4">Launching first in <em>Pune</em> · then <em>Mumbai</em> · then <em>Bengaluru</em></p>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer id="footer">
+  <div id="footer-logo">The Fourth Place</div>
+  <div id="footer-tagline">Not everyone. Just the ones that make sense.</div>
+  <div id="footer-copy">© 2025 The Fourth Place</div>
+</footer>
+
+<script>
+/* ─── CUSTOM CURSOR ─── */
+const cur = document.getElementById('cursor')
+const ring = document.getElementById('cursor-ring')
+let mx = -100, my = -100, rx = -100, ry = -100
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY
+  cur.style.left = mx + 'px'
+  cur.style.top = my + 'px'
+})
+
+function animateRing() {
+  rx += (mx - rx) * 0.12
+  ry += (my - ry) * 0.12
+  ring.style.left = rx + 'px'
+  ring.style.top = ry + 'px'
+  requestAnimationFrame(animateRing)
+}
+animateRing()
+
+document.querySelectorAll('a, button, .shelf-card, .mosaic-cell, .feat-card, .leg').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('expanded'))
+  el.addEventListener('mouseleave', () => cur.classList.remove('expanded'))
+})
+
+/* ─── NAV SCROLL ─── */
+const nav = document.getElementById('nav')
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40)
+}, { passive: true })
+
+/* ─── SCROLL REVEAL ─── */
+const revealEls = document.querySelectorAll('.reveal')
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible')
+      revealObserver.unobserve(entry.target)
+    }
+  })
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' })
+revealEls.forEach(el => revealObserver.observe(el))
+
+/* ─── HERO CARDS STAGGER ─── */
+const heroCards = document.querySelectorAll('.hero-card')
+heroCards.forEach((card, i) => {
+  const delay = parseInt(card.dataset.delay || 0)
+  setTimeout(() => card.classList.add('visible'), 900 + delay)
+})
+
+/* ─── SHELF DRAG ─── */
+const shelf = document.getElementById('shelf-track-wrap')
+const track = document.getElementById('shelf-track')
+let isDragging = false, startX, scrollLeft, vel = 0, lastX, rafId
+
+shelf.addEventListener('mousedown', e => {
+  isDragging = true
+  startX = e.pageX - shelf.offsetLeft
+  scrollLeft = shelf.scrollLeft
+  lastX = e.pageX
+  vel = 0
+  cancelAnimationFrame(rafId)
+})
+
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return
+  e.preventDefault()
+  const x = e.pageX - shelf.offsetLeft
+  const walk = (x - startX) * 1.4
+  vel = e.pageX - lastX
+  lastX = e.pageX
+  shelf.scrollLeft = scrollLeft - walk
+})
+
+window.addEventListener('mouseup', () => {
+  if (!isDragging) return
+  isDragging = false
+  applyMomentum()
+})
+
+function applyMomentum() {
+  if (Math.abs(vel) < 0.5) return
+  shelf.scrollLeft -= vel
+  vel *= 0.92
+  rafId = requestAnimationFrame(applyMomentum)
+}
+
+// Touch
+let tStartX, tScrollLeft, tLastX, tVel = 0
+shelf.addEventListener('touchstart', e => {
+  tStartX = e.touches[0].pageX
+  tScrollLeft = shelf.scrollLeft
+  tLastX = tStartX
+  tVel = 0
+  cancelAnimationFrame(rafId)
+}, { passive: true })
+shelf.addEventListener('touchmove', e => {
+  const x = e.touches[0].pageX
+  tVel = x - tLastX
+  tLastX = x
+  shelf.scrollLeft = tScrollLeft - (x - tStartX)
+}, { passive: true })
+shelf.addEventListener('touchend', () => {
+  function momentum() {
+    if (Math.abs(tVel) < 0.5) return
+    shelf.scrollLeft -= tVel
+    tVel *= 0.92
+    rafId = requestAnimationFrame(momentum)
+  }
+  momentum()
+})
+
+/* ─── WAITLIST ─── */
+function handleWaitlist(e) {
+  e.preventDefault()
+  const input = document.getElementById('wl-input')
+  const btn = document.getElementById('wl-btn')
+  const email = input.value.trim()
+  if (!email) return
+  btn.textContent = '✓'
+  btn.style.background = '#2a5c2a'
+  input.value = ''
+  input.placeholder = 'You\'re on the list.'
+  input.disabled = true
+  btn.disabled = true
+  setTimeout(() => {
+    btn.textContent = 'Join'
+    btn.style.background = ''
+    input.placeholder = 'your@email.com'
+    input.disabled = false
+    btn.disabled = false
+  }, 4000)
+}
+
+/* ─── SECTION NUMBER BIG BG ─── */
+// Already handled with CSS .section-num-bg where needed
+</script>
+</body>
+</html>
