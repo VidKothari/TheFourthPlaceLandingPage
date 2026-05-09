@@ -4,6 +4,9 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
+// Clamp a value strictly within [0, 1] to keep Web Animations API happy on Android
+const c = (v) => Math.min(1, Math.max(0, v));
+
 // Seeded pseudo-random shuffle — stable across renders, different per array
 function seededShuffle(arr, seed = 42) {
   const a = [...arr];
@@ -62,7 +65,7 @@ const lyricFragments = [
 ];
 
 const LyricFragment = ({ text, index, scrollYProgress, start, end }) => {
-  const x = useTransform(scrollYProgress, [start, end], [0, (index % 2 === 0 ? 100 : -100)]);
+  const x = useTransform(scrollYProgress, [c(start), c(end)], [0, (index % 2 === 0 ? 100 : -100)]);
   return (
     <motion.div
       style={{
@@ -87,7 +90,7 @@ const LyricFragment = ({ text, index, scrollYProgress, start, end }) => {
 
 const GalleryImage = ({ src, preserveRatio, track, index, sizeScale = 1, isMobile = false, style = {}, scrollYProgress, start, end }) => {
   const yFactor = track === 'fg' ? -150 : track === 'mid' ? -80 : -40;
-  const yParallax = useTransform(scrollYProgress, [start, end], [0, yFactor]);
+  const yParallax = useTransform(scrollYProgress, [c(start), c(end)], [0, yFactor]);
 
   let baseWidth;
   const mobileScale = isMobile ? 0.6 : 1;
@@ -106,7 +109,7 @@ const GalleryImage = ({ src, preserveRatio, track, index, sizeScale = 1, isMobil
   const rotation = (index % 2 === 0 ? 1 : -1) * (2 + (index % 3));
 
   // Organic floating: subtle sine wave
-  const floatY = useTransform(scrollYProgress, [start, end], [0, Math.sin(index) * 40]);
+  const floatY = useTransform(scrollYProgress, [c(start), c(end)], [0, Math.sin(index) * 40]);
 
   return (
     <motion.div
@@ -115,7 +118,7 @@ const GalleryImage = ({ src, preserveRatio, track, index, sizeScale = 1, isMobil
         height: preserveRatio ? 'auto' : `${baseWidth * 1.25}px`,
         flexShrink: 0,
         position: 'relative',
-        y: useTransform(scrollYProgress, [start, end], [`${yPct}vh`, `${yPct - (track === 'fg' ? 10 : 5)}vh`]),
+        y: useTransform(scrollYProgress, [c(start), c(end)], [`${yPct}vh`, `${yPct - (track === 'fg' ? 10 : 5)}vh`]),
         x: floatY,
         rotate: style.rotate !== undefined ? style.rotate : rotation,
         zIndex: track === 'fg' ? 3 : track === 'mid' ? 2 : 1,
@@ -169,11 +172,17 @@ const ConstellationGallery = ({ imgSrc, preserveRatio, scrollYProgress, start, e
   const startX = side === 'right' ? '50vw' : '0vw';
   const enterX = side === 'left' ? '60vw' : side === 'right' ? '110vw' : '100vw';
 
-  const x3 = useTransform(scrollYProgress, [start, end], [enterX, dist3]);
-  const x2 = useTransform(scrollYProgress, [start, end], [`calc(${enterX} + 30vw)`, dist2]);
-  const x1 = useTransform(scrollYProgress, [start, end], [`calc(${enterX} + 60vw)`, dist1]);
-  
-  const opacity = useTransform(scrollYProgress, [start, start + 0.02, end - 0.02, end], [0, 1, 1, 0]);
+  const x3 = useTransform(scrollYProgress, [c(start), c(end)], [enterX, dist3]);
+  const x2 = useTransform(scrollYProgress, [c(start), c(end)], [`calc(${enterX} + 30vw)`, dist2]);
+  const x1 = useTransform(scrollYProgress, [c(start), c(end)], [`calc(${enterX} + 60vw)`, dist1]);
+
+  // Ensure start+0.02 < end-0.02 to avoid non-monotonic offsets on small ranges
+  const oStart2 = c(start + 0.02);
+  const oEnd2 = c(end - 0.02);
+  const safeOpacityRange = oStart2 < oEnd2
+    ? [c(start), oStart2, oEnd2, c(end)]
+    : [c(start), c((start + end) / 2), c((start + end) / 2 + 0.001), c(end)];
+  const opacity = useTransform(scrollYProgress, safeOpacityRange, [0, 1, 1, 0]);
 
   // Derive pointer events from opacity: when gallery is invisible, block nothing
   const pointerEventsMV = useTransform(opacity, (v) => v > 0.05 ? 'auto' : 'none');
@@ -182,9 +191,9 @@ const ConstellationGallery = ({ imgSrc, preserveRatio, scrollYProgress, start, e
   const isCutout = variant === 'cutout';
 
   // Convergence logic: move towards center as scroll approaches midpoint
-  const midpoint = (start + end) / 2;
+  const midpoint = c((start + end) / 2);
   const convergence = useTransform(scrollYProgress, 
-    [start, midpoint, end], 
+    [c(start), midpoint, c(end)], 
     [side === 'left' ? '0vw' : '0vw', side === 'left' ? '15vw' : '-15vw', side === 'left' ? '0vw' : '0vw']
   );
 
@@ -240,9 +249,12 @@ const ConstellationGallery = ({ imgSrc, preserveRatio, scrollYProgress, start, e
 };
 
 const EditorialFrame = ({ scrollYProgress, start, end, align, title, subtitle, imgSrc, secondaryImgSrc, preserveRatio, sizeScale = 1, gapScale = 1, isMobile = false, variant = 'standard' }) => {
-  const opacity = useTransform(scrollYProgress, [start - 0.02, start, end, end + 0.02], [0, 1, 1, 0]);
-  const yOffset = useTransform(scrollYProgress, [start - 0.02, start, end, end + 0.02], [100, 0, 0, -100]);
-  const blur = useTransform(scrollYProgress, [start - 0.02, start, end, end + 0.02], ['blur(20px)', 'blur(0px)', 'blur(0px)', 'blur(20px)']);
+  // Clamp all offsets: start-0.02 can go negative (e.g. start=0.01 → -0.01) which
+  // throws "Offsets must be monotonically non-decreasing" on Android Chrome.
+  const r = [c(start - 0.02), c(start), c(end), c(end + 0.02)];
+  const opacity = useTransform(scrollYProgress, r, [0, 1, 1, 0]);
+  const yOffset = useTransform(scrollYProgress, r, [100, 0, 0, -100]);
+  const blur = useTransform(scrollYProgress, r, ['blur(20px)', 'blur(0px)', 'blur(0px)', 'blur(20px)']);
 
   const isArray = Array.isArray(imgSrc);
   const isSecondaryArray = Array.isArray(secondaryImgSrc);
@@ -399,9 +411,10 @@ const STOPS = [
 
 const StopMarkerLabel = ({ stop, index, scrollYProgress }) => {
   const yPos = (index / (STOPS.length - 1)) * 900 + 50;
+  // stop.mid - 0.08 can go negative for early stops (e.g. mid=0.07 → -0.01)
   const opacity = useTransform(
     scrollYProgress,
-    [stop.mid - 0.08, stop.mid, stop.mid + 0.08],
+    [c(stop.mid - 0.08), c(stop.mid), c(stop.mid + 0.08)],
     [0.2, 1, 0.2]
   );
 
