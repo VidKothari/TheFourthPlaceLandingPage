@@ -69,8 +69,9 @@ button { font-family: inherit; }
 }
 
 /* UI Elements - Razor Sharp */
-* {
-  border-radius: 0 !important; /* Strictly zero rounded corners */
+/* Scoped: exclude cursor-dot and animated Framer elements */
+*:not(#cursor-dot):not([style*="border-radius"]) {
+  border-radius: 0;
 }
 
 /* Glassmorphism for Nav */
@@ -96,7 +97,7 @@ button { font-family: inherit; }
   text-transform: uppercase;
   border: 1px solid var(--text-pure);
   transition: background 0.4s, color 0.4s;
-  cursor: none;
+  cursor: pointer;
 }
 
 .editorial-btn:hover, .interactive:hover .editorial-btn {
@@ -162,7 +163,12 @@ button { font-family: inherit; }
   }
   
   body {
-    cursor: auto !important;
+    cursor: auto;
+  }
+
+  /* Restore pointer cursor on all interactive elements for touch */
+  a, button, [role="button"], .interactive, .editorial-btn {
+    cursor: pointer;
   }
 
   .mobile-stack {
