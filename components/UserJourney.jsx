@@ -29,51 +29,125 @@ export default function UserJourney() {
   ];
 
   return (
-    <section className="mobile-padding" style={{ background: 'var(--bg-off)', padding: '160px 60px', position: 'relative' }}>
-      
-      <div className="mobile-stack" style={{ marginBottom: '100px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--border-crisp)', paddingBottom: '40px' }}>
-        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', lineHeight: 1.05, color: 'var(--text-pure)' }}>
+    <section
+      className="mobile-padding"
+      style={{
+        background: 'var(--bg-off)',
+        padding: 'clamp(72px, 10vw, 160px) clamp(20px, 5vw, 60px)',
+        position: 'relative',
+      }}
+    >
+
+      <div
+        className="mobile-stack"
+        style={{
+          marginBottom: 'clamp(48px, 7vw, 100px)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          borderBottom: '1px solid var(--border-crisp)',
+          paddingBottom: '40px',
+        }}
+      >
+        <h2 style={{
+          fontFamily: 'var(--serif)',
+          fontWeight: 400,
+          fontSize: 'clamp(2rem, 5vw, 4.5rem)',
+          lineHeight: 1.05,
+          color: 'var(--text-pure)',
+        }}>
           Meet Arjun. 26, Pune.
         </h2>
-        <div style={{ fontFamily: 'var(--sans)', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-soft)', marginBottom: '8px' }}>
+        <div style={{
+          fontFamily: 'var(--sans)',
+          fontSize: '0.8rem',
+          fontWeight: 500,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          color: 'var(--text-soft)',
+          marginBottom: '8px',
+          whiteSpace: 'nowrap',
+        }}>
           V. A Case Study
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0', maxWidth: '1000px', margin: '0 auto', borderLeft: '1px solid var(--border-crisp)' }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0',
+        maxWidth: '1000px',
+        margin: '0 auto',
+        borderLeft: '1px solid var(--border-crisp)',
+      }}>
         {steps.map((step, i) => (
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            key={i} style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '32px',
-            padding: '80px 0 80px 40px',
-            borderBottom: i === steps.length - 1 ? 'none' : '1px solid var(--border-crisp)',
-            position: 'relative'
-          }}>
-            {/* Timeline marker */}
-            <div style={{ position: 'absolute', left: '-5px', top: '90px', width: '9px', height: '9px', background: 'var(--text-pure)' }}></div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            key={i}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(20px, 3vw, 32px)',
+              padding: 'clamp(40px, 6vw, 80px) 0 clamp(40px, 6vw, 80px) clamp(20px, 3.5vw, 40px)',
+              borderBottom: i === steps.length - 1 ? 'none' : '1px solid var(--border-crisp)',
+              position: 'relative',
+            }}
+          >
+            {/* Timeline dot */}
+            <div style={{
+              position: 'absolute',
+              left: '-5px',
+              top: 'clamp(48px, 7vw, 90px)',
+              width: '9px',
+              height: '9px',
+              background: 'var(--text-pure)',
+            }} />
 
-            <div style={{ fontFamily: 'var(--sans)', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-soft)', paddingTop: '10px' }}>
+            <div style={{
+              fontFamily: 'var(--sans)',
+              fontSize: '0.8rem',
+              fontWeight: 500,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--text-soft)',
+              paddingTop: '10px',
+            }}>
               {step.num}
             </div>
+
             <div>
-              <h3 style={{ fontFamily: 'var(--serif)', fontSize: '3rem', fontWeight: 400, color: 'var(--text-pure)', marginBottom: '24px', lineHeight: 1.1 }}>
+              <h3 style={{
+                fontFamily: 'var(--serif)',
+                fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                fontWeight: 400,
+                color: 'var(--text-pure)',
+                marginBottom: '20px',
+                lineHeight: 1.1,
+              }}>
                 {step.title}
               </h3>
-              <p style={{ fontFamily: 'var(--sans)', fontSize: '1.1rem', lineHeight: 1.8, color: 'var(--text-soft)', fontWeight: 300, marginBottom: step.quote ? '40px' : '0' }}>
+              <p style={{
+                fontFamily: 'var(--sans)',
+                fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)',
+                lineHeight: 1.8,
+                color: 'var(--text-soft)',
+                fontWeight: 300,
+                marginBottom: step.quote ? 'clamp(24px, 3vw, 40px)' : '0',
+              }}>
                 {step.desc}
               </p>
               {step.quote && (
                 <div style={{
                   fontFamily: 'var(--serif)',
-                  fontSize: '1.5rem',
+                  fontSize: 'clamp(1rem, 2vw, 1.5rem)',
                   fontStyle: 'italic',
-                  lineHeight: 1.4,
+                  lineHeight: 1.5,
                   color: 'var(--text-soft)',
-                  paddingLeft: '40px',
-                  borderLeft: '1px solid var(--text-pure)'
+                  paddingLeft: 'clamp(16px, 3vw, 40px)',
+                  borderLeft: '1px solid var(--text-pure)',
                 }}>
                   "{step.quote}"
                 </div>

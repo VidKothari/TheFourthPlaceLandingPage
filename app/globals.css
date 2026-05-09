@@ -9,13 +9,18 @@
   --text-soft: #333333;
   --border-crisp: #E5E5E5;
   --border-dark: #111111;
-  
+
   /* Fonts */
   --serif: var(--font-serif), 'Georgia', serif;
   --sans: var(--font-sans), 'Helvetica Neue', Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-playfair: 'Playfair Display', Georgia, serif;
   --font-libre: 'Libre Baskerville', Georgia, serif;
+
+  /* Spacing scale */
+  --space-section: clamp(72px, 10vw, 160px);
+  --space-section-sm: clamp(48px, 7vw, 100px);
+  --space-gutter: clamp(20px, 5vw, 60px);
 
   /* Memory Colors */
   --color-memory-rose: #d6cfcb;
@@ -161,7 +166,7 @@ button { font-family: inherit; }
   #cursor-dot {
     display: none !important;
   }
-  
+
   body {
     cursor: auto;
   }
@@ -171,13 +176,15 @@ button { font-family: inherit; }
     cursor: pointer;
   }
 
-  .mobile-stack {
-    flex-direction: column !important;
-    gap: 40px !important;
+  /* Fix: only override horizontal padding so vertical is never zeroed out */
+  .mobile-padding {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
   }
 
-  .mobile-padding {
-    padding: 0 24px !important;
+  .mobile-stack {
+    flex-direction: column !important;
+    gap: 32px !important;
   }
 
   .mobile-text-left {
@@ -186,5 +193,35 @@ button { font-family: inherit; }
 
   .mobile-hide {
     display: none !important;
+  }
+
+  .mobile-show {
+    display: block !important;
+  }
+
+  /* ── Hero heading: make the animated word block so each chunk is on its own line */
+  .hero-swap {
+    display: block !important;
+    margin: 0.12em 0 0 !important;
+  }
+  /* Hide the manual <br> between the swap and "you scroll." since the swap is already block */
+  .hero-br { display: none !important; }
+
+  /* ── Section vertical padding reduction ── */
+  /* Sections with large fixed padding (160px, 200px) become reasonable on mobile */
+  .section-v-lg {
+    padding-top: 80px !important;
+    padding-bottom: 80px !important;
+  }
+  .section-v-xl {
+    padding-top: 80px !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* ── Taste Map bottom bar on mobile ── */
+  .tastemap-bottom {
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
   }
 }

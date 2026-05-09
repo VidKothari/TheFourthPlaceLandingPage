@@ -538,8 +538,8 @@ export default function TheThread() {
         />
 
         {/* Stop 3: Audio (Musicians & Songs) */}
-        <EditorialFrame 
-          scrollYProgress={scrollYProgress} start={0.41} end={0.50} align="left" 
+        <EditorialFrame
+          scrollYProgress={scrollYProgress} start={0.41} end={0.58} align="left"
           title="Musicians & Songs"
           subtitle="Music isn't background noise here. It is the architectural foundation of your inner world."
           imgSrc={musicianImages}
@@ -551,18 +551,18 @@ export default function TheThread() {
           isMobile={isMobile}
         />
 
-        {/* Stop 4: Wikipedia — 22% scroll range */}
-        <EditorialFrame 
-          scrollYProgress={scrollYProgress} start={0.53} end={0.73} align="right" 
+        {/* Stop 4: Wikipedia */}
+        <EditorialFrame
+          scrollYProgress={scrollYProgress} start={0.62} end={0.80} align="right"
           title={<>The 2AM Wikipedia spirals.</>}
           subtitle="The obscure rabbit holes, the essays, the threads that made you feel less alone in the world."
           imgSrc={wikipediaImages}
           isMobile={isMobile}
         />
 
-        {/* Stop 5: YouTube — 25% scroll range */}
-        <EditorialFrame 
-          scrollYProgress={scrollYProgress} start={0.76} end={1.0} align="left" 
+        {/* Stop 5: YouTube */}
+        <EditorialFrame
+          scrollYProgress={scrollYProgress} start={0.83} end={0.99} align="left"
           title={<>The YouTube rabbit holes.</>}
           subtitle="Video essays, obscure documentaries, music videos, and lectures that you rewatch every year."
           imgSrc={youtubeImages}

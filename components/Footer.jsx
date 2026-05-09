@@ -3,40 +3,52 @@
 
 export default function Footer() {
   return (
-    <footer className="mobile-stack mobile-padding" style={{
-      background: 'var(--bg-pure)',
-      padding: '40px 60px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      borderTop: '1px solid var(--border-crisp)'
-    }}>
+    <footer
+      className="mobile-padding"
+      style={{
+        background: 'var(--bg-pure)',
+        padding: 'clamp(28px, 4vw, 40px) clamp(20px, 5vw, 60px)',
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '16px',
+        borderTop: '1px solid var(--border-crisp)',
+      }}
+    >
       <div style={{
         fontFamily: 'var(--serif)',
-        fontSize: '1.5rem',
+        fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
         color: 'var(--text-pure)',
-        fontStyle: 'italic'
+        fontStyle: 'italic',
       }}>
         The Fourth Place
       </div>
-      
+
+      {/* Tagline hidden on smallest screens to avoid crowding */}
       <div style={{
         fontFamily: 'var(--sans)',
-        fontSize: '0.8rem',
+        fontSize: '0.75rem',
         fontWeight: 500,
         letterSpacing: '0.1em',
         textTransform: 'uppercase',
-        color: 'var(--text-soft)'
-      }}>
+        color: 'var(--text-soft)',
+        order: 3,
+        width: '100%',
+        textAlign: 'center',
+      }}
+        className="mobile-hide"
+      >
         Not everyone. Just the ones that make sense.
       </div>
-      
+
       <div style={{
         fontFamily: 'var(--sans)',
-        fontSize: '0.8rem',
+        fontSize: '0.75rem',
         fontWeight: 500,
         letterSpacing: '0.1em',
-        color: 'var(--text-soft)'
+        color: 'var(--text-soft)',
       }}>
         © 2025
       </div>

@@ -30,61 +30,144 @@ export default function FeaturesGrid() {
   ];
 
   return (
-    <section className="mobile-padding" style={{ background: 'var(--bg-pure)', padding: '160px 60px', position: 'relative' }}>
-      
-      <div className="mobile-stack" style={{ marginBottom: '120px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--text-pure)', paddingBottom: '40px' }}>
-        <h2 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 'clamp(3rem, 5vw, 4.5rem)', lineHeight: 1.05, color: 'var(--text-pure)' }}>
-          Four things that<br/>work together.
+    <section
+      className="mobile-padding section-v-lg"
+      style={{
+        background: 'var(--bg-pure)',
+        padding: 'clamp(80px, 10vw, 160px) clamp(20px, 5vw, 60px)',
+        position: 'relative',
+      }}
+    >
+
+      <div
+        className="mobile-stack"
+        style={{
+          marginBottom: 'clamp(48px, 8vw, 120px)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          borderBottom: '1px solid var(--text-pure)',
+          paddingBottom: '40px',
+        }}
+      >
+        <h2 style={{
+          fontFamily: 'var(--serif)',
+          fontWeight: 400,
+          fontSize: 'clamp(2.2rem, 5vw, 4.5rem)',
+          lineHeight: 1.05,
+          color: 'var(--text-pure)',
+        }}>
+          Four things that<br />work together.
         </h2>
-        <div style={{ fontFamily: 'var(--sans)', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-soft)', marginBottom: '8px' }}>
+        <div style={{
+          fontFamily: 'var(--sans)',
+          fontSize: '0.8rem',
+          fontWeight: 500,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          color: 'var(--text-soft)',
+          marginBottom: '8px',
+          whiteSpace: 'nowrap',
+        }}>
           III. The Architecture
         </div>
       </div>
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))',
-        gap: '1px', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+        gap: '1px',
         background: 'var(--border-crisp)',
-        border: '1px solid var(--border-crisp)'
+        border: '1px solid var(--border-crisp)',
       }}>
         {features.map((f, i) => (
-          <div key={i} className="interactive mobile-padding" style={{
-            background: 'var(--bg-pure)',
-            padding: '80px 60px',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
-            <div style={{ fontFamily: 'var(--sans)', fontSize: '1rem', fontWeight: 300, color: 'var(--text-soft)', marginBottom: '40px' }}>[ {f.num} ]</div>
-            <h3 style={{ fontFamily: 'var(--serif)', fontSize: '3rem', fontWeight: 400, color: 'var(--text-pure)', marginBottom: '24px' }}>
+          <div
+            key={i}
+            className="interactive"
+            style={{
+              background: 'var(--bg-pure)',
+              padding: 'clamp(40px, 5vw, 80px) clamp(20px, 4vw, 60px)',
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div style={{
+              fontFamily: 'var(--sans)',
+              fontSize: '1rem',
+              fontWeight: 300,
+              color: 'var(--text-soft)',
+              marginBottom: 'clamp(24px, 3vw, 40px)',
+            }}>
+              [ {f.num} ]
+            </div>
+            <h3 style={{
+              fontFamily: 'var(--serif)',
+              fontSize: 'clamp(1.8rem, 3.5vw, 3rem)',
+              fontWeight: 400,
+              color: 'var(--text-pure)',
+              marginBottom: '20px',
+            }}>
               {f.title}
             </h3>
-            <p style={{ fontFamily: 'var(--sans)', fontSize: '1.1rem', lineHeight: 1.8, fontWeight: 300, color: 'var(--text-soft)', marginBottom: '60px', flex: 1 }}>
+            <p style={{
+              fontFamily: 'var(--sans)',
+              fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)',
+              lineHeight: 1.8,
+              fontWeight: 300,
+              color: 'var(--text-soft)',
+              marginBottom: 'clamp(32px, 4vw, 60px)',
+              flex: 1,
+            }}>
               {f.desc}
             </p>
-            <div style={{ borderTop: `1px solid var(--border-crisp)`, paddingTop: '24px', fontFamily: 'var(--sans)', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--text-soft)' }}>
+            <div style={{
+              borderTop: '1px solid var(--border-crisp)',
+              paddingTop: '24px',
+              fontFamily: 'var(--sans)',
+              fontSize: '0.8rem',
+              fontWeight: 500,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              color: 'var(--text-soft)',
+            }}>
               {f.tag}
             </div>
           </div>
         ))}
-        
+
         {/* Statement Card */}
-        <div className="interactive" style={{
-          gridColumn: '1 / -1',
-          background: 'var(--bg-off)',
-          color: 'var(--text-pure)',
-          padding: '100px 60px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '40px',
-          alignItems: 'center',
-          textAlign: 'center',
-        }}>
-          <h3 style={{ fontFamily: 'var(--serif)', fontSize: '2.5rem', fontWeight: 400, maxWidth: '1000px', lineHeight: 1.3 }}>
+        <div
+          className="interactive"
+          style={{
+            gridColumn: '1 / -1',
+            background: 'var(--bg-off)',
+            color: 'var(--text-pure)',
+            padding: 'clamp(48px, 7vw, 100px) clamp(20px, 5vw, 60px)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '32px',
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+        >
+          <h3 style={{
+            fontFamily: 'var(--serif)',
+            fontSize: 'clamp(1.3rem, 3vw, 2.5rem)',
+            fontWeight: 400,
+            maxWidth: '1000px',
+            lineHeight: 1.4,
+          }}>
             "The social outcome is the surprise, not the goal. You come to add things and reflect. The finding of people happens as a consequence of being honest about who you are."
           </h3>
-          <div style={{ fontFamily: 'var(--sans)', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-soft)' }}>
+          <div style={{
+            fontFamily: 'var(--sans)',
+            fontSize: '0.8rem',
+            fontWeight: 500,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--text-soft)',
+          }}>
             No followers — No feed — No performance
           </div>
         </div>
