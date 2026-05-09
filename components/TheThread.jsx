@@ -402,11 +402,11 @@ const EditorialFrame = ({ scrollYProgress, start, end, align, title, subtitle, i
 
 // The 5 stops with their scroll midpoints
 const STOPS = [
-  { label: 'I',   mid: 0.07 },
-  { label: 'II',  mid: 0.20 },
-  { label: 'III', mid: 0.33 },
-  { label: 'IV',  mid: 0.535 },
-  { label: 'V',   mid: 0.85 },
+  { label: 'I',   mid: 0.10 },
+  { label: 'II',  mid: 0.31 },
+  { label: 'III', mid: 0.52 },
+  { label: 'IV',  mid: 0.73 },
+  { label: 'V',   mid: 0.925 },
 ];
 
 const StopMarkerLabel = ({ stop, index, scrollYProgress }) => {
@@ -489,7 +489,7 @@ export default function TheThread() {
   const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section id="thread" ref={containerRef} style={{ position: 'relative', height: '1800vh', background: 'var(--bg-off)', borderBottom: '1px solid var(--border-crisp)' }}>
+    <section id="thread" ref={containerRef} style={{ position: 'relative', height: '1200vh', background: 'var(--bg-off)', borderBottom: '1px solid var(--border-crisp)' }}>
       
       <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
 
@@ -513,9 +513,9 @@ export default function TheThread() {
 
         {!isMobile && <StopMarkers scrollYProgress={scrollYProgress} />}
 
-        {/* Stop 1: Books — 20% scroll range */}
-        <EditorialFrame 
-          scrollYProgress={scrollYProgress} start={0.01} end={0.18} align="left" 
+        {/* Stop 1: Books */}
+        <EditorialFrame
+          scrollYProgress={scrollYProgress} start={0.02} end={0.18} align="left"
           title={<>The books that changed how you see the world.</>}
           subtitle="Add the literature that fundamentally rewired your brain. The map builds itself from your honesty."
           imgSrc={bookImages}
@@ -525,9 +525,9 @@ export default function TheThread() {
           isMobile={isMobile}
         />
 
-        {/* Stop 2: Films — 18% scroll range */}
-        <EditorialFrame 
-          scrollYProgress={scrollYProgress} start={0.21} end={0.38} align="right" 
+        {/* Stop 2: Films */}
+        <EditorialFrame
+          scrollYProgress={scrollYProgress} start={0.23} end={0.39} align="right"
           title={<>The films that broke something open.</>}
           subtitle="A catalog of moving images that articulated a feeling you couldn't put into words."
           imgSrc={movieImages}
@@ -539,7 +539,7 @@ export default function TheThread() {
 
         {/* Stop 3: Audio (Musicians & Songs) */}
         <EditorialFrame
-          scrollYProgress={scrollYProgress} start={0.41} end={0.58} align="left"
+          scrollYProgress={scrollYProgress} start={0.44} end={0.60} align="left"
           title="Musicians & Songs"
           subtitle="Music isn't background noise here. It is the architectural foundation of your inner world."
           imgSrc={musicianImages}
@@ -553,7 +553,7 @@ export default function TheThread() {
 
         {/* Stop 4: Wikipedia */}
         <EditorialFrame
-          scrollYProgress={scrollYProgress} start={0.62} end={0.80} align="right"
+          scrollYProgress={scrollYProgress} start={0.65} end={0.81} align="right"
           title={<>The 2AM Wikipedia spirals.</>}
           subtitle="The obscure rabbit holes, the essays, the threads that made you feel less alone in the world."
           imgSrc={wikipediaImages}
@@ -562,7 +562,7 @@ export default function TheThread() {
 
         {/* Stop 5: YouTube */}
         <EditorialFrame
-          scrollYProgress={scrollYProgress} start={0.83} end={0.99} align="left"
+          scrollYProgress={scrollYProgress} start={0.86} end={0.99} align="left"
           title={<>The YouTube rabbit holes.</>}
           subtitle="Video essays, obscure documentaries, music videos, and lectures that you rewatch every year."
           imgSrc={youtubeImages}
