@@ -1,5 +1,6 @@
 import { Cormorant_Garamond, Inter } from 'next/font/google';
 import CustomCursor from '../components/CustomCursor';
+import MobileDebugger from '../components/MobileDebugger';
 import './globals.css';
 
 const cormorant = Cormorant_Garamond({ 
@@ -25,8 +26,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${cormorant.variable} ${inter.variable}`}>
         <CustomCursor />
+        <MobileDebugger />
         {children}
       </body>
     </html>
   );
 }
+
