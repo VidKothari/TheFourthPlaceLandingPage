@@ -160,7 +160,7 @@ export default function Manifesto() {
               maxWidth: '28rem',
             }}>
               <img
-                src="/assets/notSocial.png"
+                src="/assets/notSocial.webp"
                 alt="Not Social"
                 loading="eager"
                 style={{ width: '100%', objectFit: 'cover' }}
@@ -180,7 +180,7 @@ export default function Manifesto() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundImage: 'url(/assets/thetruth.jpg)',
+          backgroundImage: 'url(/assets/thetruth.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderTop: '1px solid var(--border-crisp)',
@@ -269,7 +269,7 @@ export default function Manifesto() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundImage: 'url(/assets/thesolution.jpg)',
+          backgroundImage: 'url(/assets/thesolution.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderTop: '1px solid var(--border-crisp)',

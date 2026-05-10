@@ -36,7 +36,7 @@ export default function Loader() {
       pointerEvents: fadeOut ? 'none' : 'all',
     }}>
       <img
-        src="/assets/TFPicon.png"
+        src="/assets/TFPicon.webp"
         alt="The Fourth Place"
         style={{
           width: '72px',

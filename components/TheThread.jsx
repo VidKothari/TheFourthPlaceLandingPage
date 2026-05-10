@@ -15,30 +15,30 @@ function seededShuffle(arr, seed = 42) {
   return a;
 }
 
-const wikipediaImages = seededShuffle(Array.from({length: 14}, (_, i) => `/assets/wikipedia${i+1}.png`), 7);
+const wikipediaImages = seededShuffle(Array.from({length: 14}, (_, i) => `/assets/wikipedia${i+1}.webp`), 7);
 const youtubeImages = seededShuffle([
-  "/assets/youtubeVid.png",
-  ...Array.from({length: 21}, (_, i) => `/assets/youtubeVid${i+2}.png`)
+  "/assets/youtubeVid.webp",
+  ...Array.from({length: 21}, (_, i) => `/assets/youtubeVid${i+2}.webp`)
 ], 13);
-const bookImages = seededShuffle(Array.from({length: 17}, (_, i) => `/assets/book${i+1}.jpg`), 31);
+const bookImages = seededShuffle(Array.from({length: 17}, (_, i) => `/assets/book${i+1}.webp`), 31);
 const movieImages = seededShuffle([
-  ...Array.from({length: 10}, (_, i) => `/assets/movie${i+1}.jpg`),
-  '/assets/movie11.jpg',
-  ...Array.from({length: 9}, (_, i) => `/assets/movie${i+12}.jpg`),
-  '/assets/movie21.jpg',
+  ...Array.from({length: 10}, (_, i) => `/assets/movie${i+1}.webp`),
+  '/assets/movie11.webp',
+  ...Array.from({length: 9}, (_, i) => `/assets/movie${i+12}.webp`),
+  '/assets/movie21.webp',
 ], 57);
 const musicianImages = seededShuffle([
   ...Array.from({length: 11}, (_, i) => {
     const name = i + 1;
-    if ([3, 4, 6, 7, 8, 10].includes(name)) return `/assets/artist${name}wbg.png`;
-    return `/assets/artist${name}.png`;
+    if ([3, 4, 6, 7, 8, 10].includes(name)) return `/assets/artist${name}wbg.webp`;
+    return `/assets/artist${name}.webp`;
   })
 ], 88);
 const songImages = seededShuffle([
-  "/assets/music1.jpeg", "/assets/music2.png", "/assets/music3.jpg",
-  "/assets/music4.jpg", "/assets/music5.jpg", "/assets/music6.jpeg",
-  "/assets/music7.jpg", "/assets/music8.jpg", "/assets/music9.jpg",
-  "/assets/music10.jpg", "/assets/music11.png"
+  "/assets/music1.webp", "/assets/music2.webp", "/assets/music3.webp",
+  "/assets/music4.webp", "/assets/music5.webp", "/assets/music6.webp",
+  "/assets/music7.webp", "/assets/music8.webp", "/assets/music9.webp",
+  "/assets/music10.webp", "/assets/music11.webp"
 ], 99);
 
 const STOP_HEIGHT = '400vh';
