@@ -111,6 +111,7 @@ const ConnectionCard = ({ card, index }) => {
         display: 'flex',
         flexDirection: 'column',
         cursor: revealed ? 'default' : 'pointer',
+        WebkitTapHighlightColor: 'transparent',
         transition: 'background 0.45s ease, box-shadow 0.45s ease',
         boxShadow: hovered
           ? '0 32px 80px rgba(0,0,0,0.28)'
@@ -214,7 +215,7 @@ const ConnectionCard = ({ card, index }) => {
                 color: hovered ? 'rgba(255,255,255,0.35)' : 'var(--text-soft)',
                 transition: 'color 0.45s ease',
               }}>
-                Click to reveal match
+                Click to reveal
               </span>
             </motion.div>
           )}

@@ -7,10 +7,7 @@ const categories = [
     id: 'books',
     label: 'Books',
     sub: 'The literature that rewired your brain.',
-    images: [
-      '/assets/book3.jpg', '/assets/book7.jpg', '/assets/book9.jpg',
-      '/assets/book10.jpg', '/assets/book13.jpg', '/assets/book16.jpg',
-    ],
+    images: Array.from({ length: 17 }, (_, i) => `/assets/book${i + 1}.jpg`),
     cardWidth: '160px',
     cardHeight: 'auto',
     objectFit: 'contain',
@@ -21,8 +18,9 @@ const categories = [
     label: 'Films',
     sub: "Moving images that articulated a feeling you couldn't put into words.",
     images: [
-      '/assets/movie1.jpg', '/assets/movie2.jpg', '/assets/movie7.jpg',
-      '/assets/movie10.jpg', '/assets/movie18.jpg', '/assets/movie20.jpg',
+      ...Array.from({ length: 10 }, (_, i) => `/assets/movie${i + 1}.jpg`),
+      '/assets/movie11.jpg',
+      ...Array.from({ length: 9 }, (_, i) => `/assets/movie${i + 12}.jpg`),
     ],
     cardWidth: '160px',
     cardHeight: 'auto',
@@ -32,10 +30,16 @@ const categories = [
   {
     id: 'music',
     label: 'Music',
-    sub: 'The albums you play when you need to feel something real.',
+    sub: 'The albums and artists that mean something real.',
     images: [
-      '/assets/music1.jpeg', '/assets/music2.png', '/assets/music4.jpg',
-      '/assets/music5.jpg', '/assets/music7.jpg', '/assets/music10.jpg',
+      '/assets/artist1.png', '/assets/music1.jpeg', '/assets/artist2.png',
+      '/assets/music2.png', '/assets/artist3wbg.png', '/assets/music3.jpg',
+      '/assets/artist4wbg.png', '/assets/music4.jpg', '/assets/artist5.png',
+      '/assets/music5.jpg', '/assets/artist6wbg.png', '/assets/music6.jpeg',
+      '/assets/artist7wbg.png', '/assets/music7.jpg', '/assets/artist8wbg.png',
+      '/assets/music8.jpg', '/assets/artist9.png', '/assets/music9.jpg',
+      '/assets/artist10wbg.png', '/assets/music10.jpg', '/assets/artist11.png',
+      '/assets/music11.png',
     ],
     cardWidth: '200px',
     cardHeight: '200px',
@@ -46,13 +50,10 @@ const categories = [
     id: 'wikipedia',
     label: 'Wikipedia',
     sub: 'The 2AM rabbit holes that made you feel less alone.',
-    images: [
-      '/assets/wikipedia1.png', '/assets/wikipedia5.png', '/assets/wikipedia11.png',
-      '/assets/wikipedia12.png', '/assets/wikipedia13.png', '/assets/wikipedia14.png',
-    ],
+    images: Array.from({ length: 14 }, (_, i) => `/assets/wikipedia${i + 1}.png`),
     cardWidth: '280px',
-    cardHeight: '180px',
-    objectFit: 'cover',
+    cardHeight: 'auto',
+    objectFit: 'contain',
     bg: '#fff',
   },
   {
@@ -60,12 +61,12 @@ const categories = [
     label: 'YouTube',
     sub: 'Video essays, lectures, and music videos you rewatch every year.',
     images: [
-      '/assets/youtubeVid3.png', '/assets/youtubeVid4.png', '/assets/youtubeVid6.png',
-      '/assets/youtubeVid12.png', '/assets/youtubeVid13.png', '/assets/youtubeVid20.png',
+      '/assets/youtubeVid.png',
+      ...Array.from({ length: 21 }, (_, i) => `/assets/youtubeVid${i + 2}.png`),
     ],
     cardWidth: '280px',
-    cardHeight: '158px',
-    objectFit: 'cover',
+    cardHeight: 'auto',
+    objectFit: 'contain',
     bg: '#fff',
   },
 ];
@@ -136,7 +137,7 @@ export default function MobileThread() {
               <div key={j} style={{
                 flexShrink: 0,
                 width: cat.cardWidth,
-                height: cat.cardHeight,
+                height: cat.cardHeight === 'auto' ? undefined : cat.cardHeight,
                 scrollSnapAlign: 'start',
                 border: '1px solid var(--border-crisp)',
                 overflow: 'hidden',
@@ -156,6 +157,8 @@ export default function MobileThread() {
                 />
               </div>
             ))}
+            {/* Spacer so last item isn't clipped by overflow:auto */}
+            <div style={{ minWidth: '24px', flexShrink: 0 }} />
           </div>
         </div>
       ))}

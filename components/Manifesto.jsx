@@ -86,10 +86,10 @@ export default function Manifesto() {
           }}
         >
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, margin: "-20%" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
             style={{ flex: 1 }}
           >
             <p style={{
@@ -123,10 +123,10 @@ export default function Manifesto() {
             </p>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+            initial={{ opacity: 0, scale: 0.92, filter: 'blur(8px)' }}
             whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             viewport={{ once: false, margin: "-20%" }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
             style={{ flex: 1, display: 'flex', justifyContent: 'center' }}
           >
             <div style={{
@@ -173,10 +173,10 @@ export default function Manifesto() {
           }}
         >
           <motion.div
-            initial={{ opacity: 0, filter: "blur(10px)" }}
+            initial={{ opacity: 0, filter: "blur(8px)" }}
             whileInView={{ opacity: 1, filter: "blur(0px)" }}
             viewport={{ once: false, margin: "-20%" }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             style={{
               border: '1px solid var(--border-crisp)',
               padding: 'clamp(32px, 5vw, 60px) clamp(20px, 4vw, 40px)',
@@ -257,10 +257,10 @@ export default function Manifesto() {
           }}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: false, margin: "-20%" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
           >
             <p style={{
               fontFamily: 'var(--font-mono)',

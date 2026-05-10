@@ -1,22 +1,19 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import LivingText from './LivingText';
 import { MoveRight } from 'lucide-react';
+import LivingText from './LivingText';
+
+const lines = [
+  { text: 'You are not the content you scroll.', italic: true },
+  { text: 'Kill the feed.', italic: false },
+];
 
 export default function Hero() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [isObject, setIsObject] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsObject((prev) => !prev);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,70 +48,35 @@ export default function Hero() {
         zIndex: 20,
       }}>
 
-        {/* Main Heading
-            On desktop: "You are not [the content / the feed]  /  you scroll."
-            On mobile:  display: block on .hero-swap makes it stack as three lines:
-                        "You are not"
-                        "the content"
-                        "you scroll."
-        */}
-        <motion.h1
-          style={{
-            fontSize: 'clamp(2.2rem, 7vw, 6rem)',
-            letterSpacing: '-0.02em',
-            lineHeight: 1.1,
-            marginBottom: 'clamp(1.5rem, 4vw, 3rem)',
-            color: 'var(--text-pure)',
-            fontFamily: 'var(--serif)',
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-        >
-          You are not
-          {/* On desktop: inline-grid so old/new word occupies same space without layout shift.
-              On mobile: .hero-swap becomes display:block, each line on its own row. */}
-          <span
-            className="hero-swap"
-            style={{
-              display: 'inline-grid',
-              gridTemplateColumns: '1fr',
-              gridTemplateRows: '1fr',
-              verticalAlign: 'bottom',
-              textAlign: 'left',
-              margin: '0 8px',
-            }}
-          >
-            <AnimatePresence mode="popLayout">
-              {isObject ? (
-                <motion.span
-                  key="content"
-                  initial={{ opacity: 0, y: 40, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -40, filter: "blur(4px)" }}
-                  transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-                  style={{ gridArea: '1/1/2/2', whiteSpace: 'nowrap' }}
-                >
-                  the <LivingText text="content" className="italic opacity-80" />
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="feed"
-                  initial={{ opacity: 0, y: 40, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -40, filter: "blur(4px)" }}
-                  transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-                  style={{ gridArea: '1/1/2/2', whiteSpace: 'nowrap' }}
-                >
-                  the <LivingText text="feed" className="italic opacity-80" />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </span>
-          {/* On mobile this <br> is hidden via .hero-br since the swap container is already block */}
-          <br className="hero-br" style={{ display: 'block', margin: '10px 0' }} />
-          you scroll.
-        </motion.h1>
+        {/* Three-line headline */}
+        <h1 style={{
+          marginBottom: 'clamp(1.5rem, 4vw, 3rem)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.05em',
+        }}>
+          {lines.map((line, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 22, delay: i * 0.13 }}
+              style={{
+                display: 'block',
+                fontFamily: 'var(--serif)',
+                fontWeight: 400,
+                fontSize: 'clamp(2.6rem, 3.5vw, 6.5rem)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.08,
+                fontStyle: line.italic ? 'italic' : 'normal',
+                color: line.italic ? 'var(--text-soft)' : 'var(--text-pure)',
+              }}
+            >
+              <LivingText text={line.text} />
+            </motion.span>
+          ))}
+        </h1>
 
         <motion.p
           initial={{ opacity: 0 }}
