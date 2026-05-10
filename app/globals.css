@@ -207,6 +207,10 @@ button { font-family: inherit; }
   /* Hide the manual <br> between the swap and "you scroll." since the swap is already block */
   .hero-br { display: none !important; }
 
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
   /* ── Section vertical padding reduction ── */
   /* Sections with large fixed padding (160px, 200px) become reasonable on mobile */
   .section-v-lg {

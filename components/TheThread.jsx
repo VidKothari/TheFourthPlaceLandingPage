@@ -40,13 +40,7 @@ const songImages = seededShuffle([
   "/assets/music10.jpg", "/assets/music11.png"
 ], 99);
 
-// Combined music gallery — avoids split-container clipping entirely
-const musicImages = seededShuffle([...musicianImages, ...songImages], 77);
-
-// Tune this single constant to make the whole section faster or slower
-const STOP_HEIGHT = '280vh';
-
-// Gallery start/end within each stop's own scrollYProgress (0→1)
+const STOP_HEIGHT = '400vh';
 const S = 0.05;
 const E = 0.95;
 
@@ -109,13 +103,10 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
   const gap2 = (preserveRatio ? 300 : 200) * gapScale;
   const gap1 = (preserveRatio ? 400 : 300) * gapScale;
 
-  // Each track starts off-screen right at different depths and ends off-screen left
   const dist3 = `${-(track3.length * ((preserveRatio ? 300 : 210) * sizeScale + gap3))}px`;
   const dist2 = `${-(track2.length * ((preserveRatio ? 460 : 340) * sizeScale + gap2))}px`;
   const dist1 = `${-(track1.length * ((preserveRatio ? 660 : 480) * sizeScale + gap1))}px`;
 
-  // bg starts at viewport right edge, mid/fg start progressively further right
-  // This staggers the layers so they don't all appear at once
   const x3 = useTransform(scrollYProgress, [S, E], ['100vw', dist3]);
   const x2 = useTransform(scrollYProgress, [S, E], ['130vw', dist2]);
   const x1 = useTransform(scrollYProgress, [S, E], ['160vw', dist1]);
@@ -128,14 +119,12 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
       position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
       overflow: 'hidden', opacity, pointerEvents: pointerEv,
     }}>
-      {/* Background track — smallest images, slowest */}
       <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap3}px`, x: x3, y: '-50%', alignItems: 'center' }}>
         {track3.map((src, i) => (
           <GalleryImage key={`bg-${i}`} src={src} preserveRatio={preserveRatio} track="bg" index={i} sizeScale={sizeScale} scrollYProgress={scrollYProgress} />
         ))}
       </motion.div>
 
-      {/* Mid track */}
       {track2.length > 0 && (
         <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap2}px`, x: x2, y: '-50%', alignItems: 'center', marginLeft: '10vw' }}>
           {track2.map((src, i) => (
@@ -144,7 +133,6 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
         </motion.div>
       )}
 
-      {/* Foreground track — largest images, leads the motion */}
       {track1.length > 0 && (
         <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap1}px`, x: x1, y: '-50%', alignItems: 'center', marginLeft: '20vw' }}>
           {track1.map((src, i) => (
@@ -153,6 +141,164 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
         </motion.div>
       )}
     </motion.div>
+  );
+};
+
+const MusicConvergenceGallery = ({ scrollYProgress }) => {
+  const mid = 0.5;
+  const xConvLeft  = useTransform(scrollYProgress, [S, mid, E], ['0vw',  '12vw', '0vw']);
+  const xConvRight = useTransform(scrollYProgress, [S, mid, E], ['0vw', '-12vw', '0vw']);
+  const opacity    = useTransform(scrollYProgress, [0, 0.08, 0.92, 1], [0, 1, 1, 0]);
+  const pointerEv  = useTransform(opacity, (v) => v > 0.05 ? 'auto' : 'none');
+
+  // ── Musicians (left half) — 3 tracks ─────────────────────────────
+  const musBg  = musicianImages.slice(0, 3);   // bg:  3 images, h=280px
+  const musMid = musicianImages.slice(3, 7);   // mid: 4 images, h=400px
+  const musFg  = musicianImages.slice(7);      // fg:  4 images, h=520px
+
+  const mDistBg  = `${-(musBg.length  * (240 + 120))}px`;
+  const mDistMid = `${-(musMid.length * (340 + 150))}px`;
+  const mDistFg  = `${-(musFg.length  * (440 + 180))}px`;
+
+  const mxBg  = useTransform(scrollYProgress, [S, E], ['60vw',  mDistBg]);
+  const mxMid = useTransform(scrollYProgress, [S, E], ['90vw',  mDistMid]);
+  const mxFg  = useTransform(scrollYProgress, [S, E], ['120vw', mDistFg]);
+
+  // ── Songs (right half) — 3 tracks ────────────────────────────────
+  const songBg  = songImages.slice(0, 3);   // bg:  3 images, 270px sq
+  const songMid = songImages.slice(3, 7);   // mid: 4 images, 360px sq
+  const songFg  = songImages.slice(7);      // fg:  4 images, 460px sq
+
+  const sDistBg  = `${-(songBg.length  * (230 + 110))}px`;
+  const sDistMid = `${-(songMid.length * (300 + 140))}px`;
+  const sDistFg  = `${-(songFg.length  * (390 + 170))}px`;
+
+  const sxBg  = useTransform(scrollYProgress, [S, E], ['110vw', sDistBg]);
+  const sxMid = useTransform(scrollYProgress, [S, E], ['140vw', sDistMid]);
+  const sxFg  = useTransform(scrollYProgress, [S, E], ['170vw', sDistFg]);
+
+  const hover = { scale: 1.07, rotate: 0, zIndex: 100, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } };
+
+  return (
+    <>
+      {/* Left half — musicians, 3 layers */}
+      <motion.div style={{
+        position: 'absolute', top: 0, left: 0, width: '50vw', height: '100%',
+        overflow: 'hidden', opacity, pointerEvents: pointerEv, x: xConvLeft,
+      }}>
+        {/* bg */}
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '120px', x: mxBg, y: '-50%', alignItems: 'center', zIndex: 1 }}>
+          {musBg.map((src, i) => (
+            <motion.div key={i} style={{ height: '240px', flexShrink: 0, rotate: (i%2===0?1:-1)*(1+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+              <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block', objectFit: 'contain' }}/>
+            </motion.div>
+          ))}
+        </motion.div>
+        {/* mid */}
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '150px', x: mxMid, y: '-50%', alignItems: 'center', marginLeft: '8vw', zIndex: 2 }}>
+          {musMid.map((src, i) => (
+            <motion.div key={i} style={{ height: '340px', flexShrink: 0, rotate: (i%2===0?-1:1)*(2+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+              <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block', objectFit: 'contain' }}/>
+            </motion.div>
+          ))}
+        </motion.div>
+        {/* fg */}
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '180px', x: mxFg, y: '-50%', alignItems: 'center', marginLeft: '16vw', zIndex: 3 }}>
+          {musFg.map((src, i) => (
+            <motion.div key={i} style={{ height: '440px', flexShrink: 0, rotate: (i%2===0?1:-1)*(3+(i%2)), cursor: 'pointer' }} whileHover={hover}>
+              <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block', objectFit: 'contain' }}/>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+
+      {/* Right half — songs, 3 layers */}
+      <motion.div style={{
+        position: 'absolute', top: 0, left: '50vw', width: '50vw', height: '100%',
+        overflow: 'hidden', opacity, pointerEvents: pointerEv, x: xConvRight,
+      }}>
+        {/* bg */}
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '110px', x: sxBg, y: '-50%', alignItems: 'center', zIndex: 1 }}>
+          {songBg.map((src, i) => (
+            <motion.div key={i} style={{ width: '230px', height: '230px', flexShrink: 0, rotate: (i%2===0?-1:1)*(1+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+              <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 12px 32px rgba(0,0,0,0.2)' }}/>
+            </motion.div>
+          ))}
+        </motion.div>
+        {/* mid */}
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '140px', x: sxMid, y: '-50%', alignItems: 'center', marginLeft: '8vw', zIndex: 2 }}>
+          {songMid.map((src, i) => (
+            <motion.div key={i} style={{ width: '300px', height: '300px', flexShrink: 0, rotate: (i%2===0?1:-1)*(2+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+              <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: '12px', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}/>
+            </motion.div>
+          ))}
+        </motion.div>
+        {/* fg */}
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '170px', x: sxFg, y: '-50%', alignItems: 'center', marginLeft: '16vw', zIndex: 3 }}>
+          {songFg.map((src, i) => (
+            <motion.div key={i} style={{ width: '390px', height: '390px', flexShrink: 0, rotate: (i%2===0?-1:1)*(3+(i%2)), cursor: 'pointer' }} whileHover={hover}>
+              <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: '14px', boxShadow: '0 20px 50px rgba(0,0,0,0.25)' }}/>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </>
+  );
+};
+
+const MusicStop = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const panelOpacity = useTransform(scrollYProgress, [0, 0.08, 0.92, 1], [0, 1, 1, 0]);
+  const panelY = useTransform(scrollYProgress, [0, 0.08, 0.92, 1], [40, 0, 0, -40]);
+  const panelBlur = useTransform(scrollYProgress, [0, 0.08, 0.92, 1], ['blur(16px)', 'blur(0px)', 'blur(0px)', 'blur(16px)']);
+
+  return (
+    <div ref={ref} style={{ height: STOP_HEIGHT, position: 'relative', borderTop: '1px solid var(--border-crisp)' }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
+        <MusicConvergenceGallery scrollYProgress={scrollYProgress} />
+        <div className="mobile-hide" style={{
+          position: 'absolute', top: '32px', left: 'clamp(24px, 5vw, 60px)',
+          fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 500,
+          textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(0,0,0,0.35)', zIndex: 20,
+        }}>
+          III / V
+        </div>
+        {/* Musicians label — sits over left half */}
+        <motion.div style={{
+          position: 'absolute', top: '50%', left: 'clamp(24px, 4vw, 48px)',
+          transform: 'translateY(-50%)', maxWidth: 'clamp(200px, 22vw, 320px)', textAlign: 'left',
+          background: 'rgba(250, 250, 248, 0.88)',
+          backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+          padding: 'clamp(20px, 2.5vw, 36px)', border: '1px solid var(--border-crisp)', borderRadius: '16px',
+          zIndex: 10, opacity: panelOpacity, filter: panelBlur, y: panelY, pointerEvents: 'none',
+        }}>
+          <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, color: 'var(--text-pure)', fontSize: 'clamp(1.4rem, 2.2vw, 2.2rem)', lineHeight: 1.1, marginBottom: '10px' }}>
+            Musicians.
+          </h3>
+          <p style={{ fontFamily: 'var(--sans)', fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: 'var(--text-soft)', fontWeight: 300, lineHeight: 1.6 }}>
+            The architects of your soundscape. The souls that articulated your silence.
+          </p>
+        </motion.div>
+
+        {/* Songs label — sits over right half */}
+        <motion.div style={{
+          position: 'absolute', top: '50%', right: 'clamp(24px, 4vw, 48px)',
+          transform: 'translateY(-50%)', maxWidth: 'clamp(200px, 22vw, 320px)', textAlign: 'right',
+          background: 'rgba(250, 250, 248, 0.88)',
+          backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+          padding: 'clamp(20px, 2.5vw, 36px)', border: '1px solid var(--border-crisp)', borderRadius: '16px',
+          zIndex: 10, opacity: panelOpacity, filter: panelBlur, y: panelY, pointerEvents: 'none',
+        }}>
+          <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, color: 'var(--text-pure)', fontSize: 'clamp(1.4rem, 2.2vw, 2.2rem)', lineHeight: 1.1, marginBottom: '10px' }}>
+            Songs.
+          </h3>
+          <p style={{ fontFamily: 'var(--sans)', fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: 'var(--text-soft)', fontWeight: 300, lineHeight: 1.6 }}>
+            The specific frequencies that hold your memories together.
+          </p>
+        </motion.div>
+      </div>
+    </div>
   );
 };
 
@@ -181,7 +327,6 @@ const GalleryStop = ({ stopNum, title, subtitle, imgSrc, preserveRatio, sizeScal
           gapScale={gapScale}
         />
 
-        {/* Stop counter — top left */}
         <div className="mobile-hide" style={{
           position: 'absolute', top: '32px', left: 'clamp(24px, 5vw, 60px)',
           fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 500,
@@ -191,24 +336,16 @@ const GalleryStop = ({ stopNum, title, subtitle, imgSrc, preserveRatio, sizeScal
           {stopNum}
         </div>
 
-        {/* Text panel */}
         <motion.div style={{
-          position: 'absolute',
-          top: '50%',
-          ...panelSide,
+          position: 'absolute', top: '50%', ...panelSide,
           transform: 'translateY(-50%)',
           maxWidth: 'clamp(260px, 28vw, 400px)',
           textAlign: align === 'left' ? 'right' : 'left',
           background: 'rgba(250, 250, 248, 0.88)',
-          backdropFilter: 'blur(18px)',
-          WebkitBackdropFilter: 'blur(18px)',
+          backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
           padding: 'clamp(24px, 3vw, 40px)',
-          border: '1px solid var(--border-crisp)',
-          borderRadius: '16px',
-          zIndex: 10,
-          opacity: panelOpacity,
-          filter: panelBlur,
-          y: panelY,
+          border: '1px solid var(--border-crisp)', borderRadius: '16px',
+          zIndex: 10, opacity: panelOpacity, filter: panelBlur, y: panelY,
           pointerEvents: 'none',
         }}>
           <h3 style={{
@@ -232,6 +369,7 @@ const GalleryStop = ({ stopNum, title, subtitle, imgSrc, preserveRatio, sizeScal
 
 export default function TheThread() {
   const [isMobile, setIsMobile] = useState(false);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -240,19 +378,35 @@ export default function TheThread() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  const { scrollYProgress: sectionProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
+  const pathLength = useTransform(sectionProgress, [0, 1], [0, 1]);
+
   if (isMobile) return null;
 
   return (
-    <section id="thread" style={{ background: 'var(--bg-off)' }}>
+    <section ref={sectionRef} id="thread" style={{ background: 'var(--bg-off)', position: 'relative', overflow: 'clip' }}>
+
+      {/* Squiggly */}
+      <div style={{ position: 'sticky', top: 0, height: '100vh', marginBottom: '-100vh', zIndex: 5, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '400px', height: '100%' }}>
+          <svg width="400" height="100%" viewBox="0 0 400 1200" preserveAspectRatio="none">
+            <motion.path
+              d="M200,0 C 400,120 0,240 200,360 C 400,480 0,600 200,720 C 400,840 0,960 200,1080 C 400,1200 200,1200 200,1200"
+              fill="none" stroke="var(--text-pure)" strokeWidth="1.5"
+              style={{ pathLength }}
+            />
+          </svg>
+        </div>
+      </div>
 
       {/* Section header */}
       <div style={{
         padding: 'clamp(32px, 4vw, 48px) clamp(24px, 5vw, 60px)',
-        borderTop: '1px solid var(--border-crisp)',
-        borderBottom: '1px solid var(--border-crisp)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        borderTop: '1px solid var(--border-crisp)', borderBottom: '1px solid var(--border-crisp)',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
         <span style={{
           fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 500,
@@ -290,23 +444,14 @@ export default function TheThread() {
         align="right"
       />
 
-      <GalleryStop
-        stopNum="III / V"
-        title="Musicians & Songs."
-        subtitle="Music isn't background noise here. It is the architectural foundation of your inner world."
-        imgSrc={musicImages}
-        preserveRatio
-        sizeScale={0.7}
-        gapScale={1.8}
-        align="left"
-      />
+      <MusicStop />
 
       <GalleryStop
         stopNum="IV / V"
         title="The 2AM Wikipedia spirals."
         subtitle="The obscure rabbit holes and essays that made you feel less alone in the world."
         imgSrc={wikipediaImages}
-        sizeScale={0.8}
+        sizeScale={0.95}
         gapScale={1.5}
         align="right"
       />
@@ -317,7 +462,7 @@ export default function TheThread() {
         subtitle="Video essays, obscure documentaries, music videos, and lectures you rewatch every year."
         imgSrc={youtubeImages}
         preserveRatio
-        sizeScale={0.75}
+        sizeScale={0.92}
         gapScale={1.6}
         align="left"
       />

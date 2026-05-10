@@ -73,13 +73,15 @@ export default function FeaturesGrid() {
         </div>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
-        gap: '1px',
-        background: 'var(--border-crisp)',
-        border: '1px solid var(--border-crisp)',
-      }}>
+      <div
+        className="features-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '1px',
+          background: 'var(--border-crisp)',
+          border: '1px solid var(--border-crisp)',
+        }}>
         {features.map((f, i) => (
           <div
             key={i}
