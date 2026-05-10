@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+import { useEffect } from 'react';
 
 const categories = [
   {
@@ -72,6 +73,12 @@ const categories = [
 ];
 
 export default function MobileThread() {
+  useEffect(() => {
+    categories.forEach(cat => {
+      cat.images.forEach(src => { new window.Image().src = src; });
+    });
+  }, []);
+
   return (
     <section style={{
       background: 'var(--bg-off)',
@@ -146,8 +153,7 @@ export default function MobileThread() {
                 <img
                   src={src}
                   alt={cat.label}
-                  loading="lazy"
-                  decoding="async"
+                  loading="eager"
                   style={{
                     width: '100%',
                     height: cat.cardHeight === 'auto' ? 'auto' : '100%',
