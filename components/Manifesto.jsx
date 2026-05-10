@@ -2,17 +2,20 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
+
+// Runs synchronously before paint on client, avoids isMobile flicker
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export default function Manifesto() {
   const containerRef = useRef(null);
   const sectionsRef = useRef([]);
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
@@ -60,6 +63,25 @@ export default function Manifesto() {
     }
   };
 
+  // On mobile: animate immediately (no scroll-triggered reveal).
+  // On desktop: use whileInView for the scroll reveal.
+  // Filter/blur is removed from all animation props to prevent the
+  // "permanently blurred" bug caused by isMobile state timing.
+  const textAnim = isMobile
+    ? { animate: { opacity: 1, y: 0 }, initial: { opacity: 0, y: 20 } }
+    : { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: false, margin: "-20%" } };
+  const textTransition = { type: 'spring', stiffness: 300, damping: 22 };
+
+  const imgAnim = isMobile
+    ? { animate: { opacity: 1, scale: 1 }, initial: { opacity: 0, scale: 0.96 } }
+    : { initial: { opacity: 0, scale: 0.92 }, whileInView: { opacity: 1, scale: 1 }, viewport: { once: false, margin: "-20%" } };
+  const imgTransition = { type: 'spring', stiffness: 260, damping: 20, delay: isMobile ? 0 : 0.1 };
+
+  const cardAnim = isMobile
+    ? { animate: { opacity: 1 }, initial: { opacity: 0 } }
+    : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: false, margin: "-20%" } };
+  const cardTransition = { duration: 0.6, ease: [0.16, 1, 0.3, 1] };
+
   return (
     <div ref={containerRef} id="manifesto" style={{ position: 'relative', width: '100%', zIndex: 20 }}>
 
@@ -75,7 +97,7 @@ export default function Manifesto() {
           background: 'var(--bg-pure)',
           borderTop: '1px solid var(--border-crisp)',
           transformOrigin: 'top',
-          padding: 'clamp(60px, 8vw, 80px) 0',
+          padding: 'clamp(3.75rem, 8vw, 5rem) 0',
         }}
       >
         <div
@@ -83,18 +105,16 @@ export default function Manifesto() {
           style={{
             maxWidth: '1100px',
             width: '100%',
-            padding: '0 clamp(20px, 5vw, 40px)',
+            padding: '0 clamp(1.25rem, 5vw, 2.5rem)',
             display: 'flex',
             alignItems: 'center',
-            gap: 'clamp(40px, 7vw, 80px)',
+            gap: 'clamp(2.5rem, 7vw, 5rem)',
             justifyContent: 'space-between',
           }}
         >
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: "-20%" }}
-            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+            {...textAnim}
+            transition={textTransition}
             style={{ flex: 1 }}
           >
             <p style={{
@@ -128,22 +148,21 @@ export default function Manifesto() {
             </p>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, ...(isMobile ? {} : { filter: 'blur(8px)' }) }}
-            whileInView={{ opacity: 1, scale: 1, ...(isMobile ? {} : { filter: 'blur(0px)' }) }}
-            viewport={{ once: false, margin: "-20%" }}
-            transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+            {...imgAnim}
+            transition={imgTransition}
             style={{ flex: 1, display: 'flex', justifyContent: 'center' }}
           >
             <div style={{
-              padding: 'clamp(12px, 2vw, 20px)',
+              padding: 'clamp(0.75rem, 2vw, 1.25rem)',
               background: 'var(--bg-off)',
               border: '1px solid var(--border-crisp)',
               width: '100%',
-              maxWidth: '450px',
+              maxWidth: '28rem',
             }}>
               <img
                 src="/assets/notSocial.png"
                 alt="Not Social"
+                loading="eager"
                 style={{ width: '100%', objectFit: 'cover' }}
               />
             </div>
@@ -166,8 +185,8 @@ export default function Manifesto() {
           backgroundPosition: 'center',
           borderTop: '1px solid var(--border-crisp)',
           transformOrigin: 'top',
-          boxShadow: '0 -20px 50px rgba(0,0,0,0.05)',
-          padding: 'clamp(60px, 8vw, 80px) 0',
+          boxShadow: '0 -1.25rem 3.125rem rgba(0,0,0,0.05)',
+          padding: 'clamp(3.75rem, 8vw, 5rem) 0',
           position: 'relative',
         }}
       >
@@ -177,30 +196,28 @@ export default function Manifesto() {
           style={{
             maxWidth: '800px',
             width: '100%',
-            padding: '0 24px',
+            padding: '0 1.5rem',
             textAlign: 'center',
             position: 'relative',
             zIndex: 1,
           }}
         >
           <motion.div
-            initial={{ opacity: 0, ...(isMobile ? {} : { filter: "blur(8px)" }) }}
-            whileInView={{ opacity: 1, ...(isMobile ? {} : { filter: "blur(0px)" }) }}
-            viewport={{ once: false, margin: "-20%" }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            {...cardAnim}
+            transition={cardTransition}
             style={{
               border: '1px solid var(--border-crisp)',
-              padding: 'clamp(32px, 5vw, 60px) clamp(20px, 4vw, 40px)',
+              padding: 'clamp(2rem, 5vw, 3.75rem) clamp(1.25rem, 4vw, 2.5rem)',
               background: 'var(--bg-pure)',
               position: 'relative',
             }}
           >
             <div style={{
               position: 'absolute',
-              top: '-50px',
+              top: '-3.125rem',
               left: '50%',
               width: '1px',
-              height: '50px',
+              height: '3.125rem',
               background: 'var(--border-crisp)',
             }} />
 
@@ -257,8 +274,8 @@ export default function Manifesto() {
           backgroundPosition: 'center',
           borderTop: '1px solid var(--border-crisp)',
           transformOrigin: 'top',
-          boxShadow: '0 -20px 50px rgba(0,0,0,0.05)',
-          padding: 'clamp(60px, 8vw, 80px) 0',
+          boxShadow: '0 -1.25rem 3.125rem rgba(0,0,0,0.05)',
+          padding: 'clamp(3.75rem, 8vw, 5rem) 0',
           position: 'relative',
         }}
       >
@@ -271,17 +288,15 @@ export default function Manifesto() {
           style={{
             maxWidth: '800px',
             width: '100%',
-            padding: '0 24px',
+            padding: '0 1.5rem',
             textAlign: 'center',
             position: 'relative',
             zIndex: 1,
           }}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: false, margin: "-20%" }}
-            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+            {...cardAnim}
+            transition={cardTransition}
           >
             <p style={{
               fontFamily: 'var(--font-mono)',
@@ -307,13 +322,13 @@ export default function Manifesto() {
               fontWeight: 300,
               opacity: 0.6,
               lineHeight: 1.6,
-              maxWidth: '600px',
+              maxWidth: '37.5rem',
               margin: '0 auto 3rem auto',
             }}>
               And we think that self is the best basis for finding people who actually matter to you.
             </p>
 
-            <div style={{ borderTop: '1px solid var(--border-crisp)', paddingTop: '40px' }}>
+            <div style={{ borderTop: '1px solid var(--border-crisp)', paddingTop: '2.5rem' }}>
               <span style={{
                 fontFamily: 'var(--serif)',
                 fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)',

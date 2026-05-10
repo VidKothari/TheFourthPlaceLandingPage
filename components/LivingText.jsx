@@ -1,26 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const fonts = [
-  "font-sans",
-  "font-serif",
-  "font-mono",
-  "font-playfair",
-  "font-libre",
-];
+const fonts = ["font-sans", "font-serif", "font-mono", "font-playfair", "font-libre"];
+
+// Synchronous before-paint detection to avoid animation flash
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export default function LivingText({ text, className = "" }) {
   const [isClient, setIsClient] = useState(false);
-  
+  const [isMobile, setIsMobile] = useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   const getRandomFont = () => fonts[Math.floor(Math.random() * fonts.length)];
 
-  if (!isClient) return <span className={className}>{text}</span>;
+  // Static render on mobile or before hydration — no per-character animation overhead
+  if (!isClient || isMobile) return <span className={className}>{text}</span>;
 
   return (
     <span className={className}>
