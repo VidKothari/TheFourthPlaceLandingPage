@@ -148,7 +148,7 @@ export default function MobileThread() {
                 <img
                   src={src}
                   alt={cat.label}
-                  loading={j < 3 ? "eager" : "lazy"}
+                  loading="eager"
                   style={{
                     width: '100%',
                     height: cat.cardHeight === 'auto' ? 'auto' : '100%',
@@ -157,6 +157,7 @@ export default function MobileThread() {
                     opacity: 0,
                     transition: 'opacity 0.4s ease',
                   }}
+                  ref={(el) => { if (el?.complete) el.style.opacity = '1'; }}
                   onLoad={(e) => { e.currentTarget.style.opacity = '1'; }}
                 />
               </div>
