@@ -228,4 +228,10 @@ button { font-family: inherit; }
     gap: 12px !important;
     text-align: center !important;
   }
+
+  /* ── Manifesto: hide background images on mobile ── */
+  .manifesto-bg {
+    background-image: none !important;
+    background-color: var(--bg-pure) !important;
+  }
 }

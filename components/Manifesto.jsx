@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
@@ -10,6 +10,11 @@ import { motion } from "framer-motion";
 export default function Manifesto() {
   const containerRef = useRef(null);
   const sectionsRef = useRef([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   useEffect(() => {
     // GSAP pinning is expensive on mobile and causes layout bugs — skip it
@@ -123,8 +128,8 @@ export default function Manifesto() {
             </p>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, filter: 'blur(8px)' }}
-            whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, scale: 0.92, ...(isMobile ? {} : { filter: 'blur(8px)' }) }}
+            whileInView={{ opacity: 1, scale: 1, ...(isMobile ? {} : { filter: 'blur(0px)' }) }}
             viewport={{ once: false, margin: "-20%" }}
             transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
             style={{ flex: 1, display: 'flex', justifyContent: 'center' }}
@@ -149,6 +154,7 @@ export default function Manifesto() {
       {/* Section 2: The Truth */}
       <div
         ref={(el) => setRef(el, 1)}
+        className="manifesto-bg"
         style={{
           width: '100%',
           minHeight: '100vh',
@@ -178,8 +184,8 @@ export default function Manifesto() {
           }}
         >
           <motion.div
-            initial={{ opacity: 0, filter: "blur(8px)" }}
-            whileInView={{ opacity: 1, filter: "blur(0px)" }}
+            initial={{ opacity: 0, ...(isMobile ? {} : { filter: "blur(8px)" }) }}
+            whileInView={{ opacity: 1, ...(isMobile ? {} : { filter: "blur(0px)" }) }}
             viewport={{ once: false, margin: "-20%" }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             style={{
@@ -239,6 +245,7 @@ export default function Manifesto() {
       {/* Section 3: The Solution */}
       <div
         ref={(el) => setRef(el, 2)}
+        className="manifesto-bg"
         style={{
           width: '100%',
           minHeight: '100vh',

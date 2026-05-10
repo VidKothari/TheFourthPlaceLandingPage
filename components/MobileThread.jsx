@@ -160,7 +160,10 @@ export default function MobileThread() {
                     height: cat.cardHeight === 'auto' ? 'auto' : '100%',
                     objectFit: cat.objectFit,
                     display: 'block',
+                    opacity: 0,
+                    transition: 'opacity 0.4s ease',
                   }}
+                  onLoad={(e) => { e.currentTarget.style.opacity = '1'; }}
                 />
               </div>
             ))}

@@ -45,11 +45,13 @@ const STOP_HEIGHT = '400vh';
 const S = 0.05;
 const E = 0.95;
 
+const VW = 19.2; // reference viewport = 1920px
+
 const GalleryImage = ({ src, preserveRatio, track, index, sizeScale = 1, scrollYProgress }) => {
-  let baseWidth;
-  if (track === 'bg') baseWidth = (preserveRatio ? 300 : 210) * sizeScale;
-  else if (track === 'mid') baseWidth = (preserveRatio ? 460 : 340) * sizeScale;
-  else baseWidth = (preserveRatio ? 660 : 480) * sizeScale;
+  let baseWidthVw;
+  if (track === 'bg') baseWidthVw = (preserveRatio ? 300 : 210) * sizeScale / VW;
+  else if (track === 'mid') baseWidthVw = (preserveRatio ? 460 : 340) * sizeScale / VW;
+  else baseWidthVw = (preserveRatio ? 660 : 480) * sizeScale / VW;
 
   const scatterAmp = track === 'bg' ? 30 : track === 'mid' ? 20 : 12;
   const yPct = track === 'bg'
@@ -65,8 +67,8 @@ const GalleryImage = ({ src, preserveRatio, track, index, sizeScale = 1, scrollY
   return (
     <motion.div
       style={{
-        width: `${baseWidth}px`,
-        height: preserveRatio ? 'auto' : `${baseWidth * 1.25}px`,
+        width: `${baseWidthVw}vw`,
+        height: preserveRatio ? 'auto' : `${baseWidthVw * 1.25}vw`,
         flexShrink: 0,
         position: 'relative',
         y: yMotion,
@@ -100,13 +102,13 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
   const track2 = imgSrc.slice(track3Count, track3Count + track2Count);
   const track1 = imgSrc.slice(track3Count + track2Count);
 
-  const gap3 = (preserveRatio ? 200 : 150) * gapScale;
-  const gap2 = (preserveRatio ? 300 : 200) * gapScale;
-  const gap1 = (preserveRatio ? 400 : 300) * gapScale;
+  const gap3vw = (preserveRatio ? 200 : 150) * gapScale / VW;
+  const gap2vw = (preserveRatio ? 300 : 200) * gapScale / VW;
+  const gap1vw = (preserveRatio ? 400 : 300) * gapScale / VW;
 
-  const dist3 = `${-(track3.length * ((preserveRatio ? 300 : 210) * sizeScale + gap3))}px`;
-  const dist2 = `${-(track2.length * ((preserveRatio ? 460 : 340) * sizeScale + gap2))}px`;
-  const dist1 = `${-(track1.length * ((preserveRatio ? 660 : 480) * sizeScale + gap1))}px`;
+  const dist3 = `${-(track3.length * ((preserveRatio ? 300 : 210) * sizeScale / VW + gap3vw))}vw`;
+  const dist2 = `${-(track2.length * ((preserveRatio ? 460 : 340) * sizeScale / VW + gap2vw))}vw`;
+  const dist1 = `${-(track1.length * ((preserveRatio ? 660 : 480) * sizeScale / VW + gap1vw))}vw`;
 
   const x3 = useTransform(scrollYProgress, [S, E], ['100vw', dist3]);
   const x2 = useTransform(scrollYProgress, [S, E], ['130vw', dist2]);
@@ -120,14 +122,14 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
       position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
       overflow: 'hidden', opacity, pointerEvents: pointerEv,
     }}>
-      <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap3}px`, x: x3, y: '-50%', alignItems: 'center' }}>
+      <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap3vw}vw`, x: x3, y: '-50%', alignItems: 'center' }}>
         {track3.map((src, i) => (
           <GalleryImage key={`bg-${i}`} src={src} preserveRatio={preserveRatio} track="bg" index={i} sizeScale={sizeScale} scrollYProgress={scrollYProgress} />
         ))}
       </motion.div>
 
       {track2.length > 0 && (
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap2}px`, x: x2, y: '-50%', alignItems: 'center', marginLeft: '10vw' }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap2vw}vw`, x: x2, y: '-50%', alignItems: 'center', marginLeft: '10vw' }}>
           {track2.map((src, i) => (
             <GalleryImage key={`mid-${i}`} src={src} preserveRatio={preserveRatio} track="mid" index={i} sizeScale={sizeScale} scrollYProgress={scrollYProgress} />
           ))}
@@ -135,7 +137,7 @@ const Gallery = ({ imgSrc, preserveRatio, scrollYProgress, sizeScale = 1, gapSca
       )}
 
       {track1.length > 0 && (
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap1}px`, x: x1, y: '-50%', alignItems: 'center', marginLeft: '20vw' }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${gap1vw}vw`, x: x1, y: '-50%', alignItems: 'center', marginLeft: '20vw' }}>
           {track1.map((src, i) => (
             <GalleryImage key={`fg-${i}`} src={src} preserveRatio={preserveRatio} track="fg" index={i} sizeScale={sizeScale} scrollYProgress={scrollYProgress} />
           ))}
@@ -157,9 +159,9 @@ const MusicConvergenceGallery = ({ scrollYProgress }) => {
   const musMid = musicianImages.slice(3, 7);   // mid: 4 images, h=400px
   const musFg  = musicianImages.slice(7);      // fg:  4 images, h=520px
 
-  const mDistBg  = `${-(musBg.length  * (240 + 120))}px`;
-  const mDistMid = `${-(musMid.length * (340 + 150))}px`;
-  const mDistFg  = `${-(musFg.length  * (440 + 180))}px`;
+  const mDistBg  = `${-(musBg.length  * (240 + 120) / VW)}vw`;
+  const mDistMid = `${-(musMid.length * (340 + 150) / VW)}vw`;
+  const mDistFg  = `${-(musFg.length  * (440 + 180) / VW)}vw`;
 
   const mxBg  = useTransform(scrollYProgress, [S, E], ['60vw',  mDistBg]);
   const mxMid = useTransform(scrollYProgress, [S, E], ['90vw',  mDistMid]);
@@ -170,9 +172,9 @@ const MusicConvergenceGallery = ({ scrollYProgress }) => {
   const songMid = songImages.slice(3, 7);   // mid: 4 images, 360px sq
   const songFg  = songImages.slice(7);      // fg:  4 images, 460px sq
 
-  const sDistBg  = `${-(songBg.length  * (230 + 110))}px`;
-  const sDistMid = `${-(songMid.length * (300 + 140))}px`;
-  const sDistFg  = `${-(songFg.length  * (390 + 170))}px`;
+  const sDistBg  = `${-(songBg.length  * (230 + 110) / VW)}vw`;
+  const sDistMid = `${-(songMid.length * (300 + 140) / VW)}vw`;
+  const sDistFg  = `${-(songFg.length  * (390 + 170) / VW)}vw`;
 
   const sxBg  = useTransform(scrollYProgress, [S, E], ['110vw', sDistBg]);
   const sxMid = useTransform(scrollYProgress, [S, E], ['140vw', sDistMid]);
@@ -188,25 +190,25 @@ const MusicConvergenceGallery = ({ scrollYProgress }) => {
         overflow: 'hidden', opacity, pointerEvents: pointerEv, x: xConvLeft,
       }}>
         {/* bg */}
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '120px', x: mxBg, y: '-50%', alignItems: 'center', zIndex: 1 }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${120/VW}vw`, x: mxBg, y: '-50%', alignItems: 'center', zIndex: 1 }}>
           {musBg.map((src, i) => (
-            <motion.div key={i} style={{ height: '240px', flexShrink: 0, rotate: (i%2===0?1:-1)*(1+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+            <motion.div key={i} style={{ height: `${240/VW}vw`, flexShrink: 0, rotate: (i%2===0?1:-1)*(1+(i%3)), cursor: 'pointer' }} whileHover={hover}>
               <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block', objectFit: 'contain' }}/>
             </motion.div>
           ))}
         </motion.div>
         {/* mid */}
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '150px', x: mxMid, y: '-50%', alignItems: 'center', marginLeft: '8vw', zIndex: 2 }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${150/VW}vw`, x: mxMid, y: '-50%', alignItems: 'center', marginLeft: '8vw', zIndex: 2 }}>
           {musMid.map((src, i) => (
-            <motion.div key={i} style={{ height: '340px', flexShrink: 0, rotate: (i%2===0?-1:1)*(2+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+            <motion.div key={i} style={{ height: `${340/VW}vw`, flexShrink: 0, rotate: (i%2===0?-1:1)*(2+(i%3)), cursor: 'pointer' }} whileHover={hover}>
               <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block', objectFit: 'contain' }}/>
             </motion.div>
           ))}
         </motion.div>
         {/* fg */}
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '180px', x: mxFg, y: '-50%', alignItems: 'center', marginLeft: '16vw', zIndex: 3 }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${180/VW}vw`, x: mxFg, y: '-50%', alignItems: 'center', marginLeft: '16vw', zIndex: 3 }}>
           {musFg.map((src, i) => (
-            <motion.div key={i} style={{ height: '440px', flexShrink: 0, rotate: (i%2===0?1:-1)*(3+(i%2)), cursor: 'pointer' }} whileHover={hover}>
+            <motion.div key={i} style={{ height: `${440/VW}vw`, flexShrink: 0, rotate: (i%2===0?1:-1)*(3+(i%2)), cursor: 'pointer' }} whileHover={hover}>
               <img src={src} alt="" style={{ height: '100%', width: 'auto', display: 'block', objectFit: 'contain' }}/>
             </motion.div>
           ))}
@@ -219,25 +221,25 @@ const MusicConvergenceGallery = ({ scrollYProgress }) => {
         overflow: 'hidden', opacity, pointerEvents: pointerEv, x: xConvRight,
       }}>
         {/* bg */}
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '110px', x: sxBg, y: '-50%', alignItems: 'center', zIndex: 1 }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${110/VW}vw`, x: sxBg, y: '-50%', alignItems: 'center', zIndex: 1 }}>
           {songBg.map((src, i) => (
-            <motion.div key={i} style={{ width: '230px', height: '230px', flexShrink: 0, rotate: (i%2===0?-1:1)*(1+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+            <motion.div key={i} style={{ width: `${230/VW}vw`, height: `${230/VW}vw`, flexShrink: 0, rotate: (i%2===0?-1:1)*(1+(i%3)), cursor: 'pointer' }} whileHover={hover}>
               <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 12px 32px rgba(0,0,0,0.2)' }}/>
             </motion.div>
           ))}
         </motion.div>
         {/* mid */}
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '140px', x: sxMid, y: '-50%', alignItems: 'center', marginLeft: '8vw', zIndex: 2 }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${140/VW}vw`, x: sxMid, y: '-50%', alignItems: 'center', marginLeft: '8vw', zIndex: 2 }}>
           {songMid.map((src, i) => (
-            <motion.div key={i} style={{ width: '300px', height: '300px', flexShrink: 0, rotate: (i%2===0?1:-1)*(2+(i%3)), cursor: 'pointer' }} whileHover={hover}>
+            <motion.div key={i} style={{ width: `${300/VW}vw`, height: `${300/VW}vw`, flexShrink: 0, rotate: (i%2===0?1:-1)*(2+(i%3)), cursor: 'pointer' }} whileHover={hover}>
               <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: '12px', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}/>
             </motion.div>
           ))}
         </motion.div>
         {/* fg */}
-        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: '170px', x: sxFg, y: '-50%', alignItems: 'center', marginLeft: '16vw', zIndex: 3 }}>
+        <motion.div style={{ position: 'absolute', top: '50%', left: 0, display: 'flex', gap: `${170/VW}vw`, x: sxFg, y: '-50%', alignItems: 'center', marginLeft: '16vw', zIndex: 3 }}>
           {songFg.map((src, i) => (
-            <motion.div key={i} style={{ width: '390px', height: '390px', flexShrink: 0, rotate: (i%2===0?-1:1)*(3+(i%2)), cursor: 'pointer' }} whileHover={hover}>
+            <motion.div key={i} style={{ width: `${390/VW}vw`, height: `${390/VW}vw`, flexShrink: 0, rotate: (i%2===0?-1:1)*(3+(i%2)), cursor: 'pointer' }} whileHover={hover}>
               <img src={src} alt="" style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: '14px', boxShadow: '0 20px 50px rgba(0,0,0,0.25)' }}/>
             </motion.div>
           ))}
