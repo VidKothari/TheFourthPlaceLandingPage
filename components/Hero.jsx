@@ -212,6 +212,7 @@ export default function Hero() {
           </AnimatePresence>
         </div>
       </div>
+
     </section>
   );
 }

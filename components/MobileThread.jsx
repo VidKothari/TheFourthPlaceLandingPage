@@ -22,6 +22,7 @@ const categories = [
       ...Array.from({ length: 10 }, (_, i) => `/assets/movie${i + 1}.jpg`),
       '/assets/movie11.jpg',
       ...Array.from({ length: 9 }, (_, i) => `/assets/movie${i + 12}.jpg`),
+      '/assets/movie21.jpg',
     ],
     cardWidth: '160px',
     cardHeight: 'auto',
@@ -141,7 +142,7 @@ export default function MobileThread() {
             overscrollBehaviorX: 'contain',
           }}>
             {cat.images.map((src, j) => (
-              <div key={j} style={{
+              <div key={j} className="mobile-media-item" style={{
                 flexShrink: 0,
                 width: cat.cardWidth,
                 height: cat.cardHeight === 'auto' ? undefined : cat.cardHeight,
@@ -171,6 +172,8 @@ export default function MobileThread() {
 
       <style>{`
         .mobile-thread-strip::-webkit-scrollbar { display: none; }
+        .mobile-media-item { transition: transform 0.25s cubic-bezier(0.16,1,0.3,1); }
+        .mobile-media-item:active { transform: scale(1.07); z-index: 10; }
       `}</style>
     </section>
   );

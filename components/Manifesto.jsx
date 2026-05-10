@@ -155,13 +155,17 @@ export default function Manifesto() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'var(--bg-off)',
+          backgroundImage: 'url(/assets/thetruth.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           borderTop: '1px solid var(--border-crisp)',
           transformOrigin: 'top',
           boxShadow: '0 -20px 50px rgba(0,0,0,0.05)',
           padding: 'clamp(60px, 8vw, 80px) 0',
+          position: 'relative',
         }}
       >
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.72)' }}/>
         <div
           className="mobile-padding"
           style={{
@@ -170,6 +174,7 @@ export default function Manifesto() {
             padding: '0 24px',
             textAlign: 'center',
             position: 'relative',
+            zIndex: 1,
           }}
         >
           <motion.div
@@ -240,13 +245,20 @@ export default function Manifesto() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'var(--bg-pure)',
+          backgroundImage: 'url(/assets/thesolution.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           borderTop: '1px solid var(--border-crisp)',
           transformOrigin: 'top',
           boxShadow: '0 -20px 50px rgba(0,0,0,0.05)',
           padding: 'clamp(60px, 8vw, 80px) 0',
+          position: 'relative',
         }}
       >
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(255,255,255,0.72)',
+        }}/>
         <div
           className="mobile-padding"
           style={{
@@ -254,6 +266,8 @@ export default function Manifesto() {
             width: '100%',
             padding: '0 24px',
             textAlign: 'center',
+            position: 'relative',
+            zIndex: 1,
           }}
         >
           <motion.div

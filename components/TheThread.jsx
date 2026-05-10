@@ -24,7 +24,8 @@ const bookImages = seededShuffle(Array.from({length: 17}, (_, i) => `/assets/boo
 const movieImages = seededShuffle([
   ...Array.from({length: 10}, (_, i) => `/assets/movie${i+1}.jpg`),
   '/assets/movie11.jpg',
-  ...Array.from({length: 9}, (_, i) => `/assets/movie${i+12}.jpg`)
+  ...Array.from({length: 9}, (_, i) => `/assets/movie${i+12}.jpg`),
+  '/assets/movie21.jpg',
 ], 57);
 const musicianImages = seededShuffle([
   ...Array.from({length: 11}, (_, i) => {
