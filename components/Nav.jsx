@@ -24,7 +24,7 @@ export default function Nav() {
         style={{
           position: 'fixed',
           top: 0, left: 0, right: 0,
-          height: '80px',
+          height: '5rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -36,35 +36,73 @@ export default function Nav() {
       >
         <div className="interactive serif" style={{
           fontSize: 'clamp(1.2rem, 4vw, 1.6rem)',
-          color: 'var(--text-pure)',
+          color: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.92)',
           fontStyle: 'italic',
-          fontWeight: 500
+          fontWeight: 500,
+          transition: 'color 0.6s',
         }}>
           The Fourth Place
         </div>
-        
+
         {/* Desktop Links */}
-        <div className="mobile-hide" style={{ display: 'flex', alignItems: 'center', gap: '48px' }}>
-          <a href="#philosophy" className="interactive" style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', color: 'var(--text-soft)', transition: 'color 0.4s' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-pure)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-soft)'}>Philosophy</a>
-          <a href="#thread" className="interactive" style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', color: 'var(--text-soft)', transition: 'color 0.4s' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-pure)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-soft)'}>Exhibition</a>
-          <a href="#tastemap" className="interactive" style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', color: 'var(--text-soft)', transition: 'color 0.4s' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-pure)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-soft)'}>Taste Map</a>
-          <a href="#waitlist" className="interactive editorial-btn">
+        <div className="mobile-hide" style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+          {['Philosophy', 'Exhibition', 'Taste Map'].map((label, i) => {
+            const href = ['#philosophy', '#thread', '#tastemap'][i];
+            const baseColor = scrolled ? 'var(--text-soft)' : 'rgba(255,255,255,0.65)';
+            const hoverColor = scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,1)';
+            return (
+              <a
+                key={label}
+                href={href}
+                className="interactive"
+                style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', color: baseColor, transition: 'color 0.4s' }}
+                onMouseEnter={(e) => { e.target.style.color = hoverColor; }}
+                onMouseLeave={(e) => { e.target.style.color = baseColor; }}
+              >
+                {label}
+              </a>
+            );
+          })}
+          <a
+            href="#waitlist"
+            className="interactive"
+            style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              height: '2.75rem', padding: '0 1.75rem',
+              background: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.12)',
+              color: scrolled ? 'var(--bg-pure)' : 'rgba(255,255,255,0.92)',
+              border: scrolled ? '1px solid var(--text-pure)' : '1px solid rgba(255,255,255,0.35)',
+              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.82rem',
+              letterSpacing: '0.06em', textTransform: 'uppercase',
+              transition: 'background 0.5s, color 0.5s, border-color 0.5s',
+              backdropFilter: scrolled ? 'none' : 'blur(8px)',
+              WebkitBackdropFilter: scrolled ? 'none' : 'blur(8px)',
+            }}
+            onMouseEnter={(e) => {
+              if (scrolled) { e.currentTarget.style.background = 'var(--bg-pure)'; e.currentTarget.style.color = 'var(--text-pure)'; }
+              else { e.currentTarget.style.background = 'rgba(255,255,255,0.22)'; }
+            }}
+            onMouseLeave={(e) => {
+              if (scrolled) { e.currentTarget.style.background = 'var(--text-pure)'; e.currentTarget.style.color = 'var(--bg-pure)'; }
+              else { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }
+            }}
+          >
             Join Waitlist
           </a>
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
-          className="interactive desktop-hide" 
+        <button
+          className="interactive desktop-hide"
           onClick={() => setIsOpen(!isOpen)}
-          style={{ 
-            display: 'none', 
+          style={{
+            display: 'none',
             background: 'none', border: 'none', cursor: 'pointer',
             flexDirection: 'column', gap: '6px'
           }}
         >
-          <div style={{ width: '24px', height: '1.5px', background: 'var(--text-pure)' }} />
-          <div style={{ width: '24px', height: '1.5px', background: 'var(--text-pure)' }} />
+          <div style={{ width: '1.5rem', height: '1.5px', background: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.85)', transition: 'background 0.4s' }} />
+          <div style={{ width: '1.5rem', height: '1.5px', background: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.85)', transition: 'background 0.4s' }} />
         </button>
       </motion.nav>
 

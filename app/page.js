@@ -11,6 +11,7 @@ import FeaturesGrid from '../components/FeaturesGrid';
 import RealWorld from '../components/RealWorld';
 import UserJourney from '../components/UserJourney';
 import Waitlist from '../components/Waitlist';
+import Suggestions from '../components/Suggestions';
 import Footer from '../components/Footer';
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
       <RealWorld />
       <UserJourney />
       <Waitlist />
+      <Suggestions />
       <Footer />
     </main>
   );

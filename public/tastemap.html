@@ -10,6 +10,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--a:#ff4fd8;--b:#4fc3ff;--c:#7c6bff;--d:#7affc6;--e:#ff7a3d;--gold:#ffd700}
 body{overflow:hidden;background:#000;font-family:'DM Sans',sans-serif;cursor:crosshair;user-select:none}
+body.bg #topbar,body.bg #switcher,body.bg #merge-banner,body.bg #legend,
+body.bg #hint,body.bg #howto,body.bg #card,body.bg #cluster-card,
+body.bg #tip,body.bg #loader,body.bg #zoom-flash{display:none!important}
 
 #topbar{position:fixed;top:0;left:0;right:0;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:100;background:linear-gradient(to bottom,rgba(0,0,0,0.9),transparent)}
 #logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.02em;color:#fff;display:flex;align-items:center;gap:10px}
@@ -202,6 +205,7 @@ body{overflow:hidden;background:#000;font-family:'DM Sans',sans-serif;cursor:cro
 </script>
 </head>
 <body>
+<script>if(new URLSearchParams(location.search).has('bg'))document.body.classList.add('bg')</script>
 
 <div id="loader"><div id="ll">TasteMap</div><div id="lbw"><div id="lb"></div></div><div id="ls">Mapping your universe</div></div>
 <div id="zoom-flash"></div>
@@ -1006,10 +1010,12 @@ document.getElementById("t1").addEventListener("click",()=>{focusedNode=null;foc
 document.getElementById("t2").addEventListener("click",()=>{focusedNode=null;focusedTag=null;setMode("jordan")})
 document.getElementById("tmg").addEventListener("click",()=>{focusedNode=null;focusedTag=null;setMode("merged")})
 
-setTimeout(()=>{
-  const hw=document.getElementById("howto"); hw.classList.add("on")
-  setTimeout(()=>hw.classList.remove("on"),5500)
-},1700)
+if(!document.body.classList.contains('bg')){
+  setTimeout(()=>{
+    const hw=document.getElementById("howto"); hw.classList.add("on")
+    setTimeout(()=>hw.classList.remove("on"),5500)
+  },1700)
+}
 
 /* ── ANIMATE ── */
 let T=0
@@ -1060,7 +1066,9 @@ window.addEventListener("resize",()=>{
 })
 
 setMode("alex")
-setTimeout(()=>document.getElementById("loader").classList.add("off"),1600)
+if(!document.body.classList.contains('bg')){
+  setTimeout(()=>document.getElementById("loader").classList.add("off"),1600)
+}
 </script>
 </body>
 </html>

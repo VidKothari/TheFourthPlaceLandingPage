@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useState } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
 import LivingText from './LivingText';
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 const lines = [
   { text: 'You are not the content you scroll.', italic: true },
@@ -14,6 +16,11 @@ const lines = [
 export default function Hero() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,16 +35,33 @@ export default function Hero() {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        background: 'var(--bg-pure)',
+        background: '#0a0a0f',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '0 60px',
+        padding: 'clamp(5rem, 8vw, 7rem) clamp(1.25rem, 5vw, 3.75rem)',
         zIndex: 10,
         alignItems: 'center',
       }}
     >
+      {/* Tastemap constellation background — desktop only */}
+      {!isMobile && (
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+          <iframe
+            src="/tastemap.html?bg=1"
+            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+          {/* Dark vignette — lets constellation glow through at edges, deep center for legibility */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(8,8,14,0.72) 0%, rgba(8,8,14,0.55) 55%, rgba(8,8,14,0.25) 100%)',
+          }} />
+        </div>
+      )}
+
       <div style={{
         maxWidth: '100%',
         textAlign: 'center',
@@ -48,7 +72,7 @@ export default function Hero() {
         zIndex: 20,
       }}>
 
-        {/* Three-line headline */}
+        {/* Headline */}
         <h1 style={{
           marginBottom: 'clamp(1.5rem, 4vw, 3rem)',
           display: 'flex',
@@ -70,7 +94,7 @@ export default function Hero() {
                 letterSpacing: '-0.02em',
                 lineHeight: 1.08,
                 fontStyle: line.italic ? 'italic' : 'normal',
-                color: line.italic ? 'var(--text-soft)' : 'var(--text-pure)',
+                color: line.italic ? 'rgba(255,255,255,0.52)' : 'rgba(255,255,255,0.96)',
               }}
             >
               <LivingText text={line.text} />
@@ -84,19 +108,19 @@ export default function Hero() {
           transition={{ duration: 2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{
             fontFamily: 'var(--sans)',
-            fontSize: 'clamp(0.95rem, 2vw, 1.2rem)',
-            lineHeight: 1.8,
-            color: 'var(--text-soft)',
+            fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
+            lineHeight: 1.85,
+            color: 'rgba(255,255,255,0.52)',
             fontWeight: 300,
-            maxWidth: '560px',
-            marginBottom: 'clamp(40px, 6vw, 60px)',
+            maxWidth: '35rem',
+            marginBottom: 'clamp(2.5rem, 6vw, 3.75rem)',
           }}
         >
           The Fourth Place maps your inner world, finds the people whose inner world rhymes with yours — a few blocks away or a hemisphere apart — and brings you together in the physical one. Designed for depth, curated like a gallery.
         </motion.p>
 
         {/* Waitlist Form */}
-        <div style={{ width: '100%', maxWidth: '400px', position: 'relative', marginTop: '1rem' }}>
+        <div style={{ width: '100%', maxWidth: '25rem', position: 'relative', marginTop: '1rem' }}>
           <AnimatePresence mode="wait">
             {!submitted ? (
               <motion.form
@@ -106,8 +130,8 @@ export default function Hero() {
                   display: 'flex',
                   alignItems: 'flex-end',
                   width: '100%',
-                  borderBottom: '1px solid rgba(0,0,0,0.2)',
-                  paddingBottom: '8px',
+                  borderBottom: '1px solid rgba(255,255,255,0.18)',
+                  paddingBottom: '0.5rem',
                   position: 'relative',
                 }}
                 className="group waitlist-form"
@@ -121,12 +145,12 @@ export default function Hero() {
                     htmlFor="email"
                     style={{
                       display: 'block',
-                      fontSize: '0.75rem',
+                      fontSize: '0.72rem',
                       fontFamily: 'var(--font-mono)',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.1em',
-                      opacity: 0.5,
-                      marginBottom: '8px',
+                      letterSpacing: '0.12em',
+                      color: 'rgba(255,255,255,0.35)',
+                      marginBottom: '0.5rem',
                     }}
                   >
                     Enter the waitlist
@@ -144,6 +168,7 @@ export default function Hero() {
                       outline: 'none',
                       border: 'none',
                       fontFamily: 'var(--serif)',
+                      color: 'rgba(255,255,255,0.88)',
                     }}
                     required
                   />
@@ -151,22 +176,23 @@ export default function Hero() {
                 <button
                   type="submit"
                   style={{
-                    paddingBottom: '4px',
-                    paddingLeft: '16px',
-                    opacity: 0.5,
+                    paddingBottom: '0.25rem',
+                    paddingLeft: '1rem',
+                    opacity: 0.4,
                     transition: 'opacity 0.3s',
                     cursor: 'pointer',
                     background: 'none',
                     border: 'none',
-                    minWidth: '44px',
-                    minHeight: '44px',
+                    minWidth: '2.75rem',
+                    minHeight: '2.75rem',
                     display: 'flex',
                     alignItems: 'center',
+                    color: 'white',
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '0.5'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '0.4'}
                 >
-                  <MoveRight strokeWidth={1} size={32} />
+                  <MoveRight strokeWidth={1} size={32} color="white" />
                 </button>
                 <span
                   style={{
@@ -175,7 +201,7 @@ export default function Hero() {
                     bottom: 0,
                     width: '100%',
                     height: '1px',
-                    background: 'black',
+                    background: 'rgba(255,255,255,0.7)',
                     transform: 'scaleX(0)',
                     transition: 'transform 1s cubic-bezier(0.19,1,0.22,1)',
                     transformOrigin: 'left',
@@ -186,15 +212,15 @@ export default function Hero() {
                   .waitlist-form:focus-within .waitlist-underline {
                     transform: scaleX(1) !important;
                   }
-                  input::placeholder {
-                    color: rgba(0,0,0,0.2);
+                  #email::placeholder {
+                    color: rgba(255,255,255,0.2);
                   }
                 `}</style>
               </motion.form>
             ) : (
               <motion.div
                 key="success"
-                style={{ textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '1.25rem' }}
+                style={{ textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '1.25rem', color: 'rgba(255,255,255,0.88)' }}
                 initial={{ opacity: 0, y: 10, filter: "blur(5px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
@@ -206,7 +232,7 @@ export default function Hero() {
                 >
                   🕊️
                 </motion.span>
-                <p style={{ marginTop: '16px' }}>Your room awaits.</p>
+                <p style={{ marginTop: '1rem' }}>Your room awaits.</p>
               </motion.div>
             )}
           </AnimatePresence>
