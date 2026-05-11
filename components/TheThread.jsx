@@ -454,7 +454,7 @@ export default function TheThread() {
       <GalleryStop
         stopNum="IV / V"
         title="The 2AM Wikipedia spirals."
-        subtitle="The obscure rabbit holes and essays that made you feel less alone in the world."
+        subtitle="The obscure rabbit holes and niche topics that truly stimulated your brain."
         imgSrc={wikipediaImages}
         sizeScale={0.95}
         gapScale={1.5}
