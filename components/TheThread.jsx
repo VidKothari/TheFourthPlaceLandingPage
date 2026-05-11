@@ -166,9 +166,9 @@ const MusicConvergenceGallery = ({ scrollYProgress }) => {
   const mDistMid = `${-(musMid.length * (340 + 150) / VW)}vw`;
   const mDistFg  = `${-(musFg.length  * (440 + 180) / VW)}vw`;
 
-  const mxBg  = useTransform(scrollYProgress, [S, E], ['15vw',  mDistBg]);
-  const mxMid = useTransform(scrollYProgress, [S, E], ['40vw',  mDistMid]);
-  const mxFg  = useTransform(scrollYProgress, [S, E], ['65vw',  mDistFg]);
+  const mxBg  = useTransform(scrollYProgress, [S, E], ['60vw',  mDistBg]);
+  const mxMid = useTransform(scrollYProgress, [S, E], ['90vw',  mDistMid]);
+  const mxFg  = useTransform(scrollYProgress, [S, E], ['120vw', mDistFg]);
 
   const songBg  = songImages.slice(0, 3);
   const songMid = songImages.slice(3, 7);
@@ -178,9 +178,9 @@ const MusicConvergenceGallery = ({ scrollYProgress }) => {
   const sDistMid = `${-(songMid.length * (300 + 140) / VW)}vw`;
   const sDistFg  = `${-(songFg.length  * (390 + 170) / VW)}vw`;
 
-  const sxBg  = useTransform(scrollYProgress, [S, E], ['55vw',  sDistBg]);
-  const sxMid = useTransform(scrollYProgress, [S, E], ['85vw',  sDistMid]);
-  const sxFg  = useTransform(scrollYProgress, [S, E], ['115vw', sDistFg]);
+  const sxBg  = useTransform(scrollYProgress, [S, E], ['110vw', sDistBg]);
+  const sxMid = useTransform(scrollYProgress, [S, E], ['140vw', sDistMid]);
+  const sxFg  = useTransform(scrollYProgress, [S, E], ['170vw', sDistFg]);
 
   const hover = { scale: 1.07, rotate: 0, zIndex: 100, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } };
 
@@ -282,7 +282,7 @@ const MusicStop = () => {
             Musicians.
           </h3>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: 'var(--text-soft)', fontWeight: 300, lineHeight: 1.6 }}>
-            The architects of your soundscape. The souls that articulated your silence.
+            The ones who made you feel less alone and made you fall in love with music.
           </p>
         </motion.div>
 
@@ -299,7 +299,7 @@ const MusicStop = () => {
             Songs.
           </h3>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: 'var(--text-soft)', fontWeight: 300, lineHeight: 1.6 }}>
-            The specific frequencies that hold your memories together.
+            The ones that make you feel alive, the ones that keep you alive, the ones you scream at the top of your lungs.
           </p>
         </motion.div>
       </div>

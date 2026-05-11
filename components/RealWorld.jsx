@@ -396,7 +396,7 @@ export default function RealWorld() {
             fontWeight: 300,
             maxWidth: '500px',
           }}>
-            When two taste maps share enough — the app sends you a card. Not a match. A suggestion. Something real to do, in a real place, based on exactly who you both are.
+            When two taste maps share enough — the app sends you a card. Not a match. A suggestion. They might be a few streets over, or in a city on the other side of the world. Either way: something real, somewhere real, with someone who actually gets it.
           </p>
         </div>
       </div>

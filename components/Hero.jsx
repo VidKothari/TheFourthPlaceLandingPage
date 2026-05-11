@@ -92,7 +92,7 @@ export default function Hero() {
             marginBottom: 'clamp(40px, 6vw, 60px)',
           }}
         >
-          The Fourth Place maps your inner world, connects you with the people nearby who resonate, and brings you together in the physical one. Designed for depth, curated like a gallery.
+          The Fourth Place maps your inner world, finds the people whose inner world rhymes with yours — a few blocks away or a hemisphere apart — and brings you together in the physical one. Designed for depth, curated like a gallery.
         </motion.p>
 
         {/* Waitlist Form */}
