@@ -45,22 +45,20 @@ export default function Hero() {
         alignItems: 'center',
       }}
     >
-      {/* Tastemap constellation background — desktop only */}
-      {!isMobile && (
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-          <iframe
-            src="/tastemap.html?bg=1"
-            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-          {/* Dark vignette — lets constellation glow through at edges, deep center for legibility */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(8,8,14,0.72) 0%, rgba(8,8,14,0.55) 55%, rgba(8,8,14,0.25) 100%)',
-          }} />
-        </div>
-      )}
+      {/* Tastemap constellation background */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+        <iframe
+          src="/tastemap.html?bg=1"
+          style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+          tabIndex={-1}
+          aria-hidden="true"
+        />
+        {/* Dark vignette — lets constellation glow through at edges, deep center for legibility */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(8,8,14,0.72) 0%, rgba(8,8,14,0.55) 55%, rgba(8,8,14,0.25) 100%)',
+        }} />
+      </div>
 
       <div style={{
         maxWidth: '100%',

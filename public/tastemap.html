@@ -1,1074 +1,2058 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TasteMap</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--a:#ff4fd8;--b:#4fc3ff;--c:#7c6bff;--d:#7affc6;--e:#ff7a3d;--gold:#ffd700}
-body{overflow:hidden;background:#000;font-family:'DM Sans',sans-serif;cursor:crosshair;user-select:none}
-body.bg #topbar,body.bg #switcher,body.bg #merge-banner,body.bg #legend,
-body.bg #hint,body.bg #howto,body.bg #card,body.bg #cluster-card,
-body.bg #tip,body.bg #loader,body.bg #zoom-flash{display:none!important}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TasteMap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-#topbar{position:fixed;top:0;left:0;right:0;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:100;background:linear-gradient(to bottom,rgba(0,0,0,0.9),transparent)}
-#logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.02em;color:#fff;display:flex;align-items:center;gap:10px}
-#logo-dot{width:8px;height:8px;border-radius:50%;background:var(--a);box-shadow:0 0 12px var(--a);animation:pdot 2s ease-in-out infinite}
-@keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.5);opacity:0.6}}
-#tagline{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);font-weight:300}
-#topright{display:flex;align-items:center;gap:8px}
-.tbtn{height:32px;padding:0 14px;border-radius:100px;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px)}
-.tbtn:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.3)}
-.tbtn.active{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.4)}
-.tbtn.merge-lit{background:linear-gradient(135deg,rgba(255,79,216,0.25),rgba(79,195,255,0.25));border-color:rgba(255,215,0,0.4);color:#ffd700}
+    :root {
+      --a: #ff4fd8;
+      --b: #4fc3ff;
+      --c: #7c6bff;
+      --d: #7affc6;
+      --e: #ff7a3d;
+      --gold: #ffd700
+    }
 
-#switcher{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;border-radius:100px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.14);background:rgba(8,8,14,0.94);backdrop-filter:blur(20px)}
-.stab{padding:8px 22px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all .3s;color:rgba(255,255,255,0.38);border:none;background:transparent}
-.stab.u1.on{color:#fff;background:rgba(255,79,216,0.22);text-shadow:0 0 14px var(--a)}
-.stab.u2.on{color:#fff;background:rgba(79,195,255,0.22);text-shadow:0 0 14px var(--b)}
-.stab.mg.on{color:#ffd700;background:linear-gradient(135deg,rgba(255,79,216,0.18),rgba(79,195,255,0.18));text-shadow:0 0 14px var(--gold)}
-.ssep{width:0.5px;background:rgba(255,255,255,0.1);height:36px}
+    body {
+      overflow: hidden;
+      background: #000;
+      font-family: 'DM Sans', sans-serif;
+      cursor: crosshair;
+      user-select: none
+    }
 
-#merge-banner{position:fixed;top:116px;left:50%;transform:translateX(-50%);z-index:190;display:none;flex-direction:column;align-items:center;gap:5px;pointer-events:none}
-#merge-banner.on{display:flex}
-#mb-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-#mb-sub{font-size:11px;color:rgba(255,255,255,0.28);letter-spacing:0.06em}
+    body.bg #topbar,
+    body.bg #switcher,
+    body.bg #merge-banner,
+    body.bg #legend,
+    body.bg #hint,
+    body.bg #howto,
+    body.bg #card,
+    body.bg #cluster-card,
+    body.bg #tip,
+    body.bg #loader,
+    body.bg #zoom-flash {
+      display: none !important
+    }
 
-#legend{position:fixed;left:24px;bottom:28px;z-index:100;display:flex;flex-direction:column;gap:6px}
-.leg{display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 12px 5px 8px;border-radius:100px;border:0.5px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);transition:all .25s;position:relative;overflow:hidden}
-.leg:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.06)}
-.leg.focused{border-color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.1)}
-.leg::after{content:'→';position:absolute;right:10px;font-size:10px;color:rgba(255,255,255,0);transition:all .25s}
-.leg:hover::after{color:rgba(255,255,255,0.4)}
-.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.leg-lbl{font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:rgba(255,255,255,0.5);font-family:'Syne',sans-serif;font-weight:500;padding-right:14px}
+    #topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent)
+    }
 
-/* ── CARD ── */
-#card{position:fixed;right:24px;top:50%;transform:translateY(-50%) translateX(370px);width:310px;background:rgba(6,6,12,0.97);border-radius:22px;border:0.5px solid rgba(255,255,255,0.1);color:#fff;display:block;box-shadow:0 0 0 0.5px rgba(255,255,255,0.05),0 28px 90px rgba(0,0,0,0.85),inset 0 1px 0 rgba(255,255,255,0.07);transition:transform .45s cubic-bezier(.23,1,.32,1),opacity .35s,box-shadow .4s;opacity:0;overflow:hidden;z-index:200;backdrop-filter:blur(28px)}
-#card.on{transform:translateY(-50%) translateX(0);opacity:1}
-#card.gold-glow{box-shadow:0 0 0 1px rgba(255,215,0,0.28),0 0 50px rgba(255,215,0,0.1),0 28px 90px rgba(0,0,0,0.85),inset 0 1px 0 rgba(255,255,255,0.1)}
+    #logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
 
-#ch{position:relative;height:188px;overflow:hidden}
-#cp{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.75)}
-#co{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,rgba(6,6,12,0.97) 100%)}
-#ctype{position:absolute;top:14px;left:14px;height:22px;padding:0 10px;border-radius:100px;background:rgba(0,0,0,0.65);border:0.5px solid rgba(255,255,255,0.2);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.85);display:flex;align-items:center;font-family:'Syne',sans-serif;font-weight:500;backdrop-filter:blur(8px)}
-#crown{position:absolute;top:12px;right:48px;display:none;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;background:rgba(255,215,0,0.18);border:0.5px solid rgba(255,215,0,0.45);backdrop-filter:blur(8px)}
-#crown.on{display:flex}
-#crown span{font-size:10px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#ffd700}
-#cclose{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.65);border:0.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.75);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .2s;z-index:10;backdrop-filter:blur(8px)}
-#cclose:hover{background:rgba(255,255,255,0.18);color:#fff}
+    #logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--a);
+      box-shadow: 0 0 12px var(--a);
+      animation: pdot 2s ease-in-out infinite
+    }
 
-#cbody{padding:16px 20px 20px}
-#ctitle{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:4px}
-#cmeta{font-size:12px;color:rgba(255,255,255,0.35);font-weight:300;margin-bottom:13px;font-style:italic}
-#crrow{display:flex;align-items:center;gap:8px;margin-bottom:13px}
-#crbar{flex:1;height:3px;background:rgba(255,255,255,0.09);border-radius:100px;overflow:hidden}
-#crfill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--d),var(--b));transition:width .6s cubic-bezier(.23,1,.32,1)}
-#crnum{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
-#ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
-.ctag{height:22px;padding:0 10px;border-radius:100px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;font-family:'Syne',sans-serif;font-weight:500;display:flex;align-items:center;border:0.5px solid}
-#cdesc{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,0.47);font-weight:300;margin-bottom:14px}
+    @keyframes pdot {
 
-#spanel{display:none;border-radius:14px;padding:14px;background:linear-gradient(135deg,rgba(255,79,216,0.07),rgba(79,195,255,0.07));border:0.5px solid rgba(255,215,0,0.22)}
-#spanel.on{display:block}
-#sphdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-#savs{display:flex}
-.sav{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:9px;border:1.5px solid rgba(0,0,0,0.8)}
-.sav.a{background:var(--a);color:#000;z-index:2}
-.sav.b{background:var(--b);color:#000;margin-left:-7px;z-index:1}
-#sptitle{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold)}
-#sloading{display:none;align-items:center;gap:7px;min-height:36px}
-#sloading.on{display:flex}
-.sd{width:5px;height:5px;border-radius:50%;animation:sb .9s ease-in-out infinite}
-.sd:nth-child(1){background:var(--a)}
-.sd:nth-child(2){background:var(--c);animation-delay:.15s}
-.sd:nth-child(3){background:var(--b);animation-delay:.3s}
-@keyframes sb{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
-#stext{font-size:12px;line-height:1.72;color:rgba(255,255,255,0.54);font-weight:300}
+      0%,
+      100% {
+        transform: scale(1)
+      }
 
-/* ── CLUSTER CARD ── */
-#cluster-card{position:fixed;right:24px;top:50%;transform:translateY(-50%) translateX(420px);width:340px;max-height:80vh;background:rgba(6,6,12,0.98);border-radius:22px;border:0.5px solid rgba(255,255,255,0.14);color:#fff;display:flex;flex-direction:column;box-shadow:0 0 0 0.5px rgba(255,255,255,0.05),0 28px 90px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,255,255,0.08);transition:transform .5s cubic-bezier(.23,1,.32,1),opacity .4s;opacity:0;overflow:hidden;z-index:200;backdrop-filter:blur(32px);pointer-events:none}
-#cluster-card.on{transform:translateY(-50%) translateX(0);opacity:1;pointer-events:all}
-#cc-head{padding:20px 20px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08)}
-#cc-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .2s}
-#cc-close:hover{background:rgba(255,255,255,0.15);color:#fff}
-#cc-dot-wrap{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-#cc-dot{width:10px;height:10px;border-radius:50%}
-#cc-tag{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;letter-spacing:-0.01em;text-transform:capitalize}
-#cc-count{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.06em;font-family:'Syne',sans-serif;text-transform:uppercase;font-weight:500}
-#cc-list{overflow-y:auto;padding:10px 12px 16px;flex:1;-webkit-overflow-scrolling:touch}
-#cc-list::-webkit-scrollbar{width:3px}
-#cc-list::-webkit-scrollbar-track{background:transparent}
-#cc-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
-.cc-item{display:flex;align-items:center;gap:12px;padding:10px 10px;border-radius:12px;cursor:pointer;transition:all .2s;margin-bottom:3px;border:0.5px solid transparent}
-.cc-item:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08)}
-.cc-item.shared{border-color:rgba(255,215,0,0.15)}
-.cc-item.shared:hover{background:rgba(255,215,0,0.05)}
-.cc-item-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:0.5px solid rgba(255,255,255,0.1)}
-.cc-item-info{flex:1;min-width:0}
-.cc-item-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin-bottom:2px}
-.cc-item-meta{font-size:10px;color:rgba(255,255,255,0.28);font-weight:300;letter-spacing:0.03em}
-.cc-item-badge{font-size:9px;font-family:'Syne',sans-serif;font-weight:700;color:var(--gold);letter-spacing:0.06em;flex-shrink:0}
-.cc-section-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);font-family:'Syne',sans-serif;font-weight:500;padding:8px 10px 4px;margin-top:4px}
+      50% {
+        transform: scale(1.5);
+        opacity: 0.6
+      }
+    }
 
-/* ── TYPE ICONS ── */
-.icon-movie{background:rgba(79,195,255,0.1);border-color:rgba(79,195,255,0.2)}
-.icon-book{background:rgba(124,107,255,0.1);border-color:rgba(124,107,255,0.2)}
-.icon-album{background:rgba(255,79,216,0.1);border-color:rgba(255,79,216,0.2)}
-.icon-artist{background:rgba(122,255,198,0.1);border-color:rgba(122,255,198,0.2)}
+    #tagline {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.28);
+      font-weight: 300
+    }
 
-/* ── TOOLTIP ── */
-#tip{position:fixed;pointer-events:none;background:rgba(6,6,12,0.95);border:0.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:7px 12px;font-family:'Syne',sans-serif;font-size:12px;font-weight:500;color:rgba(255,255,255,0.92);backdrop-filter:blur(12px);opacity:0;transition:opacity .12s;z-index:300;white-space:nowrap}
-#tip.on{opacity:1}
-#tip-shared{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-top:3px;display:none}
-#tip-shared.on{display:block}
-#tip-cluster{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;display:none}
-#tip-cluster.on{display:block}
+    #topright {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
 
-/* ── ZOOM FLASH ── */
-#zoom-flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:500;transition:opacity .15s}
-#zoom-flash.on{opacity:0.04}
+    .tbtn {
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 100px;
+      border: 0.5px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      backdrop-filter: blur(8px)
+    }
 
-#hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.18);font-family:'Syne',sans-serif;pointer-events:none;transition:opacity .5s;white-space:nowrap}
+    .tbtn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3)
+    }
 
-#loader{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:1000;transition:opacity .8s ease .3s}
-#loader.off{opacity:0;pointer-events:none}
-#ll{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.03em;color:#fff}
-#lbw{width:140px;height:2px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden}
-#lb{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--a),var(--b));animation:lf 1.4s ease forwards}
-@keyframes lf{from{width:0}to{width:100%}}
-#ls{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.22);font-family:'Syne',sans-serif}
+    .tbtn.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.4)
+    }
 
-#howto{position:fixed;bottom:28px;right:24px;z-index:100;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .5s}
-#howto.on{opacity:1}
-.hw{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:12px;background:rgba(8,8,14,0.88);border:0.5px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px)}
-.hw-n{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
-.n1{background:rgba(255,79,216,0.3);color:var(--a)}
-.n2{background:rgba(79,195,255,0.3);color:var(--b)}
-.n3{background:rgba(255,215,0,0.2);color:var(--gold)}
-.hw-t{font-size:11px;color:rgba(255,255,255,0.42);line-height:1.5}
+    .tbtn.merge-lit {
+      background: linear-gradient(135deg, rgba(255, 79, 216, 0.25), rgba(79, 195, 255, 0.25));
+      border-color: rgba(255, 215, 0, 0.4);
+      color: #ffd700
+    }
 
-/* ── MOBILE ── */
-@media (max-width: 768px) {
-  #topbar{padding:0 16px;height:52px}
-  #logo{font-size:16px}
-  #tagline{display:none}
-  #topright{gap:6px}
-  .tbtn{padding:0 10px;font-size:11px;height:28px}
-  .tbtn#btn-rot{display:none}
+    #switcher {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      border-radius: 100px;
+      overflow: hidden;
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      background: rgba(8, 8, 14, 0.94);
+      backdrop-filter: blur(20px)
+    }
 
-  #switcher{top:60px}
-  .stab{padding:7px 14px;font-size:11px}
+    .stab {
+      padding: 8px 22px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .3s;
+      color: rgba(255, 255, 255, 0.38);
+      border: none;
+      background: transparent
+    }
 
-  #legend{left:12px;bottom:80px;gap:4px}
-  .leg{padding:4px 8px 4px 6px}
-  .leg-lbl{font-size:9px}
-  .leg-dot{width:6px;height:6px}
+    .stab.u1.on {
+      color: #fff;
+      background: rgba(255, 79, 216, 0.22);
+      text-shadow: 0 0 14px var(--a)
+    }
 
-  #hint{bottom:16px;font-size:9px}
+    .stab.u2.on {
+      color: #fff;
+      background: rgba(79, 195, 255, 0.22);
+      text-shadow: 0 0 14px var(--b)
+    }
 
-  /* Cards go bottom sheet on mobile */
-  #card{
-    right:0;left:0;bottom:0;top:auto;
-    width:100%;max-width:100%;border-radius:22px 22px 0 0;
-    transform:translateY(110%) !important;
-    transition:transform .45s cubic-bezier(.23,1,.32,1),opacity .35s;
-    opacity:1 !important;
-  }
-  #card.on{transform:translateY(0) !important;opacity:1 !important}
-  #ch{height:140px}
+    .stab.mg.on {
+      color: #ffd700;
+      background: linear-gradient(135deg, rgba(255, 79, 216, 0.18), rgba(79, 195, 255, 0.18));
+      text-shadow: 0 0 14px var(--gold)
+    }
 
-  #cluster-card{
-    right:0;left:0;bottom:0;top:auto;
-    width:100%;max-width:100%;
-    max-height:75vh;
-    border-radius:22px 22px 0 0;
-    transform:translateY(110%) !important;
-    transition:transform .5s cubic-bezier(.23,1,.32,1),opacity .4s;
-    opacity:1 !important;
-  }
-  #cluster-card.on{transform:translateY(0) !important;opacity:1 !important}
+    .ssep {
+      width: 0.5px;
+      background: rgba(255, 255, 255, 0.1);
+      height: 36px
+    }
 
-  #howto{display:none}
-  #tip{display:none}
+    #merge-banner {
+      position: fixed;
+      top: 116px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 190;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      pointer-events: none
+    }
 
-  #merge-banner{top:108px}
-  #mb-title{font-size:12px}
-  #mb-sub{font-size:10px}
-}
-</style>
-<script type="importmap">
+    #merge-banner.on {
+      display: flex
+    }
+
+    #mb-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--a), var(--b));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
+
+    #mb-sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.28);
+      letter-spacing: 0.06em
+    }
+
+    #legend {
+      position: fixed;
+      left: 24px;
+      bottom: 28px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      padding: 5px 12px 5px 8px;
+      border-radius: 100px;
+      border: 0.5px solid rgba(255, 255, 255, 0.07);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      transition: all .25s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .leg:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06)
+    }
+
+    .leg.focused {
+      border-color: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.1)
+    }
+
+    .leg::after {
+      content: '→';
+      position: absolute;
+      right: 10px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0);
+      transition: all .25s
+    }
+
+    .leg:hover::after {
+      color: rgba(255, 255, 255, 0.4)
+    }
+
+    .leg-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .leg-lbl {
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      padding-right: 14px
+    }
+
+    /* ── CARD ── */
+    #card {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%) translateX(370px);
+      width: 310px;
+      background: rgba(6, 6, 12, 0.97);
+      border-radius: 22px;
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      display: block;
+      box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.05), 0 28px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      transition: transform .45s cubic-bezier(.23, 1, .32, 1), opacity .35s, box-shadow .4s;
+      opacity: 0;
+      overflow: hidden;
+      z-index: 200;
+      backdrop-filter: blur(28px)
+    }
+
+    #card.on {
+      transform: translateY(-50%) translateX(0);
+      opacity: 1
+    }
+
+    #card.gold-glow {
+      box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.28), 0 0 50px rgba(255, 215, 0, 0.1), 0 28px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1)
+    }
+
+    #ch {
+      position: relative;
+      height: 188px;
+      overflow: hidden
+    }
+
+    #cp {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.75)
+    }
+
+    #co {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 35%, rgba(6, 6, 12, 0.97) 100%)
+    }
+
+    #ctype {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      height: 22px;
+      padding: 0 10px;
+      border-radius: 100px;
+      background: rgba(0, 0, 0, 0.65);
+      border: 0.5px solid rgba(255, 255, 255, 0.2);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      align-items: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      backdrop-filter: blur(8px)
+    }
+
+    #crown {
+      position: absolute;
+      top: 12px;
+      right: 48px;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      background: rgba(255, 215, 0, 0.18);
+      border: 0.5px solid rgba(255, 215, 0, 0.45);
+      backdrop-filter: blur(8px)
+    }
+
+    #crown.on {
+      display: flex
+    }
+
+    #crown span {
+      font-size: 10px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffd700
+    }
+
+    #cclose {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      border: 0.5px solid rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all .2s;
+      z-index: 10;
+      backdrop-filter: blur(8px)
+    }
+
+    #cclose:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff
+    }
+
+    #cbody {
+      padding: 16px 20px 20px
+    }
+
+    #ctitle {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 4px
+    }
+
+    #cmeta {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.35);
+      font-weight: 300;
+      margin-bottom: 13px;
+      font-style: italic
+    }
+
+    #crrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 13px
+    }
+
+    #crbar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 100px;
+      overflow: hidden
+    }
+
+    #crfill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--d), var(--b));
+      transition: width .6s cubic-bezier(.23, 1, .32, 1)
+    }
+
+    #crnum {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    #ctags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 14px
+    }
+
+    .ctag {
+      height: 22px;
+      padding: 0 10px;
+      border-radius: 100px;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      border: 0.5px solid
+    }
+
+    #cdesc {
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.47);
+      font-weight: 300;
+      margin-bottom: 14px
+    }
+
+    #spanel {
+      display: none;
+      border-radius: 14px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(255, 79, 216, 0.07), rgba(79, 195, 255, 0.07));
+      border: 0.5px solid rgba(255, 215, 0, 0.22)
+    }
+
+    #spanel.on {
+      display: block
+    }
+
+    #sphdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px
+    }
+
+    #savs {
+      display: flex
+    }
+
+    .sav {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 9px;
+      border: 1.5px solid rgba(0, 0, 0, 0.8)
+    }
+
+    .sav.a {
+      background: var(--a);
+      color: #000;
+      z-index: 2
+    }
+
+    .sav.b {
+      background: var(--b);
+      color: #000;
+      margin-left: -7px;
+      z-index: 1
+    }
+
+    #sptitle {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold)
+    }
+
+    #sloading {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      min-height: 36px
+    }
+
+    #sloading.on {
+      display: flex
+    }
+
+    .sd {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      animation: sb .9s ease-in-out infinite
+    }
+
+    .sd:nth-child(1) {
+      background: var(--a)
+    }
+
+    .sd:nth-child(2) {
+      background: var(--c);
+      animation-delay: .15s
+    }
+
+    .sd:nth-child(3) {
+      background: var(--b);
+      animation-delay: .3s
+    }
+
+    @keyframes sb {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: .5
+      }
+
+      50% {
+        transform: translateY(-5px);
+        opacity: 1
+      }
+    }
+
+    #stext {
+      font-size: 12px;
+      line-height: 1.72;
+      color: rgba(255, 255, 255, 0.54);
+      font-weight: 300
+    }
+
+    /* ── CLUSTER CARD ── */
+    #cluster-card {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%) translateX(420px);
+      width: 340px;
+      max-height: 80vh;
+      background: rgba(6, 6, 12, 0.98);
+      border-radius: 22px;
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.05), 0 28px 90px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: transform .5s cubic-bezier(.23, 1, .32, 1), opacity .4s;
+      opacity: 0;
+      overflow: hidden;
+      z-index: 200;
+      backdrop-filter: blur(32px);
+      pointer-events: none
+    }
+
+    #cluster-card.on {
+      transform: translateY(-50%) translateX(0);
+      opacity: 1;
+      pointer-events: all
+    }
+
+    #cc-head {
+      padding: 20px 20px 16px;
+      flex-shrink: 0;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.08)
+    }
+
+    #cc-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 0.5px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all .2s
+    }
+
+    #cc-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff
+    }
+
+    #cc-dot-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px
+    }
+
+    #cc-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%
+    }
+
+    #cc-tag {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      text-transform: capitalize
+    }
+
+    #cc-count {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.06em;
+      font-family: 'Syne', sans-serif;
+      text-transform: uppercase;
+      font-weight: 500
+    }
+
+    #cc-list {
+      overflow-y: auto;
+      padding: 10px 12px 16px;
+      flex: 1;
+      -webkit-overflow-scrolling: touch
+    }
+
+    #cc-list::-webkit-scrollbar {
+      width: 3px
+    }
+
+    #cc-list::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    #cc-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px
+    }
+
+    .cc-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 3px;
+      border: 0.5px solid transparent
+    }
+
+    .cc-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08)
+    }
+
+    .cc-item.shared {
+      border-color: rgba(255, 215, 0, 0.15)
+    }
+
+    .cc-item.shared:hover {
+      background: rgba(255, 215, 0, 0.05)
+    }
+
+    .cc-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      border: 0.5px solid rgba(255, 255, 255, 0.1)
+    }
+
+    .cc-item-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .cc-item-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.88);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+      margin-bottom: 2px
+    }
+
+    .cc-item-meta {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.28);
+      font-weight: 300;
+      letter-spacing: 0.03em
+    }
+
+    .cc-item-badge {
+      font-size: 9px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      flex-shrink: 0
+    }
+
+    .cc-section-label {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      padding: 8px 10px 4px;
+      margin-top: 4px
+    }
+
+    /* ── TYPE ICONS ── */
+    .icon-movie {
+      background: rgba(79, 195, 255, 0.1);
+      border-color: rgba(79, 195, 255, 0.2)
+    }
+
+    .icon-book {
+      background: rgba(124, 107, 255, 0.1);
+      border-color: rgba(124, 107, 255, 0.2)
+    }
+
+    .icon-album {
+      background: rgba(255, 79, 216, 0.1);
+      border-color: rgba(255, 79, 216, 0.2)
+    }
+
+    .icon-artist {
+      background: rgba(122, 255, 198, 0.1);
+      border-color: rgba(122, 255, 198, 0.2)
+    }
+
+    /* ── TOOLTIP ── */
+    #tip {
+      position: fixed;
+      pointer-events: none;
+      background: rgba(6, 6, 12, 0.95);
+      border: 0.5px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transition: opacity .12s;
+      z-index: 300;
+      white-space: nowrap
+    }
+
+    #tip.on {
+      opacity: 1
+    }
+
+    #tip-shared {
+      font-size: 10px;
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-top: 3px;
+      display: none
+    }
+
+    #tip-shared.on {
+      display: block
+    }
+
+    #tip-cluster {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 2px;
+      display: none
+    }
+
+    #tip-cluster.on {
+      display: block
+    }
+
+    /* ── ZOOM FLASH ── */
+    #zoom-flash {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 500;
+      transition: opacity .15s
+    }
+
+    #zoom-flash.on {
+      opacity: 0.04
+    }
+
+    #hint {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.18);
+      font-family: 'Syne', sans-serif;
+      pointer-events: none;
+      transition: opacity .5s;
+      white-space: nowrap
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      z-index: 1000;
+      transition: opacity .8s ease .3s
+    }
+
+    #loader.off {
+      opacity: 0;
+      pointer-events: none
+    }
+
+    #ll {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      letter-spacing: -.03em;
+      color: #fff
+    }
+
+    #lbw {
+      width: 140px;
+      height: 2px;
+      background: rgba(255, 255, 255, .1);
+      border-radius: 100px;
+      overflow: hidden
+    }
+
+    #lb {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--a), var(--b));
+      animation: lf 1.4s ease forwards
+    }
+
+    @keyframes lf {
+      from {
+        width: 0
+      }
+
+      to {
+        width: 100%
+      }
+    }
+
+    #ls {
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .22);
+      font-family: 'Syne', sans-serif
+    }
+
+    #howto {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity .5s
+    }
+
+    #howto.on {
+      opacity: 1
+    }
+
+    .hw {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: rgba(8, 8, 14, 0.88);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px)
+    }
+
+    .hw-n {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .n1 {
+      background: rgba(255, 79, 216, 0.3);
+      color: var(--a)
+    }
+
+    .n2 {
+      background: rgba(79, 195, 255, 0.3);
+      color: var(--b)
+    }
+
+    .n3 {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--gold)
+    }
+
+    .hw-t {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.42);
+      line-height: 1.5
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      #topbar {
+        padding: 0 16px;
+        height: 52px
+      }
+
+      #logo {
+        font-size: 16px
+      }
+
+      #tagline {
+        display: none
+      }
+
+      #topright {
+        gap: 6px
+      }
+
+      .tbtn {
+        padding: 0 10px;
+        font-size: 11px;
+        height: 28px
+      }
+
+      .tbtn#btn-rot {
+        display: none
+      }
+
+      #switcher {
+        top: 60px
+      }
+
+      .stab {
+        padding: 7px 14px;
+        font-size: 11px
+      }
+
+      #legend {
+        left: 12px;
+        bottom: 80px;
+        gap: 4px
+      }
+
+      .leg {
+        padding: 4px 8px 4px 6px
+      }
+
+      .leg-lbl {
+        font-size: 9px
+      }
+
+      .leg-dot {
+        width: 6px;
+        height: 6px
+      }
+
+      #hint {
+        bottom: 16px;
+        font-size: 9px
+      }
+
+      /* Cards go bottom sheet on mobile */
+      #card {
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 22px 22px 0 0;
+        transform: translateY(110%) !important;
+        transition: transform .45s cubic-bezier(.23, 1, .32, 1), opacity .35s;
+        opacity: 1 !important;
+      }
+
+      #card.on {
+        transform: translateY(0) !important;
+        opacity: 1 !important
+      }
+
+      #ch {
+        height: 140px
+      }
+
+      #cluster-card {
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        max-width: 100%;
+        max-height: 75vh;
+        border-radius: 22px 22px 0 0;
+        transform: translateY(110%) !important;
+        transition: transform .5s cubic-bezier(.23, 1, .32, 1), opacity .4s;
+        opacity: 1 !important;
+      }
+
+      #cluster-card.on {
+        transform: translateY(0) !important;
+        opacity: 1 !important
+      }
+
+      #howto {
+        display: none
+      }
+
+      #tip {
+        display: none
+      }
+
+      #merge-banner {
+        top: 108px
+      }
+
+      #mb-title {
+        font-size: 12px
+      }
+
+      #mb-sub {
+        font-size: 10px
+      }
+    }
+  </style>
+  <script type="importmap">
 {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
 </script>
 </head>
+
 <body>
-<script>if(new URLSearchParams(location.search).has('bg'))document.body.classList.add('bg')</script>
+  <script>if (new URLSearchParams(location.search).has('bg')) document.body.classList.add('bg')</script>
 
-<div id="loader"><div id="ll">TasteMap</div><div id="lbw"><div id="lb"></div></div><div id="ls">Mapping your universe</div></div>
-<div id="zoom-flash"></div>
-
-<div id="topbar">
-  <div id="logo"><div id="logo-dot"></div>TasteMap</div>
-  <div id="tagline">Your cultural constellation</div>
-  <div id="topright">
-    <button class="tbtn active" id="btn-rot">Rotate</button>
-    <button class="tbtn" id="btn-rst">Reset</button>
-    <button class="tbtn" id="btn-merge">✦ Merge Tastes</button>
+  <div id="loader">
+    <div id="ll">TasteMap</div>
+    <div id="lbw">
+      <div id="lb"></div>
+    </div>
+    <div id="ls">Mapping your universe</div>
   </div>
-</div>
+  <div id="zoom-flash"></div>
 
-<div id="switcher">
-  <button class="stab u1 on" id="t1">Alex</button>
-  <div class="ssep"></div>
-  <button class="stab u2" id="t2">Jordan</button>
-  <div class="ssep" id="sep-mg" style="display:none"></div>
-  <button class="stab mg" id="tmg" style="display:none">✦ Combined</button>
-</div>
+  <div id="topbar">
+    <div id="logo">
+      <div id="logo-dot"></div>TasteMap
+    </div>
+    <div id="tagline">Your cultural constellation</div>
+    <div id="topright">
+      <button class="tbtn active" id="btn-rot">Rotate</button>
+      <button class="tbtn" id="btn-rst">Reset</button>
+      <button class="tbtn" id="btn-merge">✦ Merge Tastes</button>
+    </div>
+  </div>
 
-<div id="merge-banner">
-  <div id="mb-title">Alex &amp; Jordan — TasteGraph</div>
-  <div id="mb-sub">Golden nodes = shared taste · click to discover why</div>
-</div>
+  <div id="switcher">
+    <button class="stab u1 on" id="t1">Alex</button>
+    <div class="ssep"></div>
+    <button class="stab u2" id="t2">Jordan</button>
+    <div class="ssep" id="sep-mg" style="display:none"></div>
+    <button class="stab mg" id="tmg" style="display:none">✦ Combined</button>
+  </div>
 
-<div id="legend"></div>
-<div id="hint">Click any node to explore · tap legend to zoom</div>
+  <div id="merge-banner">
+    <div id="mb-title">Alex &amp; Jordan — TasteGraph</div>
+    <div id="mb-sub">Golden nodes = shared taste · click to discover why</div>
+  </div>
 
-<div id="howto">
-  <div class="hw"><div class="hw-n n1">1</div><div class="hw-t">Alex's constellation — click nodes to explore</div></div>
-  <div class="hw"><div class="hw-n n2">2</div><div class="hw-t">Switch to Jordan to see their taste universe</div></div>
-  <div class="hw"><div class="hw-n n3">3</div><div class="hw-t">Hit Merge — shared nodes glow gold &amp; pulse</div></div>
-</div>
+  <div id="legend"></div>
+  <div id="hint">Click any node to explore · tap legend to zoom</div>
 
-<!-- Media Card -->
-<div id="card">
-  <div id="crown"><span>✦ Shared Taste</span></div>
-  <button id="cclose">✕</button>
-  <div id="ch"><img id="cp" alt=""><div id="co"></div><div id="ctype"></div></div>
-  <div id="cbody">
-    <div id="ctitle"></div>
-    <div id="cmeta"></div>
-    <div id="crrow"><div id="crbar"><div id="crfill"></div></div><div id="crnum"></div></div>
-    <div id="ctags"></div>
-    <div id="cdesc"></div>
-    <div id="spanel">
-      <div id="sphdr">
-        <div id="savs"><div class="sav a">A</div><div class="sav b">J</div></div>
-        <div id="sptitle">Why you both love this</div>
+  <div id="howto">
+    <div class="hw">
+      <div class="hw-n n1">1</div>
+      <div class="hw-t">Alex's constellation — click nodes to explore</div>
+    </div>
+    <div class="hw">
+      <div class="hw-n n2">2</div>
+      <div class="hw-t">Switch to Jordan to see their taste universe</div>
+    </div>
+    <div class="hw">
+      <div class="hw-n n3">3</div>
+      <div class="hw-t">Hit Merge — shared nodes glow gold &amp; pulse</div>
+    </div>
+  </div>
+
+  <!-- Media Card -->
+  <div id="card">
+    <div id="crown"><span>✦ Shared Taste</span></div>
+    <button id="cclose">✕</button>
+    <div id="ch"><img id="cp" alt="">
+      <div id="co"></div>
+      <div id="ctype"></div>
+    </div>
+    <div id="cbody">
+      <div id="ctitle"></div>
+      <div id="cmeta"></div>
+      <div id="crrow">
+        <div id="crbar">
+          <div id="crfill"></div>
+        </div>
+        <div id="crnum"></div>
       </div>
-      <div id="sloading"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>
-      <div id="stext"></div>
+      <div id="ctags"></div>
+      <div id="cdesc"></div>
+      <div id="spanel">
+        <div id="sphdr">
+          <div id="savs">
+            <div class="sav a">A</div>
+            <div class="sav b">J</div>
+          </div>
+          <div id="sptitle">Why you both love this</div>
+        </div>
+        <div id="sloading">
+          <div class="sd"></div>
+          <div class="sd"></div>
+          <div class="sd"></div>
+        </div>
+        <div id="stext"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Cluster Card -->
-<div id="cluster-card">
-  <button id="cc-close">✕</button>
-  <div id="cc-head">
-    <div id="cc-dot-wrap">
-      <div id="cc-dot"></div>
-      <div id="cc-tag"></div>
+  <!-- Cluster Card -->
+  <div id="cluster-card">
+    <button id="cc-close">✕</button>
+    <div id="cc-head">
+      <div id="cc-dot-wrap">
+        <div id="cc-dot"></div>
+        <div id="cc-tag"></div>
+      </div>
+      <div id="cc-count"></div>
     </div>
-    <div id="cc-count"></div>
+    <div id="cc-list"></div>
   </div>
-  <div id="cc-list"></div>
-</div>
 
-<div id="tip"><div id="tip-name"></div><div id="tip-shared">✦ shared taste</div><div id="tip-cluster">⬡ cluster node</div></div>
+  <div id="tip">
+    <div id="tip-name"></div>
+    <div id="tip-shared">✦ shared taste</div>
+    <div id="tip-cluster">⬡ cluster node</div>
+  </div>
 
-<script type="module">
-import * as THREE from "three"
-import {EffectComposer} from "three/addons/postprocessing/EffectComposer.js"
-import {RenderPass} from "three/addons/postprocessing/RenderPass.js"
-import {UnrealBloomPass} from "three/addons/postprocessing/UnrealBloomPass.js"
+  <script type="module">
+    import * as THREE from "three"
+    import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js"
+    import { RenderPass } from "three/addons/postprocessing/RenderPass.js"
+    import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 
-const TAGS=["sci-fi","fantasy","philosophy","electronic","classical","art","psychology"]
-const COLORS=[0xff4fd8,0xff7a3d,0x4fc3ff,0x7c6bff,0xff5ea8,0x7affc6,0xd7ff5a]
-const TCSS=["#ff4fd8","#ff7a3d","#4fc3ff","#7c6bff","#ff5ea8","#7affc6","#d7ff5a"]
-const TYPE_ICONS={"Movie":"🎬","Book":"📖","Album":"🎵","Artist":"🎨"}
+      // Seeded PRNG — same layout on every reload
+      ; (function () {
+        let s = 0x4a7c3f91 | 0
+        Math.random = function () { s = Math.imul(s ^ s >>> 15, s | 1); s ^= s + Math.imul(s ^ s >>> 7, s | 61); return ((s ^ s >>> 14) >>> 0) / 4294967296 }
+      })()
 
-const ALL=[
-  {id:"blade-runner",title:"Blade Runner 2049",type:"Movie",year:2017,rating:9.1,tags:["sci-fi","philosophy"],desc:"A haunting neo-noir asking what it means to be human in a world of artificial beings."},
-  {id:"annihilation",title:"Annihilation",type:"Movie",year:2018,rating:8.7,tags:["sci-fi","psychology"],desc:"A mesmerising expedition into an alien zone where biology and identity collapse."},
-  {id:"dune",title:"Dune",type:"Movie",year:2021,rating:8.9,tags:["sci-fi","philosophy"],desc:"Epic worldbuilding meets political allegory across sand and prophecy."},
-  {id:"solaris",title:"Solaris",type:"Movie",year:1972,rating:8.4,tags:["sci-fi","philosophy"],desc:"Tarkovsky's meditative masterpiece about grief, consciousness, and the unknowable."},
-  {id:"ex-machina",title:"Ex Machina",type:"Movie",year:2014,rating:8.6,tags:["sci-fi","psychology"],desc:"A tense chamber piece probing power, AI, and manipulation."},
-  {id:"arrival",title:"Arrival",type:"Movie",year:2016,rating:9.0,tags:["sci-fi","philosophy"],desc:"Language shapes reality — and grief — in this devastating first-contact film."},
-  {id:"her",title:"Her",type:"Movie",year:2013,rating:9.2,tags:["sci-fi","psychology"],desc:"Jonze's tender film about love, loneliness, and the limits of connection."},
-  {id:"moon",title:"Moon",type:"Movie",year:2009,rating:8.8,tags:["sci-fi","philosophy"],desc:"Claustrophobic and heartbreaking — Sam Rockwell alone on a lunar mining station."},
-  {id:"neuromancer",title:"Neuromancer",type:"Book",year:1984,rating:8.8,tags:["sci-fi","electronic"],desc:"Gibson coined cyberspace in this seminal cyberpunk novel of hacking and corporate noir."},
-  {id:"never-let-me-go",title:"Never Let Me Go",type:"Book",year:2005,rating:9.0,tags:["sci-fi","philosophy"],desc:"Ishiguro's quiet heartbreak — a dystopia felt through longing, not spectacle."},
-  {id:"left-hand",title:"Left Hand of Darkness",type:"Book",year:1969,rating:9.3,tags:["sci-fi","philosophy"],desc:"Le Guin's humanist masterpiece on gender, loyalty, and what it means to be alien."},
-  {id:"hyperion",title:"Hyperion",type:"Book",year:1989,rating:9.1,tags:["sci-fi","philosophy"],desc:"Simmons weaves Canterbury Tales into a universe-spanning space opera."},
-  {id:"childhood-end",title:"Childhood's End",type:"Book",year:1953,rating:8.7,tags:["sci-fi","philosophy"],desc:"Clarke's cold, majestic vision of humanity's transcendent and terrible end."},
-  {id:"altered-carbon",title:"Altered Carbon",type:"Book",year:2002,rating:9.0,tags:["sci-fi","philosophy"],desc:"Morgan imagines identity in a world of sleeved, disposable consciousness."},
-  {id:"2001",title:"2001: A Space Odyssey",type:"Movie",year:1968,rating:9.6,tags:["sci-fi","philosophy","art"],desc:"Kubrick's monolith — the dawn of man to the birth of something unnameable."},
-  {id:"stalker",title:"Stalker",type:"Movie",year:1979,rating:9.2,tags:["sci-fi","philosophy"],desc:"A zone where your deepest wish might destroy you — Tarkovsky at his most mythic."},
-  {id:"contact",title:"Contact",type:"Movie",year:1997,rating:8.8,tags:["sci-fi","philosophy"],desc:"Sagan's novel made film — science, faith, and the longing to not be alone."},
-  {id:"under-skin",title:"Under the Skin",type:"Movie",year:2013,rating:8.6,tags:["sci-fi","art"],desc:"Glazer's alien prowling Glasgow — embodiment and predation made hallucinatory."},
-  {id:"lotr",title:"The Lord of the Rings",type:"Movie",year:2001,rating:9.4,tags:["fantasy","art"],desc:"Jackson's trilogy redefined what fantasy cinema could achieve."},
-  {id:"spirited-away",title:"Spirited Away",type:"Movie",year:2001,rating:9.3,tags:["fantasy","art"],desc:"Miyazaki's dreamlike journey into a spirit world of breathtaking imagination."},
-  {id:"pans-labyrinth",title:"Pan's Labyrinth",type:"Movie",year:2006,rating:8.8,tags:["fantasy","art"],desc:"Del Toro's dark fable weaves fascist Spain with a labyrinthine underworld."},
-  {id:"princess-mononoke",title:"Princess Mononoke",type:"Movie",year:1997,rating:9.3,tags:["fantasy","art"],desc:"Miyazaki's epic clash of industry and nature — morally ambiguous and breathtaking."},
-  {id:"name-of-wind",title:"The Name of the Wind",type:"Book",year:2007,rating:9.1,tags:["fantasy","art"],desc:"Rothfuss weaves a legendary hero's origin with gorgeous prose and deep lore."},
-  {id:"earthsea",title:"A Wizard of Earthsea",type:"Book",year:1968,rating:9.0,tags:["fantasy","philosophy"],desc:"Le Guin's foundational fantasy about the shadow we run from inside ourselves."},
-  {id:"gormenghast",title:"Gormenghast",type:"Book",year:1950,rating:8.9,tags:["fantasy","art"],desc:"Peake's grotesque, gothic castle-world defies every fantasy convention."},
-  {id:"hundred-years",title:"One Hundred Years of Solitude",type:"Book",year:1967,rating:9.4,tags:["fantasy","philosophy"],desc:"García Márquez invented magical realism's greatest expression of family and fate."},
-  {id:"master-margarita",title:"The Master and Margarita",type:"Book",year:1967,rating:9.5,tags:["fantasy","philosophy"],desc:"Bulgakov's satire — the devil visits Soviet Moscow and everyone is found wanting."},
-  {id:"little-big",title:"Little, Big",type:"Book",year:1981,rating:8.9,tags:["fantasy","art"],desc:"Crowley's sprawling fairy tale about a family enchanted by a world within worlds."},
-  {id:"zarathustra",title:"Thus Spoke Zarathustra",type:"Book",year:1883,rating:8.7,tags:["philosophy"],desc:"Nietzsche's lyrical proclamation of the Übermensch and the death of God."},
-  {id:"sapiens",title:"Sapiens",type:"Book",year:2011,rating:8.9,tags:["philosophy","psychology"],desc:"Harari traces humanity's rise through biology, myth, and empire."},
-  {id:"being-time",title:"Being and Time",type:"Book",year:1927,rating:8.5,tags:["philosophy"],desc:"Heidegger's dense interrogation of existence, time, and authentic living."},
-  {id:"republic",title:"The Republic",type:"Book",year:-380,rating:9.0,tags:["philosophy"],desc:"Plato's foundational dialogue on justice, the ideal state, and the philosopher king."},
-  {id:"meditations",title:"Meditations",type:"Book",year:180,rating:9.5,tags:["philosophy","psychology"],desc:"Marcus Aurelius's private Stoic diary — the most practical wisdom ever written."},
-  {id:"tao",title:"Tao Te Ching",type:"Book",year:-400,rating:9.3,tags:["philosophy"],desc:"Laozi's 81 verses that birthed an entire way of being in the world."},
-  {id:"godel-escher",title:"Gödel, Escher, Bach",type:"Book",year:1979,rating:9.2,tags:["philosophy","art"],desc:"Hofstadter's dazzling fugue on consciousness, recursion, and strange loops."},
-  {id:"denial-death",title:"The Denial of Death",type:"Book",year:1973,rating:9.2,tags:["psychology","philosophy"],desc:"Becker's Pulitzer winner — all human culture is a defence against mortality."},
-  {id:"phaedrus",title:"Phaedrus",type:"Book",year:-370,rating:8.8,tags:["psychology","philosophy"],desc:"Plato on love, beauty, madness, and the soul's chariot driven by two horses."},
-  {id:"burial-untrue",title:"Burial — Untrue",type:"Album",year:2007,rating:9.4,tags:["electronic","art"],desc:"Urban ghost music — the definitive post-dubstep masterpiece of loneliness."},
-  {id:"aphex-syro",title:"Aphex Twin — SYRO",type:"Album",year:2014,rating:9.0,tags:["electronic"],desc:"Richard James returns with meticulously constructed IDM euphoria."},
-  {id:"kid-a",title:"Radiohead — Kid A",type:"Album",year:2000,rating:9.5,tags:["electronic","philosophy"],desc:"Rock's most audacious reinvention — cold, alien, and utterly essential."},
-  {id:"arca-kick",title:"Arca — Kick i",type:"Album",year:2020,rating:8.8,tags:["electronic","art"],desc:"Venezuelan-born Arca fuses flamenco and avant electronics into something new."},
-  {id:"mezzanine",title:"Massive Attack — Mezzanine",type:"Album",year:1998,rating:9.2,tags:["electronic","art"],desc:"Darkest trip-hop. A paranoid, cinematic record drenched in dread."},
-  {id:"jon-immunity",title:"Jon Hopkins — Immunity",type:"Album",year:2013,rating:9.0,tags:["electronic","philosophy"],desc:"A night cycle in sound — club-floor euphoria to fragile morning light."},
-  {id:"boards-music",title:"Boards of Canada — Music Has The Right",type:"Album",year:1998,rating:9.1,tags:["electronic","art"],desc:"Nostalgia and unease — childhood memories soaked in Scottish mist."},
-  {id:"autechre-tri",title:"Autechre — Tri Repetae",type:"Album",year:1995,rating:8.9,tags:["electronic"],desc:"Maximally abstract machine music that rewards deep listening."},
-  {id:"four-tet-rounds",title:"Four Tet — Rounds",type:"Album",year:2003,rating:9.0,tags:["electronic","art"],desc:"Folktronica at its warmest — organic and digital in perfect balance."},
-  {id:"actress-splazsh",title:"Actress — Splazsh",type:"Album",year:2010,rating:8.7,tags:["electronic","art"],desc:"Fractured, corroded house music from deep inside an alien city."},
-  {id:"flying-lotus",title:"Flying Lotus — Cosmogramma",type:"Album",year:2010,rating:9.1,tags:["electronic","art"],desc:"Jazz, hip-hop, and electronics collide in a cosmic explosion of grief and wonder."},
-  {id:"eno-ambient",title:"Brian Eno — Ambient 1",type:"Album",year:1978,rating:9.4,tags:["electronic","philosophy"],desc:"Eno invented ambient music in a hospital bed — tones that blend with silence."},
-  {id:"kraftwerk-autobahn",title:"Kraftwerk — Autobahn",type:"Album",year:1974,rating:9.2,tags:["electronic"],desc:"The birth of electronic pop — a 22-minute motorway journey into the future."},
-  {id:"daft-punk-discovery",title:"Daft Punk — Discovery",type:"Album",year:2001,rating:9.3,tags:["electronic","art"],desc:"French house euphoria — every track a love letter to music's transformative power."},
-  {id:"portishead-dummy",title:"Portishead — Dummy",type:"Album",year:1994,rating:9.4,tags:["electronic","art"],desc:"Trip-hop's defining debut — vinyl crackle and ache crystallised into ten perfect songs."},
-  {id:"james-blake",title:"James Blake — Overgrown",type:"Album",year:2013,rating:9.0,tags:["electronic","philosophy"],desc:"Post-dubstep and gospel collapse into each other — grief and grace entangled."},
-  {id:"prurient",title:"Prurient — Frozen Niagara Falls",type:"Album",year:2015,rating:8.8,tags:["electronic","psychology"],desc:"Industrial noise pushed to its most human and devastated extreme."},
-  {id:"goldberg",title:"Bach — Goldberg Variations",type:"Album",year:1741,rating:9.6,tags:["classical"],desc:"Glenn Gould's 1981 recording remains the high-water mark of contrapuntal perfection."},
-  {id:"tabula-rasa",title:"Arvo Pärt — Tabula Rasa",type:"Album",year:1984,rating:9.1,tags:["classical","philosophy"],desc:"Tintinnabuli — the bell-like purity of Pärt's minimalist spirituality."},
-  {id:"shostakovich",title:"Shostakovich String Quartets",type:"Album",year:1960,rating:9.3,tags:["classical","psychology"],desc:"Coded protest and raw anguish compressed into chamber music."},
-  {id:"satie",title:"Erik Satie — Gymnopédies",type:"Album",year:1888,rating:9.0,tags:["classical","art"],desc:"Three melancholic pieces that invented ambient music a century early."},
-  {id:"reich-music",title:"Steve Reich — Music for 18 Musicians",type:"Album",year:1978,rating:9.5,tags:["classical","electronic"],desc:"Minimalism's crowning achievement — patterns rippling across time like water."},
-  {id:"schubert-winter",title:"Schubert — Winterreise",type:"Album",year:1828,rating:9.4,tags:["classical","philosophy"],desc:"A solitary winter journey through grief, delusion, and acceptance."},
-  {id:"messiaen-quartet",title:"Messiaen — Quartet for End of Time",type:"Album",year:1941,rating:9.3,tags:["classical","philosophy"],desc:"Written in a Nazi prison camp — transcendence forged in extremity."},
-  {id:"debussy-images",title:"Debussy — Images",type:"Album",year:1907,rating:9.0,tags:["classical","art"],desc:"Impressionist piano paintings — sound as watercolour and light."},
-  {id:"olafur",title:"Ólafur Arnalds — re:member",type:"Album",year:2018,rating:8.9,tags:["classical","electronic"],desc:"Icelandic composer blending neoclassical piano with ambient electronics."},
-  {id:"beethoven-late",title:"Beethoven — Late String Quartets",type:"Album",year:1826,rating:9.6,tags:["classical","philosophy"],desc:"Written deaf and alone — the most transcendent chamber music ever composed."},
-  {id:"coltrane-love",title:"Coltrane — A Love Supreme",type:"Album",year:1965,rating:9.7,tags:["classical","philosophy"],desc:"The summit of jazz spirituality — a suite of devotion, resolve, and thanks."},
-  {id:"feldman-rothko",title:"Feldman — Rothko Chapel",type:"Album",year:1972,rating:9.0,tags:["classical","art","philosophy"],desc:"Written for Rothko's final paintings — silence as much as sound."},
-  {id:"nils-frahm",title:"Nils Frahm — All Melody",type:"Album",year:2018,rating:9.1,tags:["classical","electronic"],desc:"Berlin's favourite composer blurs acoustic piano with synthesizer into something new."},
-  {id:"frida",title:"Frida Kahlo",type:"Artist",year:1939,rating:9.5,tags:["art","psychology"],desc:"Visceral self-portraiture fusing surrealism with Mexican folk tradition and pain."},
-  {id:"rothko",title:"Mark Rothko",type:"Artist",year:1958,rating:9.0,tags:["art","philosophy"],desc:"Monumental colour field canvases that hover between grief and transcendence."},
-  {id:"kusama",title:"Yayoi Kusama",type:"Artist",year:1960,rating:8.9,tags:["art","psychology"],desc:"Obliteration and infinity — polka dots that devour the world."},
-  {id:"bacon",title:"Francis Bacon",type:"Artist",year:1953,rating:9.1,tags:["art","philosophy"],desc:"Distorted figures trapped in existential crisis on raw, painterly surfaces."},
-  {id:"kiefer",title:"Anselm Kiefer",type:"Artist",year:1975,rating:9.0,tags:["art","philosophy"],desc:"Vast paintings layered with myth, lead, ash, and German history."},
-  {id:"bourgeois",title:"Louise Bourgeois",type:"Artist",year:1974,rating:8.8,tags:["art","psychology"],desc:"Giant spiders and intimate cells — childhood trauma made monumental and tender."},
-  {id:"turrell",title:"James Turrell",type:"Artist",year:1967,rating:9.2,tags:["art","philosophy"],desc:"Light itself is the medium — immersive skyspaces that reshape perception."},
-  {id:"richter",title:"Gerhard Richter",type:"Artist",year:1962,rating:9.1,tags:["art","philosophy"],desc:"Photorealism blurred into abstraction — memory and loss made painterly."},
-  {id:"basquiat",title:"Jean-Michel Basquiat",type:"Artist",year:1981,rating:9.0,tags:["art","psychology"],desc:"Raw, crowned figures scrawled with fury, anatomy, and coded Black experience."},
-  {id:"hockney",title:"David Hockney — A Bigger Splash",type:"Artist",year:1967,rating:8.8,tags:["art"],desc:"California pool scenes of flat colour and luxurious stillness frozen in time."},
-  {id:"naoshima",title:"Naoshima Island",type:"Artist",year:1992,rating:9.4,tags:["art","philosophy"],desc:"Ando's art island — architecture and installation fused with nature and sea."},
-  {id:"olafur-sun",title:"Olafur Eliasson — The Weather Project",type:"Artist",year:2003,rating:9.1,tags:["art","philosophy"],desc:"A glowing sun fills the Turbine Hall — visitors lie on the floor and stare."},
-  {id:"brutalism",title:"Brutalism",type:"Artist",year:1960,rating:8.7,tags:["art","philosophy"],desc:"Raw concrete as monument — the architectural movement that split opinion eternally."},
-  {id:"thinking",title:"Thinking, Fast and Slow",type:"Book",year:2011,rating:8.6,tags:["psychology","philosophy"],desc:"Kahneman's landmark work on the two systems governing our decisions."},
-  {id:"mans-search",title:"Man's Search for Meaning",type:"Book",year:1946,rating:9.4,tags:["psychology","philosophy"],desc:"Frankl's account of surviving Auschwitz and discovering logotherapy."},
-  {id:"jung-archetypes",title:"Jung — The Archetypes",type:"Book",year:1959,rating:8.8,tags:["psychology","philosophy"],desc:"The collective unconscious, shadow, anima — Jung's foundational concepts mapped."},
-  {id:"varieties",title:"The Varieties of Religious Experience",type:"Book",year:1902,rating:8.9,tags:["psychology","philosophy"],desc:"William James surveys mysticism, conversion, and the psychology of belief."},
-  {id:"flow",title:"Flow",type:"Book",year:1990,rating:8.7,tags:["psychology"],desc:"Csikszentmihalyi on optimal experience — losing yourself to become more."},
-  {id:"body-keeps",title:"The Body Keeps the Score",type:"Book",year:2014,rating:9.1,tags:["psychology"],desc:"Van der Kolk's definitive account of how trauma reshapes mind, brain, and body."},
-  {id:"stoner",title:"Stoner",type:"Book",year:1965,rating:9.2,tags:["psychology","philosophy"],desc:"John Williams's quiet masterpiece about a life of dignity, quiet, and loss."},
-  {id:"interpretation-dreams",title:"The Interpretation of Dreams",type:"Book",year:1899,rating:8.6,tags:["psychology"],desc:"Freud's founding text — the unconscious speaks in symbols while we sleep."},
-  {id:"gift-imperfection",title:"The Gifts of Imperfection",type:"Book",year:2010,rating:8.4,tags:["psychology"],desc:"Brené Brown on letting go of who we should be and embracing who we are."},
-  {id:"pale-fire",title:"Pale Fire",type:"Book",year:1962,rating:9.1,tags:["art","philosophy"],desc:"Nabokov's novel-as-poem-as-commentary — unreliable narration at its most dazzling."},
-  {id:"borges-labyrinths",title:"Borges — Labyrinths",type:"Book",year:1962,rating:9.5,tags:["fantasy","philosophy"],desc:"Infinite libraries, garden paths, mirrors — fiction that contains the universe."},
-  {id:"visible-invisible",title:"The Visible and the Invisible",type:"Book",year:1968,rating:8.6,tags:["philosophy"],desc:"Merleau-Ponty's unfinished phenomenology of perception, flesh, and the world."},
-  {id:"four-quartets",title:"T.S. Eliot — Four Quartets",type:"Book",year:1943,rating:9.3,tags:["philosophy","art"],desc:"Time, memory, and redemption — Eliot's finest meditative verse."},
-  {id:"crying-lot-49",title:"The Crying of Lot 49",type:"Book",year:1966,rating:8.8,tags:["art","philosophy"],desc:"Pynchon's slender paranoid masterpiece — signs proliferate and cohere into nothing."},
-  {id:"blindness",title:"Blindness",type:"Book",year:1995,rating:9.0,tags:["philosophy","psychology"],desc:"Saramago's allegory of a society unravelling when sight suddenly fails everyone."},
-  {id:"music-chance",title:"Music of Chance",type:"Book",year:1990,rating:8.7,tags:["philosophy","art"],desc:"Auster's strange fable — two men trapped by fortune and a wall of stones."},
-  {id:"disintegration-loops",title:"Basinski — The Disintegration Loops",type:"Album",year:2002,rating:9.4,tags:["classical","art","philosophy"],desc:"Magnetic tape crumbling in real time — beauty decaying into silence."},
-  {id:"grouper-dragging",title:"Grouper — Dragging a Dead Deer",type:"Album",year:2008,rating:9.1,tags:["electronic","art"],desc:"Lo-fi folk drenched in reverb — grief made ambient and luminous."},
-]
+    const TAGS = ["sci-fi", "fantasy", "philosophy", "electronic", "classical", "art", "psychology"]
+    const COLORS = [0xff4fd8, 0xff7a3d, 0x4fc3ff, 0x7c6bff, 0xff5ea8, 0x7affc6, 0xd7ff5a]
+    const TCSS = ["#ff4fd8", "#ff7a3d", "#4fc3ff", "#7c6bff", "#ff5ea8", "#7affc6", "#d7ff5a"]
+    const TYPE_ICONS = { "Movie": "🎬", "Book": "📖", "Album": "🎵", "Artist": "🎨" }
 
-const ALEX_IDS=new Set(["blade-runner","annihilation","dune","solaris","ex-machina","arrival","her","neuromancer","never-let-me-go","left-hand","hyperion","2001","stalker","contact","altered-carbon","lotr","spirited-away","pans-labyrinth","name-of-wind","earthsea","gormenghast","master-margarita","zarathustra","sapiens","republic","meditations","godel-escher","denial-death","burial-untrue","aphex-syro","kid-a","arca-kick","mezzanine","jon-immunity","boards-music","four-tet-rounds","flying-lotus","eno-ambient","daft-punk-discovery","portishead-dummy","goldberg","tabula-rasa","shostakovich","satie","reich-music","schubert-winter","olafur","beethoven-late","coltrane-love","feldman-rothko","nils-frahm","frida","rothko","kusama","bacon","kiefer","turrell","richter","naoshima","olafur-sun","thinking","mans-search","jung-archetypes","stoner","borges-labyrinths","four-quartets","pale-fire","disintegration-loops","grouper-dragging"])
-const JORDAN_IDS=new Set(["blade-runner","dune","arrival","her","moon","left-hand","childhood-end","2001","stalker","contact","under-skin","spirited-away","pans-labyrinth","princess-mononoke","hundred-years","master-margarita","little-big","zarathustra","republic","meditations","tao","godel-escher","phaedrus","denial-death","kid-a","arca-kick","mezzanine","autechre-tri","actress-splazsh","flying-lotus","eno-ambient","james-blake","prurient","goldberg","tabula-rasa","reich-music","messiaen-quartet","debussy-images","olafur","beethoven-late","coltrane-love","feldman-rothko","frida","kusama","bourgeois","basquiat","richter","naoshima","olafur-sun","brutalism","thinking","mans-search","varieties","body-keeps","jung-archetypes","interpretation-dreams","borges-labyrinths","four-quartets","crying-lot-49","blindness","visible-invisible","disintegration-loops","grouper-dragging","shostakovich","satie","schubert-winter","nils-frahm"])
-const SHARED_IDS=new Set([...ALEX_IDS].filter(id=>JORDAN_IDS.has(id)))
+    const ALL = [
+      { id: "blade-runner", title: "Blade Runner 2049", type: "Movie", year: 2017, rating: 9.1, tags: ["sci-fi", "philosophy"], desc: "A haunting neo-noir asking what it means to be human in a world of artificial beings." },
+      { id: "annihilation", title: "Annihilation", type: "Movie", year: 2018, rating: 8.7, tags: ["sci-fi", "psychology"], desc: "A mesmerising expedition into an alien zone where biology and identity collapse." },
+      { id: "dune", title: "Dune", type: "Movie", year: 2021, rating: 8.9, tags: ["sci-fi", "philosophy"], desc: "Epic worldbuilding meets political allegory across sand and prophecy." },
+      { id: "solaris", title: "Solaris", type: "Movie", year: 1972, rating: 8.4, tags: ["sci-fi", "philosophy"], desc: "Tarkovsky's meditative masterpiece about grief, consciousness, and the unknowable." },
+      { id: "ex-machina", title: "Ex Machina", type: "Movie", year: 2014, rating: 8.6, tags: ["sci-fi", "psychology"], desc: "A tense chamber piece probing power, AI, and manipulation." },
+      { id: "arrival", title: "Arrival", type: "Movie", year: 2016, rating: 9.0, tags: ["sci-fi", "philosophy"], desc: "Language shapes reality — and grief — in this devastating first-contact film." },
+      { id: "her", title: "Her", type: "Movie", year: 2013, rating: 9.2, tags: ["sci-fi", "psychology"], desc: "Jonze's tender film about love, loneliness, and the limits of connection." },
+      { id: "moon", title: "Moon", type: "Movie", year: 2009, rating: 8.8, tags: ["sci-fi", "philosophy"], desc: "Claustrophobic and heartbreaking — Sam Rockwell alone on a lunar mining station." },
+      { id: "neuromancer", title: "Neuromancer", type: "Book", year: 1984, rating: 8.8, tags: ["sci-fi", "electronic"], desc: "Gibson coined cyberspace in this seminal cyberpunk novel of hacking and corporate noir." },
+      { id: "never-let-me-go", title: "Never Let Me Go", type: "Book", year: 2005, rating: 9.0, tags: ["sci-fi", "philosophy"], desc: "Ishiguro's quiet heartbreak — a dystopia felt through longing, not spectacle." },
+      { id: "left-hand", title: "Left Hand of Darkness", type: "Book", year: 1969, rating: 9.3, tags: ["sci-fi", "philosophy"], desc: "Le Guin's humanist masterpiece on gender, loyalty, and what it means to be alien." },
+      { id: "hyperion", title: "Hyperion", type: "Book", year: 1989, rating: 9.1, tags: ["sci-fi", "philosophy"], desc: "Simmons weaves Canterbury Tales into a universe-spanning space opera." },
+      { id: "childhood-end", title: "Childhood's End", type: "Book", year: 1953, rating: 8.7, tags: ["sci-fi", "philosophy"], desc: "Clarke's cold, majestic vision of humanity's transcendent and terrible end." },
+      { id: "altered-carbon", title: "Altered Carbon", type: "Book", year: 2002, rating: 9.0, tags: ["sci-fi", "philosophy"], desc: "Morgan imagines identity in a world of sleeved, disposable consciousness." },
+      { id: "2001", title: "2001: A Space Odyssey", type: "Movie", year: 1968, rating: 9.6, tags: ["sci-fi", "philosophy", "art"], desc: "Kubrick's monolith — the dawn of man to the birth of something unnameable." },
+      { id: "stalker", title: "Stalker", type: "Movie", year: 1979, rating: 9.2, tags: ["sci-fi", "philosophy"], desc: "A zone where your deepest wish might destroy you — Tarkovsky at his most mythic." },
+      { id: "contact", title: "Contact", type: "Movie", year: 1997, rating: 8.8, tags: ["sci-fi", "philosophy"], desc: "Sagan's novel made film — science, faith, and the longing to not be alone." },
+      { id: "under-skin", title: "Under the Skin", type: "Movie", year: 2013, rating: 8.6, tags: ["sci-fi", "art"], desc: "Glazer's alien prowling Glasgow — embodiment and predation made hallucinatory." },
+      { id: "lotr", title: "The Lord of the Rings", type: "Movie", year: 2001, rating: 9.4, tags: ["fantasy", "art"], desc: "Jackson's trilogy redefined what fantasy cinema could achieve." },
+      { id: "spirited-away", title: "Spirited Away", type: "Movie", year: 2001, rating: 9.3, tags: ["fantasy", "art"], desc: "Miyazaki's dreamlike journey into a spirit world of breathtaking imagination." },
+      { id: "pans-labyrinth", title: "Pan's Labyrinth", type: "Movie", year: 2006, rating: 8.8, tags: ["fantasy", "art"], desc: "Del Toro's dark fable weaves fascist Spain with a labyrinthine underworld." },
+      { id: "princess-mononoke", title: "Princess Mononoke", type: "Movie", year: 1997, rating: 9.3, tags: ["fantasy", "art"], desc: "Miyazaki's epic clash of industry and nature — morally ambiguous and breathtaking." },
+      { id: "name-of-wind", title: "The Name of the Wind", type: "Book", year: 2007, rating: 9.1, tags: ["fantasy", "art"], desc: "Rothfuss weaves a legendary hero's origin with gorgeous prose and deep lore." },
+      { id: "earthsea", title: "A Wizard of Earthsea", type: "Book", year: 1968, rating: 9.0, tags: ["fantasy", "philosophy"], desc: "Le Guin's foundational fantasy about the shadow we run from inside ourselves." },
+      { id: "gormenghast", title: "Gormenghast", type: "Book", year: 1950, rating: 8.9, tags: ["fantasy", "art"], desc: "Peake's grotesque, gothic castle-world defies every fantasy convention." },
+      { id: "hundred-years", title: "One Hundred Years of Solitude", type: "Book", year: 1967, rating: 9.4, tags: ["fantasy", "philosophy"], desc: "García Márquez invented magical realism's greatest expression of family and fate." },
+      { id: "master-margarita", title: "The Master and Margarita", type: "Book", year: 1967, rating: 9.5, tags: ["fantasy", "philosophy"], desc: "Bulgakov's satire — the devil visits Soviet Moscow and everyone is found wanting." },
+      { id: "little-big", title: "Little, Big", type: "Book", year: 1981, rating: 8.9, tags: ["fantasy", "art"], desc: "Crowley's sprawling fairy tale about a family enchanted by a world within worlds." },
+      { id: "zarathustra", title: "Thus Spoke Zarathustra", type: "Book", year: 1883, rating: 8.7, tags: ["philosophy"], desc: "Nietzsche's lyrical proclamation of the Übermensch and the death of God." },
+      { id: "sapiens", title: "Sapiens", type: "Book", year: 2011, rating: 8.9, tags: ["philosophy", "psychology"], desc: "Harari traces humanity's rise through biology, myth, and empire." },
+      { id: "being-time", title: "Being and Time", type: "Book", year: 1927, rating: 8.5, tags: ["philosophy"], desc: "Heidegger's dense interrogation of existence, time, and authentic living." },
+      { id: "republic", title: "The Republic", type: "Book", year: -380, rating: 9.0, tags: ["philosophy"], desc: "Plato's foundational dialogue on justice, the ideal state, and the philosopher king." },
+      { id: "meditations", title: "Meditations", type: "Book", year: 180, rating: 9.5, tags: ["philosophy", "psychology"], desc: "Marcus Aurelius's private Stoic diary — the most practical wisdom ever written." },
+      { id: "tao", title: "Tao Te Ching", type: "Book", year: -400, rating: 9.3, tags: ["philosophy"], desc: "Laozi's 81 verses that birthed an entire way of being in the world." },
+      { id: "godel-escher", title: "Gödel, Escher, Bach", type: "Book", year: 1979, rating: 9.2, tags: ["philosophy", "art"], desc: "Hofstadter's dazzling fugue on consciousness, recursion, and strange loops." },
+      { id: "denial-death", title: "The Denial of Death", type: "Book", year: 1973, rating: 9.2, tags: ["psychology", "philosophy"], desc: "Becker's Pulitzer winner — all human culture is a defence against mortality." },
+      { id: "phaedrus", title: "Phaedrus", type: "Book", year: -370, rating: 8.8, tags: ["psychology", "philosophy"], desc: "Plato on love, beauty, madness, and the soul's chariot driven by two horses." },
+      { id: "burial-untrue", title: "Burial — Untrue", type: "Album", year: 2007, rating: 9.4, tags: ["electronic", "art"], desc: "Urban ghost music — the definitive post-dubstep masterpiece of loneliness." },
+      { id: "aphex-syro", title: "Aphex Twin — SYRO", type: "Album", year: 2014, rating: 9.0, tags: ["electronic"], desc: "Richard James returns with meticulously constructed IDM euphoria." },
+      { id: "kid-a", title: "Radiohead — Kid A", type: "Album", year: 2000, rating: 9.5, tags: ["electronic", "philosophy"], desc: "Rock's most audacious reinvention — cold, alien, and utterly essential." },
+      { id: "arca-kick", title: "Arca — Kick i", type: "Album", year: 2020, rating: 8.8, tags: ["electronic", "art"], desc: "Venezuelan-born Arca fuses flamenco and avant electronics into something new." },
+      { id: "mezzanine", title: "Massive Attack — Mezzanine", type: "Album", year: 1998, rating: 9.2, tags: ["electronic", "art"], desc: "Darkest trip-hop. A paranoid, cinematic record drenched in dread." },
+      { id: "jon-immunity", title: "Jon Hopkins — Immunity", type: "Album", year: 2013, rating: 9.0, tags: ["electronic", "philosophy"], desc: "A night cycle in sound — club-floor euphoria to fragile morning light." },
+      { id: "boards-music", title: "Boards of Canada — Music Has The Right", type: "Album", year: 1998, rating: 9.1, tags: ["electronic", "art"], desc: "Nostalgia and unease — childhood memories soaked in Scottish mist." },
+      { id: "autechre-tri", title: "Autechre — Tri Repetae", type: "Album", year: 1995, rating: 8.9, tags: ["electronic"], desc: "Maximally abstract machine music that rewards deep listening." },
+      { id: "four-tet-rounds", title: "Four Tet — Rounds", type: "Album", year: 2003, rating: 9.0, tags: ["electronic", "art"], desc: "Folktronica at its warmest — organic and digital in perfect balance." },
+      { id: "actress-splazsh", title: "Actress — Splazsh", type: "Album", year: 2010, rating: 8.7, tags: ["electronic", "art"], desc: "Fractured, corroded house music from deep inside an alien city." },
+      { id: "flying-lotus", title: "Flying Lotus — Cosmogramma", type: "Album", year: 2010, rating: 9.1, tags: ["electronic", "art"], desc: "Jazz, hip-hop, and electronics collide in a cosmic explosion of grief and wonder." },
+      { id: "eno-ambient", title: "Brian Eno — Ambient 1", type: "Album", year: 1978, rating: 9.4, tags: ["electronic", "philosophy"], desc: "Eno invented ambient music in a hospital bed — tones that blend with silence." },
+      { id: "kraftwerk-autobahn", title: "Kraftwerk — Autobahn", type: "Album", year: 1974, rating: 9.2, tags: ["electronic"], desc: "The birth of electronic pop — a 22-minute motorway journey into the future." },
+      { id: "daft-punk-discovery", title: "Daft Punk — Discovery", type: "Album", year: 2001, rating: 9.3, tags: ["electronic", "art"], desc: "French house euphoria — every track a love letter to music's transformative power." },
+      { id: "portishead-dummy", title: "Portishead — Dummy", type: "Album", year: 1994, rating: 9.4, tags: ["electronic", "art"], desc: "Trip-hop's defining debut — vinyl crackle and ache crystallised into ten perfect songs." },
+      { id: "james-blake", title: "James Blake — Overgrown", type: "Album", year: 2013, rating: 9.0, tags: ["electronic", "philosophy"], desc: "Post-dubstep and gospel collapse into each other — grief and grace entangled." },
+      { id: "prurient", title: "Prurient — Frozen Niagara Falls", type: "Album", year: 2015, rating: 8.8, tags: ["electronic", "psychology"], desc: "Industrial noise pushed to its most human and devastated extreme." },
+      { id: "goldberg", title: "Bach — Goldberg Variations", type: "Album", year: 1741, rating: 9.6, tags: ["classical"], desc: "Glenn Gould's 1981 recording remains the high-water mark of contrapuntal perfection." },
+      { id: "tabula-rasa", title: "Arvo Pärt — Tabula Rasa", type: "Album", year: 1984, rating: 9.1, tags: ["classical", "philosophy"], desc: "Tintinnabuli — the bell-like purity of Pärt's minimalist spirituality." },
+      { id: "shostakovich", title: "Shostakovich String Quartets", type: "Album", year: 1960, rating: 9.3, tags: ["classical", "psychology"], desc: "Coded protest and raw anguish compressed into chamber music." },
+      { id: "satie", title: "Erik Satie — Gymnopédies", type: "Album", year: 1888, rating: 9.0, tags: ["classical", "art"], desc: "Three melancholic pieces that invented ambient music a century early." },
+      { id: "reich-music", title: "Steve Reich — Music for 18 Musicians", type: "Album", year: 1978, rating: 9.5, tags: ["classical", "electronic"], desc: "Minimalism's crowning achievement — patterns rippling across time like water." },
+      { id: "schubert-winter", title: "Schubert — Winterreise", type: "Album", year: 1828, rating: 9.4, tags: ["classical", "philosophy"], desc: "A solitary winter journey through grief, delusion, and acceptance." },
+      { id: "messiaen-quartet", title: "Messiaen — Quartet for End of Time", type: "Album", year: 1941, rating: 9.3, tags: ["classical", "philosophy"], desc: "Written in a Nazi prison camp — transcendence forged in extremity." },
+      { id: "debussy-images", title: "Debussy — Images", type: "Album", year: 1907, rating: 9.0, tags: ["classical", "art"], desc: "Impressionist piano paintings — sound as watercolour and light." },
+      { id: "olafur", title: "Ólafur Arnalds — re:member", type: "Album", year: 2018, rating: 8.9, tags: ["classical", "electronic"], desc: "Icelandic composer blending neoclassical piano with ambient electronics." },
+      { id: "beethoven-late", title: "Beethoven — Late String Quartets", type: "Album", year: 1826, rating: 9.6, tags: ["classical", "philosophy"], desc: "Written deaf and alone — the most transcendent chamber music ever composed." },
+      { id: "coltrane-love", title: "Coltrane — A Love Supreme", type: "Album", year: 1965, rating: 9.7, tags: ["classical", "philosophy"], desc: "The summit of jazz spirituality — a suite of devotion, resolve, and thanks." },
+      { id: "feldman-rothko", title: "Feldman — Rothko Chapel", type: "Album", year: 1972, rating: 9.0, tags: ["classical", "art", "philosophy"], desc: "Written for Rothko's final paintings — silence as much as sound." },
+      { id: "nils-frahm", title: "Nils Frahm — All Melody", type: "Album", year: 2018, rating: 9.1, tags: ["classical", "electronic"], desc: "Berlin's favourite composer blurs acoustic piano with synthesizer into something new." },
+      { id: "frida", title: "Frida Kahlo", type: "Artist", year: 1939, rating: 9.5, tags: ["art", "psychology"], desc: "Visceral self-portraiture fusing surrealism with Mexican folk tradition and pain." },
+      { id: "rothko", title: "Mark Rothko", type: "Artist", year: 1958, rating: 9.0, tags: ["art", "philosophy"], desc: "Monumental colour field canvases that hover between grief and transcendence." },
+      { id: "kusama", title: "Yayoi Kusama", type: "Artist", year: 1960, rating: 8.9, tags: ["art", "psychology"], desc: "Obliteration and infinity — polka dots that devour the world." },
+      { id: "bacon", title: "Francis Bacon", type: "Artist", year: 1953, rating: 9.1, tags: ["art", "philosophy"], desc: "Distorted figures trapped in existential crisis on raw, painterly surfaces." },
+      { id: "kiefer", title: "Anselm Kiefer", type: "Artist", year: 1975, rating: 9.0, tags: ["art", "philosophy"], desc: "Vast paintings layered with myth, lead, ash, and German history." },
+      { id: "bourgeois", title: "Louise Bourgeois", type: "Artist", year: 1974, rating: 8.8, tags: ["art", "psychology"], desc: "Giant spiders and intimate cells — childhood trauma made monumental and tender." },
+      { id: "turrell", title: "James Turrell", type: "Artist", year: 1967, rating: 9.2, tags: ["art", "philosophy"], desc: "Light itself is the medium — immersive skyspaces that reshape perception." },
+      { id: "richter", title: "Gerhard Richter", type: "Artist", year: 1962, rating: 9.1, tags: ["art", "philosophy"], desc: "Photorealism blurred into abstraction — memory and loss made painterly." },
+      { id: "basquiat", title: "Jean-Michel Basquiat", type: "Artist", year: 1981, rating: 9.0, tags: ["art", "psychology"], desc: "Raw, crowned figures scrawled with fury, anatomy, and coded Black experience." },
+      { id: "hockney", title: "David Hockney — A Bigger Splash", type: "Artist", year: 1967, rating: 8.8, tags: ["art"], desc: "California pool scenes of flat colour and luxurious stillness frozen in time." },
+      { id: "naoshima", title: "Naoshima Island", type: "Artist", year: 1992, rating: 9.4, tags: ["art", "philosophy"], desc: "Ando's art island — architecture and installation fused with nature and sea." },
+      { id: "olafur-sun", title: "Olafur Eliasson — The Weather Project", type: "Artist", year: 2003, rating: 9.1, tags: ["art", "philosophy"], desc: "A glowing sun fills the Turbine Hall — visitors lie on the floor and stare." },
+      { id: "brutalism", title: "Brutalism", type: "Artist", year: 1960, rating: 8.7, tags: ["art", "philosophy"], desc: "Raw concrete as monument — the architectural movement that split opinion eternally." },
+      { id: "thinking", title: "Thinking, Fast and Slow", type: "Book", year: 2011, rating: 8.6, tags: ["psychology", "philosophy"], desc: "Kahneman's landmark work on the two systems governing our decisions." },
+      { id: "mans-search", title: "Man's Search for Meaning", type: "Book", year: 1946, rating: 9.4, tags: ["psychology", "philosophy"], desc: "Frankl's account of surviving Auschwitz and discovering logotherapy." },
+      { id: "jung-archetypes", title: "Jung — The Archetypes", type: "Book", year: 1959, rating: 8.8, tags: ["psychology", "philosophy"], desc: "The collective unconscious, shadow, anima — Jung's foundational concepts mapped." },
+      { id: "varieties", title: "The Varieties of Religious Experience", type: "Book", year: 1902, rating: 8.9, tags: ["psychology", "philosophy"], desc: "William James surveys mysticism, conversion, and the psychology of belief." },
+      { id: "flow", title: "Flow", type: "Book", year: 1990, rating: 8.7, tags: ["psychology"], desc: "Csikszentmihalyi on optimal experience — losing yourself to become more." },
+      { id: "body-keeps", title: "The Body Keeps the Score", type: "Book", year: 2014, rating: 9.1, tags: ["psychology"], desc: "Van der Kolk's definitive account of how trauma reshapes mind, brain, and body." },
+      { id: "stoner", title: "Stoner", type: "Book", year: 1965, rating: 9.2, tags: ["psychology", "philosophy"], desc: "John Williams's quiet masterpiece about a life of dignity, quiet, and loss." },
+      { id: "interpretation-dreams", title: "The Interpretation of Dreams", type: "Book", year: 1899, rating: 8.6, tags: ["psychology"], desc: "Freud's founding text — the unconscious speaks in symbols while we sleep." },
+      { id: "gift-imperfection", title: "The Gifts of Imperfection", type: "Book", year: 2010, rating: 8.4, tags: ["psychology"], desc: "Brené Brown on letting go of who we should be and embracing who we are." },
+      { id: "pale-fire", title: "Pale Fire", type: "Book", year: 1962, rating: 9.1, tags: ["art", "philosophy"], desc: "Nabokov's novel-as-poem-as-commentary — unreliable narration at its most dazzling." },
+      { id: "borges-labyrinths", title: "Borges — Labyrinths", type: "Book", year: 1962, rating: 9.5, tags: ["fantasy", "philosophy"], desc: "Infinite libraries, garden paths, mirrors — fiction that contains the universe." },
+      { id: "visible-invisible", title: "The Visible and the Invisible", type: "Book", year: 1968, rating: 8.6, tags: ["philosophy"], desc: "Merleau-Ponty's unfinished phenomenology of perception, flesh, and the world." },
+      { id: "four-quartets", title: "T.S. Eliot — Four Quartets", type: "Book", year: 1943, rating: 9.3, tags: ["philosophy", "art"], desc: "Time, memory, and redemption — Eliot's finest meditative verse." },
+      { id: "crying-lot-49", title: "The Crying of Lot 49", type: "Book", year: 1966, rating: 8.8, tags: ["art", "philosophy"], desc: "Pynchon's slender paranoid masterpiece — signs proliferate and cohere into nothing." },
+      { id: "blindness", title: "Blindness", type: "Book", year: 1995, rating: 9.0, tags: ["philosophy", "psychology"], desc: "Saramago's allegory of a society unravelling when sight suddenly fails everyone." },
+      { id: "music-chance", title: "Music of Chance", type: "Book", year: 1990, rating: 8.7, tags: ["philosophy", "art"], desc: "Auster's strange fable — two men trapped by fortune and a wall of stones." },
+      { id: "disintegration-loops", title: "Basinski — The Disintegration Loops", type: "Album", year: 2002, rating: 9.4, tags: ["classical", "art", "philosophy"], desc: "Magnetic tape crumbling in real time — beauty decaying into silence." },
+      { id: "grouper-dragging", title: "Grouper — Dragging a Dead Deer", type: "Album", year: 2008, rating: 9.1, tags: ["electronic", "art"], desc: "Lo-fi folk drenched in reverb — grief made ambient and luminous." },
+    ]
 
-/* ── SCENE ── */
-const scene=new THREE.Scene()
-const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,0.1,16000)
-camera.position.set(0,450,1700)
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"})
-renderer.setSize(innerWidth,innerHeight)
-renderer.setPixelRatio(Math.min(devicePixelRatio,2))
-document.body.appendChild(renderer.domElement)
+    const ALEX_IDS = new Set(["blade-runner", "annihilation", "dune", "solaris", "ex-machina", "arrival", "her", "neuromancer", "never-let-me-go", "left-hand", "hyperion", "2001", "stalker", "contact", "altered-carbon", "lotr", "spirited-away", "pans-labyrinth", "name-of-wind", "earthsea", "gormenghast", "master-margarita", "zarathustra", "sapiens", "republic", "meditations", "godel-escher", "denial-death", "burial-untrue", "aphex-syro", "kid-a", "arca-kick", "mezzanine", "jon-immunity", "boards-music", "four-tet-rounds", "flying-lotus", "eno-ambient", "daft-punk-discovery", "portishead-dummy", "goldberg", "tabula-rasa", "shostakovich", "satie", "reich-music", "schubert-winter", "olafur", "beethoven-late", "coltrane-love", "feldman-rothko", "nils-frahm", "frida", "rothko", "kusama", "bacon", "kiefer", "turrell", "richter", "naoshima", "olafur-sun", "thinking", "mans-search", "jung-archetypes", "stoner", "borges-labyrinths", "four-quartets", "pale-fire", "disintegration-loops", "grouper-dragging"])
+    const JORDAN_IDS = new Set(["blade-runner", "dune", "arrival", "her", "moon", "left-hand", "childhood-end", "2001", "stalker", "contact", "under-skin", "spirited-away", "pans-labyrinth", "princess-mononoke", "hundred-years", "master-margarita", "little-big", "zarathustra", "republic", "meditations", "tao", "godel-escher", "phaedrus", "denial-death", "kid-a", "arca-kick", "mezzanine", "autechre-tri", "actress-splazsh", "flying-lotus", "eno-ambient", "james-blake", "prurient", "goldberg", "tabula-rasa", "reich-music", "messiaen-quartet", "debussy-images", "olafur", "beethoven-late", "coltrane-love", "feldman-rothko", "frida", "kusama", "bourgeois", "basquiat", "richter", "naoshima", "olafur-sun", "brutalism", "thinking", "mans-search", "varieties", "body-keeps", "jung-archetypes", "interpretation-dreams", "borges-labyrinths", "four-quartets", "crying-lot-49", "blindness", "visible-invisible", "disintegration-loops", "grouper-dragging", "shostakovich", "satie", "schubert-winter", "nils-frahm"])
+    const SHARED_IDS = new Set([...ALEX_IDS].filter(id => JORDAN_IDS.has(id)))
 
-const composer=new EffectComposer(renderer)
-composer.addPass(new RenderPass(scene,camera))
-const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),1.8,0.5,0.12)
-composer.addPass(bloom)
+    /* ── SCENE ── */
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 16000)
+    camera.position.set(0, 450, 1700)
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" })
+    renderer.setSize(innerWidth, innerHeight)
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+    document.body.appendChild(renderer.domElement)
 
-// Stub — no OrbitControls. We rotate the universe group on drag, zoom camera on scroll.
-// This eliminates any orbit-target lock entirely.
-const controls={update:()=>{},target:new THREE.Vector3()}
+    const composer = new EffectComposer(renderer)
+    composer.addPass(new RenderPass(scene, camera))
+    const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.8, 0.5, 0.12)
+    composer.addPass(bloom)
 
-let _drag=false,_lastX=0,_lastY=0,_velX=0,_velY=0
-let _camDist=camera.position.length()
-const CAM_MIN=300,CAM_MAX=6000
+    // Stub — no OrbitControls. We rotate the universe group on drag, zoom camera on scroll.
+    // This eliminates any orbit-target lock entirely.
+    const controls = { update: () => { }, target: new THREE.Vector3() }
 
-renderer.domElement.addEventListener("mousedown",e=>{
-  if(e.button!==0) return
-  _drag=true; _lastX=e.clientX; _lastY=e.clientY; _velX=0; _velY=0
-  camAnim=null // cancel any in-progress animation immediately
-})
-window.addEventListener("mousemove",e=>{
-  if(!_drag) return
-  const dx=e.clientX-_lastX, dy=e.clientY-_lastY
-  _velX=dx*0.7; _velY=dy*0.7
-  universe.rotation.y+=dx*0.004
-  universe.rotation.x+=dy*0.004
-  universe.rotation.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,universe.rotation.x))
-  _lastX=e.clientX; _lastY=e.clientY
-})
-window.addEventListener("mouseup",()=>{ _drag=false })
+    let _drag = false, _lastX = 0, _lastY = 0, _velX = 0, _velY = 0
+    let _camDist = camera.position.length()
+    const CAM_MIN = 300, CAM_MAX = 6000
 
-let _t1x=0,_t1y=0,_pinchDist=0,_tStartTime=0,_tStartX=0,_tStartY=0
-renderer.domElement.addEventListener("touchstart",e=>{
-  if(e.touches.length===1){
-    _drag=true; _t1x=e.touches[0].clientX; _t1y=e.touches[0].clientY; _velX=0; _velY=0
-    _tStartTime=Date.now(); _tStartX=_t1x; _tStartY=_t1y
-    camAnim=null
-  } else if(e.touches.length===2){
-    _drag=false
-    const dx=e.touches[0].clientX-e.touches[1].clientX
-    const dy=e.touches[0].clientY-e.touches[1].clientY
-    _pinchDist=Math.sqrt(dx*dx+dy*dy)
-  }
-},{passive:true})
-renderer.domElement.addEventListener("touchmove",e=>{
-  if(e.touches.length===1&&_drag){
-    const dx=e.touches[0].clientX-_t1x, dy=e.touches[0].clientY-_t1y
-    _velX=dx*0.7; _velY=dy*0.7
-    universe.rotation.y+=dx*0.004
-    universe.rotation.x+=dy*0.004
-    universe.rotation.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,universe.rotation.x))
-    _t1x=e.touches[0].clientX; _t1y=e.touches[0].clientY
-  } else if(e.touches.length===2){
-    const dx=e.touches[0].clientX-e.touches[1].clientX
-    const dy=e.touches[0].clientY-e.touches[1].clientY
-    const d=Math.sqrt(dx*dx+dy*dy)
-    _camDist=Math.max(CAM_MIN,Math.min(CAM_MAX,_camDist+(_pinchDist-d)*2.5))
-    _pinchDist=d
-  }
-},{passive:true})
-renderer.domElement.addEventListener("wheel",e=>{
-  e.preventDefault()
-  _camDist=Math.max(CAM_MIN,Math.min(CAM_MAX,_camDist+e.deltaY*1.5))
-},{passive:false})
-
-const universe=new THREE.Group(); scene.add(universe)
-
-/* Stars */
-const sp=[]
-for(let i=0;i<15000;i++) sp.push(THREE.MathUtils.randFloatSpread(15000),THREE.MathUtils.randFloatSpread(15000),THREE.MathUtils.randFloatSpread(15000))
-const sg=new THREE.BufferGeometry(); sg.setAttribute("position",new THREE.Float32BufferAttribute(sp,3))
-universe.add(new THREE.Points(sg,new THREE.PointsMaterial({size:0.85,color:0xffffff,transparent:true,opacity:0.5})))
-
-const userNode=new THREE.Mesh(new THREE.SphereGeometry(22,32,32),new THREE.MeshBasicMaterial({color:0xffffff}))
-universe.add(userNode)
-
-function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
-
-const clusters=[],nebulas=[]
-TAGS.forEach((tag,i)=>{
-  const phi=Math.acos(2*Math.random()-1),theta=Math.random()*Math.PI*2,r=1150
-  const x=r*Math.sin(phi)*Math.cos(theta),y=r*Math.sin(phi)*Math.sin(theta),z=r*Math.cos(phi)
-  const m=new THREE.Mesh(new THREE.SphereGeometry(18,24,24),new THREE.MeshBasicMaterial({color:COLORS[i]}))
-  m.position.set(x,y,z); m.userData.tag=tag; m.userData.tagIndex=i; m.userData.isClusterNode=true
-  universe.add(m); clusters.push(m)
-  const pos=[],col=[]
-  for(let j=0;j<45000;j++){
-    pos.push(x+gauss()*315,y+gauss()*168,z+gauss()*315)
-    const c=new THREE.Color(COLORS[i]); col.push(c.r,c.g,c.b)
-  }
-  const geo=new THREE.BufferGeometry()
-  geo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3))
-  geo.setAttribute("color",new THREE.Float32BufferAttribute(col,3))
-  const tex=new THREE.TextureLoader().load("https://threejs.org/examples/textures/sprites/disc.png")
-  const mat=new THREE.PointsMaterial({size:4.2,vertexColors:true,transparent:true,opacity:0.38,blending:THREE.AdditiveBlending,depthWrite:false,map:tex})
-  const cloud=new THREE.Points(geo,mat); universe.add(cloud); nebulas.push(cloud)
-})
-
-const nodes=[]
-ALL.forEach((d,i)=>{
-  const isShared=SHARED_IDS.has(d.id)
-  const mesh=new THREE.Mesh(
-    new THREE.SphereGeometry(isShared?11:7,16,16),
-    new THREE.MeshBasicMaterial({color:0xffffff})
-  )
-  mesh.userData={...d,poster:`https://picsum.photos/400/600?random=${i+8}`,isShared}
-  universe.add(mesh); nodes.push(mesh)
-})
-nodes.forEach(n=>{
-  const ci=TAGS.indexOf(n.userData.tags[0]); const cl=clusters[ci<0?0:ci]
-  const sp2=n.userData.isShared?680:860
-  n.position.set(cl.position.x+THREE.MathUtils.randFloatSpread(sp2),cl.position.y+THREE.MathUtils.randFloatSpread(sp2),cl.position.z+THREE.MathUtils.randFloatSpread(sp2))
-})
-
-/* Edges */
-const edges=[]
-function addEdge(a,b,color=0x8899ff,opacity=0.15){
-  const geo=new THREE.BufferGeometry().setFromPoints([a.position,b.position])
-  const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color,transparent:true,opacity}))
-  line.userData={a,b}; universe.add(line); edges.push(line)
-}
-clusters.forEach(c=>addEdge(userNode,c,0x8899ff,0.1))
-nodes.forEach(n=>{
-  n.userData.tags.forEach(tag=>{
-    const ci=TAGS.indexOf(tag)
-    if(ci>=0) addEdge(n,clusters[ci],n.userData.isShared?0xffd700:0x8899ff,n.userData.isShared?0.28:0.13)
-  })
-})
-
-/* ── LEGEND ── */
-const legEl=document.getElementById("legend")
-const legItems=[]
-TAGS.forEach((tag,i)=>{
-  const el=document.createElement("div"); el.className="leg"
-  el.innerHTML=`<div class="leg-dot" style="background:${TCSS[i]};box-shadow:0 0 8px ${TCSS[i]}66"></div><span class="leg-lbl">${tag}</span>`
-  el.addEventListener("click",()=>zoomToCluster(i))
-  legEl.appendChild(el)
-  legItems.push(el)
-})
-
-/* ── CAMERA ANIMATION ── */
-// Camera always sits at (0, 0, _camDist) looking at origin.
-// To "zoom to cluster" we rotate the universe so the cluster faces the camera,
-// then animate _camDist to a comfortable viewing distance.
-let camAnim=null
-
-function getWorldPos(obj){
-  const wp=new THREE.Vector3()
-  obj.getWorldPosition(wp)
-  return wp
-}
-
-// Smoothly animate universe rotation and camera distance
-function animateToCluster(tagIndex, onDone){
-  // Get cluster local position (before universe rotation)
-  const cl=clusters[tagIndex]
-  const localPos=cl.position.clone() // cluster sits in universe local space
-
-  // We want to rotate the universe so this cluster points toward +Z (camera direction)
-  // i.e. universe.rotation such that localPos when rotated ends up at (0,0,positive)
-  // Compute target rotation angles: rotY and rotX to align localPos with +Z
-  const targetRotY=-Math.atan2(localPos.x, localPos.z)
-  const horiz=Math.sqrt(localPos.x*localPos.x+localPos.z*localPos.z)
-  const targetRotX=Math.atan2(localPos.y, horiz)
-  // Clamp X rotation
-  const clampedRotX=Math.max(-Math.PI/2,Math.min(Math.PI/2,targetRotX))
-
-  // Comfortable viewing distance: cluster is ~1150 units from origin, sit ~800 back
-  const clusterDist=localPos.length()
-  const targetDist=clusterDist+800
-
-  const startRotY=universe.rotation.y
-  const startRotX=universe.rotation.x
-  const startDist=_camDist
-
-  // Normalise rotation delta to shortest path
-  let dY=((targetRotY-startRotY)%(Math.PI*2))
-  if(dY>Math.PI) dY-=Math.PI*2
-  if(dY<-Math.PI) dY+=Math.PI*2
-  let dX=clampedRotX-startRotX
-
-  const start=performance.now()
-  const duration=1400
-
-  camAnim={
-    update(now){
-      const t=Math.min((now-start)/duration,1)
-      const ease=t<0.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1
-      universe.rotation.y=startRotY+dY*ease
-      universe.rotation.x=startRotX+dX*ease
-      _camDist=startDist+(targetDist-startDist)*ease
-      camera.position.set(0,0,_camDist)
-      camera.lookAt(0,0,0)
-      if(t>=1){camAnim=null;if(onDone)onDone()}
-    }
-  }
-}
-
-function animateCamDistTo(targetDist, duration, onDone){
-  const startDist=_camDist
-  const start=performance.now()
-  camAnim={
-    update(now){
-      const t=Math.min((now-start)/duration,1)
-      const ease=t<0.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1
-      _camDist=startDist+(targetDist-startDist)*ease
-      camera.position.set(0,0,_camDist)
-      camera.lookAt(0,0,0)
-      if(t>=1){camAnim=null;if(onDone)onDone()}
-    }
-  }
-}
-
-function zoomToCluster(tagIndex){
-  legItems.forEach((el,i)=>el.classList.toggle("focused",i===tagIndex))
-  hideCard(); hideClusterCard()
-
-  focusedNode=null
-  focusedTag=TAGS[tagIndex]
-  applyNodeVisibility()
-
-  const flash=document.getElementById("zoom-flash")
-
-  // Phase 1: pull back wide
-  animateCamDistTo(3400, 700, ()=>{
-    // Phase 2: rotate universe to face cluster + zoom in
-    animateToCluster(tagIndex, ()=>{
-      flash.classList.add("on")
-      setTimeout(()=>flash.classList.remove("on"),180)
+    renderer.domElement.addEventListener("mousedown", e => {
+      if (e.button !== 0) return
+      _drag = true; _lastX = e.clientX; _lastY = e.clientY; _velX = 0; _velY = 0
+      camAnim = null // cancel any in-progress animation immediately
     })
-  })
-}
+    window.addEventListener("mousemove", e => {
+      if (!_drag) return
+      const dx = e.clientX - _lastX, dy = e.clientY - _lastY
+      _velX = dx * 0.7; _velY = dy * 0.7
+      universe.rotation.y += dx * 0.004
+      universe.rotation.x += dy * 0.004
+      universe.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, universe.rotation.x))
+      _lastX = e.clientX; _lastY = e.clientY
+    })
+    window.addEventListener("mouseup", () => { _drag = false })
 
-function resetCamera(){
-  legItems.forEach(el=>el.classList.remove("focused"))
-  animateCamDistTo(1700, 900, null)
-}
-
-/* ── MODE ── */
-let mode="alex", mergeUnlocked=false
-let focusedNode=null, focusedTag=null
-
-function setMode(m){
-  mode=m
-  hideCard(); hideClusterCard(); resetVis()
-  ;["t1","t2","tmg"].forEach(id=>document.getElementById(id).classList.remove("on"))
-  if(m==="alex") document.getElementById("t1").classList.add("on")
-  else if(m==="jordan") document.getElementById("t2").classList.add("on")
-  else document.getElementById("tmg").classList.add("on")
-  document.getElementById("merge-banner").classList.toggle("on",m==="merged")
-}
-
-function getNodeBaseColor(n){
-  const id=n.userData.id, isS=SHARED_IDS.has(id), inA=ALEX_IDS.has(id)
-  if(mode==="merged"){
-    if(isS) return null
-    if(inA) return new THREE.Color(0xff4fd8)
-    return new THREE.Color(0x4fc3ff)
-  }
-  return new THREE.Color(0xffffff)
-}
-
-function applyNodeVisibility(){
-  nodes.forEach(n=>{
-    const id=n.userData.id
-    let modeVisible
-    if(mode==="alex") modeVisible=ALEX_IDS.has(id)
-    else if(mode==="jordan") modeVisible=JORDAN_IDS.has(id)
-    else modeVisible=true
-    n.visible=modeVisible
-    if(!modeVisible) return
-
-    const isS=SHARED_IDS.has(id)&&mode==="merged"
-    if(!isS){const bc=getNodeBaseColor(n);if(bc) n.material.color.copy(bc)}
-
-    if(focusedNode){
-      const match=n.userData.tags.some(t=>focusedNode.userData.tags.includes(t))
-      n.material.opacity=match?1:0.04; n.material.transparent=true
-    } else if(focusedTag){
-      const match=n.userData.tags.includes(focusedTag)
-      n.material.opacity=match?1:0.04; n.material.transparent=true
-    } else {
-      n.material.opacity=1; n.material.transparent=isS
-    }
-  })
-  clusters.forEach((c,i)=>{
-    if(focusedNode){
-      const match=focusedNode.userData.tags.includes(TAGS[i])
-      c.material.opacity=match?1:0.07; c.material.transparent=true
-    } else if(focusedTag){
-      c.material.opacity=TAGS[i]===focusedTag?1:0.07; c.material.transparent=true
-    } else {
-      c.material.opacity=1; c.material.transparent=false
-    }
-  })
-  nebulas.forEach((nb,i)=>{
-    if(focusedNode){
-      nb.material.opacity=focusedNode.userData.tags.includes(TAGS[i])?0.38:0.015
-    } else if(focusedTag){
-      nb.material.opacity=TAGS[i]===focusedTag?0.38:0.015
-    } else {
-      nb.material.opacity=0.38
-    }
-  })
-  edges.forEach(e=>{
-    const aNode=nodes.find(x=>x===e.userData.a)
-    const isUserEdge=!aNode
-    if(aNode){
-      const id=aNode.userData.id
-      let modeVis
-      if(mode==="alex") modeVis=ALEX_IDS.has(id)
-      else if(mode==="jordan") modeVis=JORDAN_IDS.has(id)
-      else modeVis=true
-      if(!modeVis){e.visible=false;return}
-    }
-    if(mode==="merged"&&aNode){
-      const id=aNode.userData.id
-      if(SHARED_IDS.has(id)) e.material.color.setHex(0xffd700)
-      else if(ALEX_IDS.has(id)) e.material.color.setHex(0xff4fd8)
-      else e.material.color.setHex(0x4fc3ff)
-    } else {
-      e.material.color.setHex(0x8899ff)
-    }
-    if(focusedNode){
-      const rel=(e.userData.a===focusedNode||e.userData.b===focusedNode)
-      e.visible=rel
-    } else if(focusedTag){
-      // Show edges belonging to nodes in this tag cluster, hide others
-      if(aNode){
-        const inTag=aNode.userData.tags.includes(focusedTag)
-        e.visible=inTag
-        if(inTag) e.material.opacity=0.22
-      } else {
-        // cluster-to-origin edges: show the one for this tag
-        const bCluster=clusters.find(c=>c===e.userData.b)
-        e.visible=bCluster?bCluster.userData.tag===focusedTag:false
+    let _t1x = 0, _t1y = 0, _pinchDist = 0, _tStartTime = 0, _tStartX = 0, _tStartY = 0
+    renderer.domElement.addEventListener("touchstart", e => {
+      if (e.touches.length === 1) {
+        _drag = true; _t1x = e.touches[0].clientX; _t1y = e.touches[0].clientY; _velX = 0; _velY = 0
+        _tStartTime = Date.now(); _tStartX = _t1x; _tStartY = _t1y
+        camAnim = null
+      } else if (e.touches.length === 2) {
+        _drag = false
+        const dx = e.touches[0].clientX - e.touches[1].clientX
+        const dy = e.touches[0].clientY - e.touches[1].clientY
+        _pinchDist = Math.sqrt(dx * dx + dy * dy)
       }
-    } else {
-      e.visible=true
-      // restore default opacity
-      e.material.opacity=aNode?(aNode.userData.isShared?0.28:0.13):0.1
+    }, { passive: true })
+    renderer.domElement.addEventListener("touchmove", e => {
+      if (e.touches.length === 1 && _drag) {
+        const dx = e.touches[0].clientX - _t1x, dy = e.touches[0].clientY - _t1y
+        _velX = dx * 0.7; _velY = dy * 0.7
+        universe.rotation.y += dx * 0.004
+        universe.rotation.x += dy * 0.004
+        universe.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, universe.rotation.x))
+        _t1x = e.touches[0].clientX; _t1y = e.touches[0].clientY
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX
+        const dy = e.touches[0].clientY - e.touches[1].clientY
+        const d = Math.sqrt(dx * dx + dy * dy)
+        _camDist = Math.max(CAM_MIN, Math.min(CAM_MAX, _camDist + (_pinchDist - d) * 2.5))
+        _pinchDist = d
+      }
+    }, { passive: true })
+    renderer.domElement.addEventListener("wheel", e => {
+      e.preventDefault()
+      _camDist = Math.max(CAM_MIN, Math.min(CAM_MAX, _camDist + e.deltaY * 1.5))
+    }, { passive: false })
+
+    const universe = new THREE.Group(); scene.add(universe)
+
+    /* Stars */
+    const sp = []
+    for (let i = 0; i < 15000; i++) sp.push(THREE.MathUtils.randFloatSpread(15000), THREE.MathUtils.randFloatSpread(15000), THREE.MathUtils.randFloatSpread(15000))
+    const sg = new THREE.BufferGeometry(); sg.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3))
+    universe.add(new THREE.Points(sg, new THREE.PointsMaterial({ size: 0.85, color: 0xffffff, transparent: true, opacity: 0.5 })))
+
+    const userNode = new THREE.Mesh(new THREE.SphereGeometry(22, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffff }))
+    universe.add(userNode)
+
+    function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
+
+    const clusters = [], nebulas = []
+    TAGS.forEach((tag, i) => {
+      const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2, r = 1150
+      const x = r * Math.sin(phi) * Math.cos(theta), y = r * Math.sin(phi) * Math.sin(theta), z = r * Math.cos(phi)
+      const m = new THREE.Mesh(new THREE.SphereGeometry(18, 24, 24), new THREE.MeshBasicMaterial({ color: COLORS[i] }))
+      m.position.set(x, y, z); m.userData.tag = tag; m.userData.tagIndex = i; m.userData.isClusterNode = true
+      universe.add(m); clusters.push(m)
+      const pos = [], col = []
+      for (let j = 0; j < 45000; j++) {
+        pos.push(x + gauss() * 315, y + gauss() * 168, z + gauss() * 315)
+        const c = new THREE.Color(COLORS[i]); col.push(c.r, c.g, c.b)
+      }
+      const geo = new THREE.BufferGeometry()
+      geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3))
+      geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3))
+      const tex = new THREE.TextureLoader().load("https://threejs.org/examples/textures/sprites/disc.png")
+      const mat = new THREE.PointsMaterial({ size: 4.2, vertexColors: true, transparent: true, opacity: 0.38, blending: THREE.AdditiveBlending, depthWrite: false, map: tex })
+      const cloud = new THREE.Points(geo, mat); universe.add(cloud); nebulas.push(cloud)
+    })
+
+    const nodes = []
+    ALL.forEach((d, i) => {
+      const isShared = SHARED_IDS.has(d.id)
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(isShared ? 11 : 7, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      )
+      mesh.userData = { ...d, poster: `https://picsum.photos/400/600?random=${i + 8}`, isShared }
+      universe.add(mesh); nodes.push(mesh)
+    })
+    nodes.forEach(n => {
+      const ci = TAGS.indexOf(n.userData.tags[0]); const cl = clusters[ci < 0 ? 0 : ci]
+      const sp2 = n.userData.isShared ? 680 : 860
+      n.position.set(cl.position.x + THREE.MathUtils.randFloatSpread(sp2), cl.position.y + THREE.MathUtils.randFloatSpread(sp2), cl.position.z + THREE.MathUtils.randFloatSpread(sp2))
+    })
+
+    /* Edges */
+    const edges = []
+    function addEdge(a, b, color = 0x8899ff, opacity = 0.15) {
+      const geo = new THREE.BufferGeometry().setFromPoints([a.position, b.position])
+      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color, transparent: true, opacity }))
+      line.userData = { a, b }; universe.add(line); edges.push(line)
     }
-  })
-}
+    clusters.forEach(c => addEdge(userNode, c, 0x8899ff, 0.1))
+    nodes.forEach(n => {
+      n.userData.tags.forEach(tag => {
+        const ci = TAGS.indexOf(tag)
+        if (ci >= 0) addEdge(n, clusters[ci], n.userData.isShared ? 0xffd700 : 0x8899ff, n.userData.isShared ? 0.28 : 0.13)
+      })
+    })
 
-function resetVis(){
-  focusedNode=null; focusedTag=null
-  legItems.forEach(el=>el.classList.remove("focused"))
-  applyNodeVisibility()
-  resetCamera()
-}
+    /* ── LEGEND ── */
+    const legEl = document.getElementById("legend")
+    const legItems = []
+    TAGS.forEach((tag, i) => {
+      const el = document.createElement("div"); el.className = "leg"
+      el.innerHTML = `<div class="leg-dot" style="background:${TCSS[i]};box-shadow:0 0 8px ${TCSS[i]}66"></div><span class="leg-lbl">${tag}</span>`
+      el.addEventListener("click", () => zoomToCluster(i))
+      legEl.appendChild(el)
+      legItems.push(el)
+    })
 
-function focusNodeFn(n){focusedNode=n;focusedTag=null;applyNodeVisibility()}
+    /* ── CAMERA ANIMATION ── */
+    // Camera always sits at (0, 0, _camDist) looking at origin.
+    // To "zoom to cluster" we rotate the universe so the cluster faces the camera,
+    // then animate _camDist to a comfortable viewing distance.
+    let camAnim = null
 
-/* ── CLUSTER CARD ── */
-const clusterCardEl=document.getElementById("cluster-card")
-document.getElementById("cc-close").addEventListener("click",()=>{hideClusterCard();resetVis()})
+    function getWorldPos(obj) {
+      const wp = new THREE.Vector3()
+      obj.getWorldPosition(wp)
+      return wp
+    }
 
-function showClusterCard(tagIndex){
-  const tag=TAGS[tagIndex]
-  const color=TCSS[tagIndex]
+    // Smoothly animate universe rotation and camera distance
+    function animateToCluster(tagIndex, onDone) {
+      // Get cluster local position (before universe rotation)
+      const cl = clusters[tagIndex]
+      const localPos = cl.position.clone() // cluster sits in universe local space
 
-  // Which items belong to this cluster (primary tag match)
-  let items=ALL.filter(d=>d.tags.includes(tag))
-  // Filter by mode
-  if(mode==="alex") items=items.filter(d=>ALEX_IDS.has(d.id))
-  else if(mode==="jordan") items=items.filter(d=>JORDAN_IDS.has(d.id))
+      // We want to rotate the universe so this cluster points toward +Z (camera direction)
+      // i.e. universe.rotation such that localPos when rotated ends up at (0,0,positive)
+      // Compute target rotation angles: rotY and rotX to align localPos with +Z
+      const targetRotY = -Math.atan2(localPos.x, localPos.z)
+      const horiz = Math.sqrt(localPos.x * localPos.x + localPos.z * localPos.z)
+      const targetRotX = Math.atan2(localPos.y, horiz)
+      // Clamp X rotation
+      const clampedRotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRotX))
 
-  // Sort: shared first, then by rating desc
-  items.sort((a,b)=>{
-    const aS=SHARED_IDS.has(a.id)?1:0, bS=SHARED_IDS.has(b.id)?1:0
-    if(aS!==bS) return bS-aS
-    return b.rating-a.rating
-  })
+      // Comfortable viewing distance: cluster is ~1150 units from origin, sit ~800 back
+      const clusterDist = localPos.length()
+      const targetDist = clusterDist + 800
 
-  document.getElementById("cc-dot").style.cssText=`background:${color};box-shadow:0 0 14px ${color}88;width:10px;height:10px;border-radius:50%`
-  document.getElementById("cc-tag").textContent=tag
-  document.getElementById("cc-tag").style.color=color
-  document.getElementById("cc-count").textContent=`${items.length} works in this cluster`
+      const startRotY = universe.rotation.y
+      const startRotX = universe.rotation.x
+      const startDist = _camDist
 
-  const listEl=document.getElementById("cc-list")
-  listEl.innerHTML=""
+      // Normalise rotation delta to shortest path
+      let dY = ((targetRotY - startRotY) % (Math.PI * 2))
+      if (dY > Math.PI) dY -= Math.PI * 2
+      if (dY < -Math.PI) dY += Math.PI * 2
+      let dX = clampedRotX - startRotX
 
-  // Group by shared / unique
-  const shared=items.filter(d=>SHARED_IDS.has(d.id)&&mode==="merged")
-  const unique=items.filter(d=>!(SHARED_IDS.has(d.id)&&mode==="merged"))
+      const start = performance.now()
+      const duration = 1400
 
-  function renderItem(d){
-    const isS=SHARED_IDS.has(d.id)&&mode==="merged"
-    const iconClass=`icon-${d.type.toLowerCase()}`
-    const el=document.createElement("div")
-    el.className=`cc-item${isS?" shared":""}`
-    const yr=d.year>0?d.year:(Math.abs(d.year)+" BCE")
-    el.innerHTML=`
-      <div class="cc-item-icon ${iconClass}">${TYPE_ICONS[d.type]||"●"}</div>
+      camAnim = {
+        update(now) {
+          const t = Math.min((now - start) / duration, 1)
+          const ease = t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+          universe.rotation.y = startRotY + dY * ease
+          universe.rotation.x = startRotX + dX * ease
+          _camDist = startDist + (targetDist - startDist) * ease
+          camera.position.set(0, 0, _camDist)
+          camera.lookAt(0, 0, 0)
+          if (t >= 1) { camAnim = null; if (onDone) onDone() }
+        }
+      }
+    }
+
+    function animateCamDistTo(targetDist, duration, onDone) {
+      const startDist = _camDist
+      const start = performance.now()
+      camAnim = {
+        update(now) {
+          const t = Math.min((now - start) / duration, 1)
+          const ease = t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+          _camDist = startDist + (targetDist - startDist) * ease
+          camera.position.set(0, 0, _camDist)
+          camera.lookAt(0, 0, 0)
+          if (t >= 1) { camAnim = null; if (onDone) onDone() }
+        }
+      }
+    }
+
+    function zoomToCluster(tagIndex) {
+      legItems.forEach((el, i) => el.classList.toggle("focused", i === tagIndex))
+      hideCard(); hideClusterCard()
+
+      focusedNode = null
+      focusedTag = TAGS[tagIndex]
+      applyNodeVisibility()
+
+      const flash = document.getElementById("zoom-flash")
+
+      // Phase 1: pull back wide
+      animateCamDistTo(3400, 700, () => {
+        // Phase 2: rotate universe to face cluster + zoom in
+        animateToCluster(tagIndex, () => {
+          flash.classList.add("on")
+          setTimeout(() => flash.classList.remove("on"), 180)
+        })
+      })
+    }
+
+    function resetCamera() {
+      legItems.forEach(el => el.classList.remove("focused"))
+      animateCamDistTo(1700, 900, null)
+    }
+
+    /* ── MODE ── */
+    let mode = "alex", mergeUnlocked = false
+    let focusedNode = null, focusedTag = null
+
+    function setMode(m) {
+      mode = m
+      hideCard(); hideClusterCard(); resetVis()
+        ;["t1", "t2", "tmg"].forEach(id => document.getElementById(id).classList.remove("on"))
+      if (m === "alex") document.getElementById("t1").classList.add("on")
+      else if (m === "jordan") document.getElementById("t2").classList.add("on")
+      else document.getElementById("tmg").classList.add("on")
+      document.getElementById("merge-banner").classList.toggle("on", m === "merged")
+    }
+
+    function getNodeBaseColor(n) {
+      const id = n.userData.id, isS = SHARED_IDS.has(id), inA = ALEX_IDS.has(id)
+      if (mode === "merged") {
+        if (isS) return null
+        if (inA) return new THREE.Color(0xff4fd8)
+        return new THREE.Color(0x4fc3ff)
+      }
+      return new THREE.Color(0xffffff)
+    }
+
+    function applyNodeVisibility() {
+      nodes.forEach(n => {
+        const id = n.userData.id
+        let modeVisible
+        if (mode === "alex") modeVisible = ALEX_IDS.has(id)
+        else if (mode === "jordan") modeVisible = JORDAN_IDS.has(id)
+        else modeVisible = true
+        n.visible = modeVisible
+        if (!modeVisible) return
+
+        const isS = SHARED_IDS.has(id) && mode === "merged"
+        if (!isS) { const bc = getNodeBaseColor(n); if (bc) n.material.color.copy(bc) }
+
+        if (focusedNode) {
+          const match = n.userData.tags.some(t => focusedNode.userData.tags.includes(t))
+          n.material.opacity = match ? 1 : 0.04; n.material.transparent = true
+        } else if (focusedTag) {
+          const match = n.userData.tags.includes(focusedTag)
+          n.material.opacity = match ? 1 : 0.04; n.material.transparent = true
+        } else {
+          n.material.opacity = 1; n.material.transparent = isS
+        }
+      })
+      clusters.forEach((c, i) => {
+        if (focusedNode) {
+          const match = focusedNode.userData.tags.includes(TAGS[i])
+          c.material.opacity = match ? 1 : 0.07; c.material.transparent = true
+        } else if (focusedTag) {
+          c.material.opacity = TAGS[i] === focusedTag ? 1 : 0.07; c.material.transparent = true
+        } else {
+          c.material.opacity = 1; c.material.transparent = false
+        }
+      })
+      nebulas.forEach((nb, i) => {
+        if (focusedNode) {
+          nb.material.opacity = focusedNode.userData.tags.includes(TAGS[i]) ? 0.38 : 0.015
+        } else if (focusedTag) {
+          nb.material.opacity = TAGS[i] === focusedTag ? 0.38 : 0.015
+        } else {
+          nb.material.opacity = 0.38
+        }
+      })
+      edges.forEach(e => {
+        const aNode = nodes.find(x => x === e.userData.a)
+        const isUserEdge = !aNode
+        if (aNode) {
+          const id = aNode.userData.id
+          let modeVis
+          if (mode === "alex") modeVis = ALEX_IDS.has(id)
+          else if (mode === "jordan") modeVis = JORDAN_IDS.has(id)
+          else modeVis = true
+          if (!modeVis) { e.visible = false; return }
+        }
+        if (mode === "merged" && aNode) {
+          const id = aNode.userData.id
+          if (SHARED_IDS.has(id)) e.material.color.setHex(0xffd700)
+          else if (ALEX_IDS.has(id)) e.material.color.setHex(0xff4fd8)
+          else e.material.color.setHex(0x4fc3ff)
+        } else {
+          e.material.color.setHex(0x8899ff)
+        }
+        if (focusedNode) {
+          const rel = (e.userData.a === focusedNode || e.userData.b === focusedNode)
+          e.visible = rel
+        } else if (focusedTag) {
+          // Show edges belonging to nodes in this tag cluster, hide others
+          if (aNode) {
+            const inTag = aNode.userData.tags.includes(focusedTag)
+            e.visible = inTag
+            if (inTag) e.material.opacity = 0.22
+          } else {
+            // cluster-to-origin edges: show the one for this tag
+            const bCluster = clusters.find(c => c === e.userData.b)
+            e.visible = bCluster ? bCluster.userData.tag === focusedTag : false
+          }
+        } else {
+          e.visible = true
+          // restore default opacity
+          e.material.opacity = aNode ? (aNode.userData.isShared ? 0.28 : 0.13) : 0.1
+        }
+      })
+    }
+
+    function resetVis() {
+      focusedNode = null; focusedTag = null
+      legItems.forEach(el => el.classList.remove("focused"))
+      applyNodeVisibility()
+      resetCamera()
+    }
+
+    function focusNodeFn(n) { focusedNode = n; focusedTag = null; applyNodeVisibility() }
+
+    /* ── CLUSTER CARD ── */
+    const clusterCardEl = document.getElementById("cluster-card")
+    document.getElementById("cc-close").addEventListener("click", () => { hideClusterCard(); resetVis() })
+
+    function showClusterCard(tagIndex) {
+      const tag = TAGS[tagIndex]
+      const color = TCSS[tagIndex]
+
+      // Which items belong to this cluster (primary tag match)
+      let items = ALL.filter(d => d.tags.includes(tag))
+      // Filter by mode
+      if (mode === "alex") items = items.filter(d => ALEX_IDS.has(d.id))
+      else if (mode === "jordan") items = items.filter(d => JORDAN_IDS.has(d.id))
+
+      // Sort: shared first, then by rating desc
+      items.sort((a, b) => {
+        const aS = SHARED_IDS.has(a.id) ? 1 : 0, bS = SHARED_IDS.has(b.id) ? 1 : 0
+        if (aS !== bS) return bS - aS
+        return b.rating - a.rating
+      })
+
+      document.getElementById("cc-dot").style.cssText = `background:${color};box-shadow:0 0 14px ${color}88;width:10px;height:10px;border-radius:50%`
+      document.getElementById("cc-tag").textContent = tag
+      document.getElementById("cc-tag").style.color = color
+      document.getElementById("cc-count").textContent = `${items.length} works in this cluster`
+
+      const listEl = document.getElementById("cc-list")
+      listEl.innerHTML = ""
+
+      // Group by shared / unique
+      const shared = items.filter(d => SHARED_IDS.has(d.id) && mode === "merged")
+      const unique = items.filter(d => !(SHARED_IDS.has(d.id) && mode === "merged"))
+
+      function renderItem(d) {
+        const isS = SHARED_IDS.has(d.id) && mode === "merged"
+        const iconClass = `icon-${d.type.toLowerCase()}`
+        const el = document.createElement("div")
+        el.className = `cc-item${isS ? " shared" : ""}`
+        const yr = d.year > 0 ? d.year : (Math.abs(d.year) + " BCE")
+        el.innerHTML = `
+      <div class="cc-item-icon ${iconClass}">${TYPE_ICONS[d.type] || "●"}</div>
       <div class="cc-item-info">
         <div class="cc-item-title">${d.title}</div>
         <div class="cc-item-meta">${d.type} · ${yr} · ${d.rating}/10</div>
       </div>
-      ${isS?'<div class="cc-item-badge">✦</div>':''}
+      ${isS ? '<div class="cc-item-badge">✦</div>' : ''}
     `
-    el.addEventListener("click",()=>{
-      // Find and show the node card
-      const n=nodes.find(x=>x.userData.id===d.id)
-      if(n){
-        showCard(n.userData)
-        focusNodeFn(n)
-        hideClusterCard()
+        el.addEventListener("click", () => {
+          // Find and show the node card
+          const n = nodes.find(x => x.userData.id === d.id)
+          if (n) {
+            showCard(n.userData)
+            focusNodeFn(n)
+            hideClusterCard()
+          }
+        })
+        listEl.appendChild(el)
+      }
+
+      if (shared.length && mode === "merged") {
+        const lbl = document.createElement("div")
+        lbl.className = "cc-section-label"
+        lbl.textContent = "✦ Shared Taste"
+        listEl.appendChild(lbl)
+        shared.forEach(renderItem)
+        if (unique.length) {
+          const lbl2 = document.createElement("div")
+          lbl2.className = "cc-section-label"
+          lbl2.textContent = "Unique picks"
+          listEl.appendChild(lbl2)
+        }
+      }
+      unique.forEach(renderItem)
+
+      clusterCardEl.classList.add("on")
+      document.getElementById("hint").style.opacity = "0"
+    }
+
+    function hideClusterCard() {
+      clusterCardEl.classList.remove("on")
+      setTimeout(() => document.getElementById("hint").style.opacity = "1", 600)
+    }
+
+    /* ── MEDIA CARD ── */
+    const cardEl = document.getElementById("card")
+    const hint = document.getElementById("hint")
+    const tipEl = document.getElementById("tip")
+    const tipName = document.getElementById("tip-name")
+    const tipShared = document.getElementById("tip-shared")
+    const tipCluster = document.getElementById("tip-cluster")
+
+    document.getElementById("cclose").addEventListener("click", () => { hideCard(); resetVis() })
+
+    const insightCache = {}
+
+    async function showCard(d) {
+      document.getElementById("cp").src = d.poster
+      document.getElementById("ctitle").textContent = d.title
+      const yr = d.year > 0 ? d.year : (Math.abs(d.year) + " BCE")
+      document.getElementById("cmeta").textContent = yr + " · " + d.type
+      document.getElementById("ctype").textContent = d.type
+      document.getElementById("crnum").textContent = d.rating + "/10"
+      document.getElementById("crfill").style.width = (d.rating / 10 * 100) + "%"
+      const tagsEl = document.getElementById("ctags"); tagsEl.innerHTML = ""
+      d.tags.forEach(t => { const i = TAGS.indexOf(t), col = TCSS[i] || "#888", el = document.createElement("div"); el.className = "ctag"; el.textContent = t; el.style.color = col; el.style.borderColor = col + "44"; el.style.background = col + "11"; tagsEl.appendChild(el) })
+      document.getElementById("cdesc").textContent = d.desc || ""
+
+      const isS = d.isShared && mode === "merged"
+      document.getElementById("crown").classList.toggle("on", isS)
+      cardEl.classList.toggle("gold-glow", isS)
+      cardEl.classList.add("on"); hint.style.opacity = "0"
+
+      const sp = document.getElementById("spanel"), sl = document.getElementById("sloading"), st = document.getElementById("stext")
+      if (isS) {
+        sp.classList.add("on"); sl.classList.add("on"); st.textContent = ""
+        const ins = await getInsight(d)
+        sl.classList.remove("on"); st.textContent = ins
+      } else {
+        sp.classList.remove("on"); sl.classList.remove("on"); st.textContent = ""
+      }
+    }
+
+    function hideCard() {
+      cardEl.classList.remove("on", "gold-glow")
+      setTimeout(() => hint.style.opacity = "1", 600)
+    }
+
+    async function getInsight(d) {
+      if (insightCache[d.id]) return insightCache[d.id]
+      try {
+        const r = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            system: "You are TasteMap, an AI that finds the deep connection between two friends' shared taste. Write a single warm, insightful paragraph of 2-3 sentences (max 55 words) explaining what Alex and Jordan likely both love about this work and what it reveals about their shared aesthetic sensibility. Be specific and poetic. Sound like a perceptive friend, not a critic. No preamble, no mention of their names at the start.",
+            messages: [{ role: "user", content: `Shared work: "${d.title}" (${d.type}, ${d.year > 0 ? d.year : Math.abs(d.year) + " BCE"}). Tags: ${d.tags.join(", ")}. Description: ${d.desc}` }]
+          })
+        })
+        const data = await r.json()
+        const txt = (data.content || []).map(b => b.text || "").join("")
+        insightCache[d.id] = txt || "A rare work rich enough to resonate across different sensibilities — both probably return to it for the depth, craft, and emotional truth it carries."
+        return insightCache[d.id]
+      } catch (e) {
+        return "Something here speaks across different sensibilities — rich enough to mean different things to different listeners, yet essential to both."
+      }
+    }
+
+    /* ── RAYCASTER ── */
+    const raycaster = new THREE.Raycaster()
+    const mouse = new THREE.Vector2()
+    let hovered = null
+
+    function getPointerPos(e) {
+      const touch = e.touches ? e.touches[0] : e
+      return { x: (touch.clientX / innerWidth) * 2 - 1, y: -(touch.clientY / innerHeight) * 2 + 1 }
+    }
+
+    renderer.domElement.addEventListener("mousemove", e => {
+      if (_drag) return // don't update hover while dragging
+      const p = getPointerPos(e)
+      mouse.x = p.x; mouse.y = p.y
+      raycaster.setFromCamera(mouse, camera)
+      const allHittable = [...nodes.filter(n => n.visible), ...clusters]
+      const hits = raycaster.intersectObjects(allHittable)
+      if (hits.length) {
+        const n = hits[0].object
+        if (hovered !== n) {
+          hovered = n
+          renderer.domElement.style.cursor = "pointer"
+          tipName.textContent = n.userData.title || (n.userData.tag || "")
+          const isCluster = !!n.userData.isClusterNode
+          const isS = n.userData.isShared && mode === "merged"
+          tipShared.classList.toggle("on", isS && !isCluster)
+          tipCluster.classList.toggle("on", isCluster)
+          tipEl.classList.add("on")
+        }
+        tipEl.style.left = (e.clientX + 16) + "px"; tipEl.style.top = (e.clientY - 12) + "px"
+      } else {
+        hovered = null; renderer.domElement.style.cursor = "crosshair"; tipEl.classList.remove("on")
       }
     })
-    listEl.appendChild(el)
-  }
 
-  if(shared.length&&mode==="merged"){
-    const lbl=document.createElement("div")
-    lbl.className="cc-section-label"
-    lbl.textContent="✦ Shared Taste"
-    listEl.appendChild(lbl)
-    shared.forEach(renderItem)
-    if(unique.length){
-      const lbl2=document.createElement("div")
-      lbl2.className="cc-section-label"
-      lbl2.textContent="Unique picks"
-      listEl.appendChild(lbl2)
-    }
-  }
-  unique.forEach(renderItem)
+    // Track if this was a real drag (suppress click after drag)
+    let _wasDrag = false
+    window.addEventListener("mousedown", () => { _wasDrag = false })
+    window.addEventListener("mousemove", e => { if (_drag && (Math.abs(e.movementX) + Math.abs(e.movementY)) > 2) _wasDrag = true })
 
-  clusterCardEl.classList.add("on")
-  document.getElementById("hint").style.opacity="0"
-}
+    // Single touchend: drag-end + tap detection
+    renderer.domElement.addEventListener("touchend", e => {
+      _drag = false
+      if (e.changedTouches.length === 1) {
+        const dt = Date.now() - _tStartTime
+        const dx = Math.abs(e.changedTouches[0].clientX - _tStartX)
+        const dy = Math.abs(e.changedTouches[0].clientY - _tStartY)
+        if (dt < 220 && dx < 12 && dy < 12) {
+          const touch = e.changedTouches[0]
+          mouse.x = (touch.clientX / innerWidth) * 2 - 1; mouse.y = -(touch.clientY / innerHeight) * 2 + 1
+          handleClick()
+        }
+      }
+    }, { passive: true })
 
-function hideClusterCard(){
-  clusterCardEl.classList.remove("on")
-  setTimeout(()=>document.getElementById("hint").style.opacity="1",600)
-}
-
-/* ── MEDIA CARD ── */
-const cardEl=document.getElementById("card")
-const hint=document.getElementById("hint")
-const tipEl=document.getElementById("tip")
-const tipName=document.getElementById("tip-name")
-const tipShared=document.getElementById("tip-shared")
-const tipCluster=document.getElementById("tip-cluster")
-
-document.getElementById("cclose").addEventListener("click",()=>{hideCard();resetVis()})
-
-const insightCache={}
-
-async function showCard(d){
-  document.getElementById("cp").src=d.poster
-  document.getElementById("ctitle").textContent=d.title
-  const yr=d.year>0?d.year:(Math.abs(d.year)+" BCE")
-  document.getElementById("cmeta").textContent=yr+" · "+d.type
-  document.getElementById("ctype").textContent=d.type
-  document.getElementById("crnum").textContent=d.rating+"/10"
-  document.getElementById("crfill").style.width=(d.rating/10*100)+"%"
-  const tagsEl=document.getElementById("ctags"); tagsEl.innerHTML=""
-  d.tags.forEach(t=>{const i=TAGS.indexOf(t),col=TCSS[i]||"#888",el=document.createElement("div");el.className="ctag";el.textContent=t;el.style.color=col;el.style.borderColor=col+"44";el.style.background=col+"11";tagsEl.appendChild(el)})
-  document.getElementById("cdesc").textContent=d.desc||""
-
-  const isS=d.isShared&&mode==="merged"
-  document.getElementById("crown").classList.toggle("on",isS)
-  cardEl.classList.toggle("gold-glow",isS)
-  cardEl.classList.add("on"); hint.style.opacity="0"
-
-  const sp=document.getElementById("spanel"),sl=document.getElementById("sloading"),st=document.getElementById("stext")
-  if(isS){
-    sp.classList.add("on"); sl.classList.add("on"); st.textContent=""
-    const ins=await getInsight(d)
-    sl.classList.remove("on"); st.textContent=ins
-  } else {
-    sp.classList.remove("on"); sl.classList.remove("on"); st.textContent=""
-  }
-}
-
-function hideCard(){
-  cardEl.classList.remove("on","gold-glow")
-  setTimeout(()=>hint.style.opacity="1",600)
-}
-
-async function getInsight(d){
-  if(insightCache[d.id]) return insightCache[d.id]
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:1000,
-        system:"You are TasteMap, an AI that finds the deep connection between two friends' shared taste. Write a single warm, insightful paragraph of 2-3 sentences (max 55 words) explaining what Alex and Jordan likely both love about this work and what it reveals about their shared aesthetic sensibility. Be specific and poetic. Sound like a perceptive friend, not a critic. No preamble, no mention of their names at the start.",
-        messages:[{role:"user",content:`Shared work: "${d.title}" (${d.type}, ${d.year>0?d.year:Math.abs(d.year)+" BCE"}). Tags: ${d.tags.join(", ")}. Description: ${d.desc}`}]
-      })
-    })
-    const data=await r.json()
-    const txt=(data.content||[]).map(b=>b.text||"").join("")
-    insightCache[d.id]=txt||"A rare work rich enough to resonate across different sensibilities — both probably return to it for the depth, craft, and emotional truth it carries."
-    return insightCache[d.id]
-  }catch(e){
-    return "Something here speaks across different sensibilities — rich enough to mean different things to different listeners, yet essential to both."
-  }
-}
-
-/* ── RAYCASTER ── */
-const raycaster=new THREE.Raycaster()
-const mouse=new THREE.Vector2()
-let hovered=null
-
-function getPointerPos(e){
-  const touch=e.touches?e.touches[0]:e
-  return {x:(touch.clientX/innerWidth)*2-1, y:-(touch.clientY/innerHeight)*2+1}
-}
-
-renderer.domElement.addEventListener("mousemove",e=>{
-  if(_drag) return // don't update hover while dragging
-  const p=getPointerPos(e)
-  mouse.x=p.x; mouse.y=p.y
-  raycaster.setFromCamera(mouse,camera)
-  const allHittable=[...nodes.filter(n=>n.visible),...clusters]
-  const hits=raycaster.intersectObjects(allHittable)
-  if(hits.length){
-    const n=hits[0].object
-    if(hovered!==n){
-      hovered=n
-      renderer.domElement.style.cursor="pointer"
-      tipName.textContent=n.userData.title||(n.userData.tag||"")
-      const isCluster=!!n.userData.isClusterNode
-      const isS=n.userData.isShared&&mode==="merged"
-      tipShared.classList.toggle("on",isS&&!isCluster)
-      tipCluster.classList.toggle("on",isCluster)
-      tipEl.classList.add("on")
-    }
-    tipEl.style.left=(e.clientX+16)+"px"; tipEl.style.top=(e.clientY-12)+"px"
-  }else{
-    hovered=null; renderer.domElement.style.cursor="crosshair"; tipEl.classList.remove("on")
-  }
-})
-
-// Track if this was a real drag (suppress click after drag)
-let _wasDrag=false
-window.addEventListener("mousedown",()=>{ _wasDrag=false })
-window.addEventListener("mousemove",e=>{ if(_drag&&(Math.abs(e.movementX)+Math.abs(e.movementY))>2) _wasDrag=true })
-
-// Single touchend: drag-end + tap detection
-renderer.domElement.addEventListener("touchend",e=>{
-  _drag=false
-  if(e.changedTouches.length===1){
-    const dt=Date.now()-_tStartTime
-    const dx=Math.abs(e.changedTouches[0].clientX-_tStartX)
-    const dy=Math.abs(e.changedTouches[0].clientY-_tStartY)
-    if(dt<220&&dx<12&&dy<12){
-      const touch=e.changedTouches[0]
-      mouse.x=(touch.clientX/innerWidth)*2-1; mouse.y=-(touch.clientY/innerHeight)*2+1
+    renderer.domElement.addEventListener("click", e => {
+      if (_wasDrag) return
+      mouse.x = (e.clientX / innerWidth) * 2 - 1; mouse.y = -(e.clientY / innerHeight) * 2 + 1
       handleClick()
-    }
-  }
-},{passive:true})
-
-renderer.domElement.addEventListener("click",e=>{
-  if(_wasDrag) return
-  mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=-(e.clientY/innerHeight)*2+1
-  handleClick()
-})
-
-function handleClick(){
-  raycaster.setFromCamera(mouse,camera)
-  const allHittable=[...nodes.filter(n=>n.visible),...clusters]
-  const hits=raycaster.intersectObjects(allHittable)
-  if(!hits.length){hideCard();hideClusterCard();resetVis();return}
-  const n=hits[0].object
-
-  if(n.userData.isClusterNode){
-    // Cluster node clicked
-    const ti=n.userData.tagIndex
-    hideCard()
-    focusedNode=null
-    focusedTag=TAGS[ti]
-    applyNodeVisibility()
-    legItems.forEach((el,i)=>el.classList.toggle("focused",i===ti))
-    showClusterCard(ti)
-  } else {
-    // Media node clicked
-    hideClusterCard()
-    showCard(n.userData)
-    focusNodeFn(n)
-  }
-}
-
-/* ── CONTROLS ── */
-document.getElementById("btn-rot").addEventListener("click",function(){
-  // rotation is always on — button just pulses as feedback
-  this.classList.add("active")
-})
-document.getElementById("btn-rst").addEventListener("click",()=>{resetVis();hideCard();hideClusterCard()})
-
-document.getElementById("btn-merge").addEventListener("click",function(){
-  if(!mergeUnlocked){
-    mergeUnlocked=true
-    document.getElementById("sep-mg").style.display=""
-    document.getElementById("tmg").style.display=""
-    this.classList.add("merge-lit"); this.textContent="✦ Merged"
-  }
-  setMode("merged")
-})
-document.getElementById("t1").addEventListener("click",()=>{focusedNode=null;focusedTag=null;setMode("alex")})
-document.getElementById("t2").addEventListener("click",()=>{focusedNode=null;focusedTag=null;setMode("jordan")})
-document.getElementById("tmg").addEventListener("click",()=>{focusedNode=null;focusedTag=null;setMode("merged")})
-
-if(!document.body.classList.contains('bg')){
-  setTimeout(()=>{
-    const hw=document.getElementById("howto"); hw.classList.add("on")
-    setTimeout(()=>hw.classList.remove("on"),5500)
-  },1700)
-}
-
-/* ── ANIMATE ── */
-let T=0
-// Camera always at (0,0,_camDist) looking at origin; universe rotates under it
-camera.position.set(0,0,_camDist)
-camera.lookAt(0,0,0)
-
-function animate(){
-  requestAnimationFrame(animate); T+=0.001
-
-  if(camAnim){
-    camAnim.update(performance.now())
-  } else {
-    // Auto-rotate when no animation running and user not dragging
-    if(!_drag) universe.rotation.y+=0.00025
-    // Smooth zoom toward _camDist
-    const cur=camera.position.z
-    camera.position.z+=(_camDist-cur)*0.08
-    camera.lookAt(0,0,0)
-  }
-
-  // Inertia when drag released
-  if(!_drag&&!camAnim){
-    universe.rotation.y+=_velX*0.002
-    universe.rotation.x+=_velY*0.002
-    universe.rotation.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,universe.rotation.x))
-    _velX*=0.88; _velY*=0.88
-  }
-
-  userNode.scale.setScalar(1+Math.sin(T*2.2)*0.07)
-  if(mode==="merged"){
-    const pulse=0.78+Math.sin(T*2.8)*0.22
-    nodes.forEach(n=>{
-      if(n.userData.isShared&&n.visible) n.material.color.setRGB(1,pulse*0.85,0)
     })
-  }
-  clusters.forEach((c,i)=>{
-    const s=1+Math.sin(T*1.6+i*0.8)*0.08
-    c.scale.setScalar(s)
-  })
-  composer.render()
-}
-animate()
 
-window.addEventListener("resize",()=>{
-  camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()
-  renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight)
-})
+    function handleClick() {
+      raycaster.setFromCamera(mouse, camera)
+      const allHittable = [...nodes.filter(n => n.visible), ...clusters]
+      const hits = raycaster.intersectObjects(allHittable)
+      if (!hits.length) { hideCard(); hideClusterCard(); resetVis(); return }
+      const n = hits[0].object
 
-setMode("alex")
-if(!document.body.classList.contains('bg')){
-  setTimeout(()=>document.getElementById("loader").classList.add("off"),1600)
-}
-</script>
+      if (n.userData.isClusterNode) {
+        // Cluster node clicked
+        const ti = n.userData.tagIndex
+        hideCard()
+        focusedNode = null
+        focusedTag = TAGS[ti]
+        applyNodeVisibility()
+        legItems.forEach((el, i) => el.classList.toggle("focused", i === ti))
+        showClusterCard(ti)
+      } else {
+        // Media node clicked
+        hideClusterCard()
+        showCard(n.userData)
+        focusNodeFn(n)
+      }
+    }
+
+    /* ── CONTROLS ── */
+    document.getElementById("btn-rot").addEventListener("click", function () {
+      // rotation is always on — button just pulses as feedback
+      this.classList.add("active")
+    })
+    document.getElementById("btn-rst").addEventListener("click", () => { resetVis(); hideCard(); hideClusterCard() })
+
+    document.getElementById("btn-merge").addEventListener("click", function () {
+      if (!mergeUnlocked) {
+        mergeUnlocked = true
+        document.getElementById("sep-mg").style.display = ""
+        document.getElementById("tmg").style.display = ""
+        this.classList.add("merge-lit"); this.textContent = "✦ Merged"
+      }
+      setMode("merged")
+    })
+    document.getElementById("t1").addEventListener("click", () => { focusedNode = null; focusedTag = null; setMode("alex") })
+    document.getElementById("t2").addEventListener("click", () => { focusedNode = null; focusedTag = null; setMode("jordan") })
+    document.getElementById("tmg").addEventListener("click", () => { focusedNode = null; focusedTag = null; setMode("merged") })
+
+    if (!document.body.classList.contains('bg')) {
+      setTimeout(() => {
+        const hw = document.getElementById("howto"); hw.classList.add("on")
+        setTimeout(() => hw.classList.remove("on"), 5500)
+      }, 1700)
+    }
+
+    /* ── ANIMATE ── */
+    let T = 0
+    // Camera always at (0,0,_camDist) looking at origin; universe rotates under it
+    camera.position.set(0, 0, _camDist)
+    camera.lookAt(0, 0, 0)
+
+    function animate() {
+      requestAnimationFrame(animate); T += 0.001
+
+      if (camAnim) {
+        camAnim.update(performance.now())
+      } else {
+        // Auto-rotate when no animation running and user not dragging
+        if (!_drag) universe.rotation.y += 0.00025
+        // Smooth zoom toward _camDist
+        const cur = camera.position.z
+        camera.position.z += (_camDist - cur) * 0.08
+        camera.lookAt(0, 0, 0)
+      }
+
+      // Inertia when drag released
+      if (!_drag && !camAnim) {
+        universe.rotation.y += _velX * 0.002
+        universe.rotation.x += _velY * 0.002
+        universe.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, universe.rotation.x))
+        _velX *= 0.88; _velY *= 0.88
+      }
+
+      userNode.scale.setScalar(1 + Math.sin(T * 2.2) * 0.07)
+      if (mode === "merged") {
+        const pulse = 0.78 + Math.sin(T * 2.8) * 0.22
+        nodes.forEach(n => {
+          if (n.userData.isShared && n.visible) n.material.color.setRGB(1, pulse * 0.85, 0)
+        })
+      }
+      clusters.forEach((c, i) => {
+        const s = 1 + Math.sin(T * 1.6 + i * 0.8) * 0.08
+        c.scale.setScalar(s)
+      })
+      composer.render()
+    }
+    animate()
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix()
+      renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight)
+    })
+
+    setMode("alex")
+    if (!document.body.classList.contains('bg')) {
+      setTimeout(() => document.getElementById("loader").classList.add("off"), 1600)
+    }
+  </script>
 </body>
+
 </html>
