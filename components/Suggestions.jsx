@@ -9,11 +9,19 @@ export default function Suggestions() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!thought.trim()) return;
-    const body = encodeURIComponent(thought + (email ? `\n\nFrom: ${email}` : ''));
-    window.open(`mailto:founders@thefourthplace.me?subject=${encodeURIComponent('Feature idea')}&body=${body}`);
+    try {
+      await fetch('/api/suggestions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ thought, email }),
+      });
+    } catch {
+      // fail silently
+    }
+    setNotes((prev) => [{ id: Date.now(), text: thought.trim() }, ...prev]);
     setSubmitted(true);
   };
 

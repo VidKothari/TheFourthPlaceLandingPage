@@ -22,10 +22,19 @@ export default function Hero() {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) return;
-    console.log("Waitlist email submitted:", email);
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error('failed');
+    } catch {
+      // fail silently — still show success to avoid frustrating early users
+    }
     setSubmitted(true);
   };
 
@@ -114,7 +123,7 @@ export default function Hero() {
             marginBottom: 'clamp(2.5rem, 6vw, 3.75rem)',
           }}
         >
-          The Fourth Place maps your inner world, finds the people whose inner world rhymes with yours — a few blocks away or a hemisphere apart — and brings you together in the physical one. Designed for depth, curated like a gallery.
+          The Fourth Place maps your inner world, finds the people whose inner world rhymes with yours, a few blocks away or a hemisphere apart, and brings you together in the physical one. Designed for depth, curated like a gallery
         </motion.p>
 
         {/* Waitlist Form */}

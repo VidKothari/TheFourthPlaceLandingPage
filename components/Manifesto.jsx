@@ -144,7 +144,7 @@ export default function Manifesto() {
             }}>
               You don't open Instagram to connect. You open it to consume.<br />
               The feed is a machine designed to hold your attention, not to introduce you to your people.<br />
-              Every platform optimised for reach and got performance. For engagement and got addiction.
+              Every platform optimised for reach and got performance, for engagement and got addiction.
             </p>
           </motion.div>
           <motion.div
