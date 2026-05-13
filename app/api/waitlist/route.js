@@ -15,7 +15,7 @@ export async function POST(request) {
     // from: use custom domain once thefourthplace.me is verified in Resend → Domains
     // until then, onboarding@resend.dev works for any verified Resend account
     await resend.emails.send({
-      from: 'permanentresident@thefourthplace.me>',
+      from: 'The Fourth Place <permanentresident@thefourthplace.me>',
       to: 'founders@thefourthplace.me',
       subject: 'New permanent resident',
       text: `New permanent resident: ${email}`,
