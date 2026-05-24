@@ -1,4 +1,5 @@
 import { Cormorant_Garamond, Inter } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import CustomCursor from '../components/CustomCursor';
 import ClientErrorBoundary from '../components/ClientErrorBoundary';
 import Loader from '../components/Loader';
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
         <ClientErrorBoundary>
           {children}
         </ClientErrorBoundary>
+        <SpeedInsights />
       </body>
     </html>
   );
