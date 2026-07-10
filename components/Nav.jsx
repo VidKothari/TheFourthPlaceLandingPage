@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const links = [
+  { label: 'The Room', href: '#manifesto' },
+  { label: 'The Map', href: '#tastemap' },
+  { label: 'The Exhibition', href: '#thread' },
+];
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -36,58 +42,50 @@ export default function Nav() {
       >
         <div className="interactive serif" style={{
           fontSize: 'clamp(1.2rem, 4vw, 1.6rem)',
-          color: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.92)',
+          color: 'var(--text-pure)',
           fontStyle: 'italic',
           fontWeight: 500,
-          transition: 'color 0.6s',
         }}>
           The Fourth Place
         </div>
 
         {/* Desktop Links */}
         <div className="mobile-hide" style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
-          {['Philosophy', 'Exhibition', 'Taste Map'].map((label, i) => {
-            const href = ['#philosophy', '#thread', '#tastemap'][i];
-            const baseColor = scrolled ? 'var(--text-soft)' : 'rgba(255,255,255,0.65)';
-            const hoverColor = scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,1)';
-            return (
-              <a
-                key={label}
-                href={href}
-                className="interactive"
-                style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', color: baseColor, transition: 'color 0.4s' }}
-                onMouseEnter={(e) => { e.target.style.color = hoverColor; }}
-                onMouseLeave={(e) => { e.target.style.color = baseColor; }}
-              >
-                {label}
-              </a>
-            );
-          })}
+          {links.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              className="interactive"
+              style={{ fontSize: '0.8rem', fontWeight: 400, letterSpacing: '0.05em', color: 'var(--text-soft)', transition: 'color 0.4s' }}
+              onMouseEnter={(e) => { e.target.style.color = 'var(--text-pure)'; }}
+              onMouseLeave={(e) => { e.target.style.color = 'var(--text-soft)'; }}
+            >
+              {label}
+            </a>
+          ))}
           <a
             href="#waitlist"
             className="interactive"
             style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               height: '2.75rem', padding: '0 1.75rem',
-              background: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.12)',
-              color: scrolled ? 'var(--bg-pure)' : 'rgba(255,255,255,0.92)',
-              border: scrolled ? '1px solid var(--text-pure)' : '1px solid rgba(255,255,255,0.35)',
-              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.82rem',
+              background: 'var(--text-pure)',
+              color: 'var(--bg-pure)',
+              border: '1px solid var(--text-pure)',
+              fontFamily: 'var(--sans)', fontWeight: 400, fontSize: '0.82rem',
               letterSpacing: '0.06em', textTransform: 'uppercase',
-              transition: 'background 0.5s, color 0.5s, border-color 0.5s',
-              backdropFilter: scrolled ? 'none' : 'blur(8px)',
-              WebkitBackdropFilter: scrolled ? 'none' : 'blur(8px)',
+              transition: 'background 0.5s, color 0.5s',
             }}
             onMouseEnter={(e) => {
-              if (scrolled) { e.currentTarget.style.background = 'var(--bg-pure)'; e.currentTarget.style.color = 'var(--text-pure)'; }
-              else { e.currentTarget.style.background = 'rgba(255,255,255,0.22)'; }
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--text-pure)';
             }}
             onMouseLeave={(e) => {
-              if (scrolled) { e.currentTarget.style.background = 'var(--text-pure)'; e.currentTarget.style.color = 'var(--bg-pure)'; }
-              else { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }
+              e.currentTarget.style.background = 'var(--text-pure)';
+              e.currentTarget.style.color = 'var(--bg-pure)';
             }}
           >
-            Join Waitlist
+            Join the waitlist
           </a>
         </div>
 
@@ -95,14 +93,15 @@ export default function Nav() {
         <button
           className="interactive desktop-hide"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Open menu"
           style={{
             display: 'none',
             background: 'none', border: 'none', cursor: 'pointer',
             flexDirection: 'column', gap: '6px'
           }}
         >
-          <div style={{ width: '1.5rem', height: '1.5px', background: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.85)', transition: 'background 0.4s' }} />
-          <div style={{ width: '1.5rem', height: '1.5px', background: scrolled ? 'var(--text-pure)' : 'rgba(255,255,255,0.85)', transition: 'background 0.4s' }} />
+          <div style={{ width: '1.5rem', height: '1.5px', background: 'var(--text-pure)' }} />
+          <div style={{ width: '1.5rem', height: '1.5px', background: 'var(--text-pure)' }} />
         </button>
       </motion.nav>
 
@@ -115,18 +114,18 @@ export default function Nav() {
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             style={{
-              position: 'fixed', inset: 0, background: 'var(--bg-pure)', zIndex: 2000,
+              position: 'fixed', inset: 0, background: 'var(--bg-warm)', zIndex: 2000,
               display: 'flex', flexDirection: 'column', padding: '40px 24px', gap: '32px'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-              <div className="serif italic" style={{ fontSize: '1.4rem' }}>The Fourth Place</div>
-              <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', fontSize: '2rem' }}>✕</button>
+              <div className="serif italic" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontFamily: 'var(--serif)' }}>The Fourth Place</div>
+              <button onClick={() => setIsOpen(false)} aria-label="Close menu" style={{ background: 'none', border: 'none', fontSize: '2rem', cursor: 'pointer' }}>✕</button>
             </div>
-            <a href="#philosophy" onClick={() => setIsOpen(false)} style={{ fontSize: '2rem', fontFamily: 'var(--serif)' }}>Philosophy</a>
-            <a href="#thread" onClick={() => setIsOpen(false)} style={{ fontSize: '2rem', fontFamily: 'var(--serif)' }}>Exhibition</a>
-            <a href="#tastemap" onClick={() => setIsOpen(false)} style={{ fontSize: '2rem', fontFamily: 'var(--serif)' }}>Taste Map</a>
-            <a href="#waitlist" onClick={() => setIsOpen(false)} style={{ marginTop: 'auto', textAlign: 'center' }} className="editorial-btn">Join Waitlist</a>
+            {links.map(({ label, href }) => (
+              <a key={label} href={href} onClick={() => setIsOpen(false)} style={{ fontSize: '2rem', fontFamily: 'var(--serif)' }}>{label}</a>
+            ))}
+            <a href="#waitlist" onClick={() => setIsOpen(false)} style={{ marginTop: 'auto', textAlign: 'center' }} className="editorial-btn">Join the waitlist</a>
           </motion.div>
         )}
       </AnimatePresence>

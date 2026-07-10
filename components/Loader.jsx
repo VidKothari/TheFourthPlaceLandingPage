@@ -25,7 +25,7 @@ export default function Loader() {
       position: 'fixed',
       inset: 0,
       zIndex: 99999,
-      background: '#fff',
+      background: '#f8f6f2',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

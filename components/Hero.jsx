@@ -1,251 +1,236 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useState, useLayoutEffect, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
 import LivingText from './LivingText';
 
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-
-const lines = [
-  { text: 'You are not the content you scroll.', italic: true },
-  { text: 'Kill the feed.', italic: false },
+const exhibits = [
+  {
+    num: 'i',
+    label: 'Film',
+    text: 'The one that broke something open, that you still can’t explain to anyone.',
+  },
+  {
+    num: 'ii',
+    label: 'Album',
+    text: 'The one you only play at 2am, when you need to feel something real.',
+  },
+  {
+    num: 'iii',
+    label: 'Book',
+    text: 'The dog-eared one you keep trying to give everyone you love.',
+  },
 ];
 
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] },
+});
+
 export default function Hero() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useIsomorphicLayoutEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email) return;
-    try {
-      const res = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) throw new Error('failed');
-    } catch {
-      // fail silently — still show success to avoid frustrating early users
-    }
-    setSubmitted(true);
-  };
-
   return (
     <section
       className="mobile-padding"
       style={{
         position: 'relative',
-        minHeight: '100vh',
-        background: '#0a0a0f',
-        overflow: 'hidden',
+        minHeight: '100dvh',
+        background: 'var(--bg-warm)',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: 'clamp(5rem, 8vw, 7rem) clamp(1.25rem, 5vw, 3.75rem)',
-        zIndex: 10,
         alignItems: 'center',
+        padding: 'clamp(7rem, 12vw, 9rem) clamp(1.25rem, 5vw, 3.75rem) clamp(3rem, 6vw, 5rem)',
+        borderBottom: '1px solid var(--border-crisp)',
+        overflow: 'hidden',
       }}
     >
-      {/* Tastemap constellation background */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <iframe
-          src="/tastemap.html?bg=1"
-          style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-        {/* Dark vignette — lets constellation glow through at edges, deep center for legibility */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(8,8,14,0.72) 0%, rgba(8,8,14,0.55) 55%, rgba(8,8,14,0.25) 100%)',
-        }} />
-      </div>
-
-      <div style={{
-        maxWidth: '100%',
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative',
-        zIndex: 20,
-      }}>
-
-        {/* Headline */}
-        <h1 style={{
-          marginBottom: 'clamp(1.5rem, 4vw, 3rem)',
-          display: 'flex',
-          flexDirection: 'column',
+      <div
+        className="hero-grid"
+        style={{
+          width: '100%',
+          maxWidth: '1400px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: '7fr 4fr',
+          gap: 'clamp(3rem, 8vw, 8rem)',
           alignItems: 'center',
-          gap: '0.05em',
-        }}>
-          {lines.map((line, i) => (
+        }}
+      >
+        {/* Left — the statement */}
+        <div>
+          <motion.p
+            {...reveal(0.1)}
+            style={{
+              fontFamily: 'var(--sans)',
+              fontWeight: 400,
+              fontSize: '0.72rem',
+              letterSpacing: '0.28em',
+              textTransform: 'uppercase',
+              color: 'var(--text-soft)',
+              marginBottom: 'clamp(2rem, 4vw, 3rem)',
+            }}
+          >
+            A digital museum of yourself
+          </motion.p>
+
+          <h1
+            style={{
+              fontFamily: 'var(--serif)',
+              fontWeight: 400,
+              fontSize: 'clamp(2.8rem, 6.5vw, 6rem)',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.05,
+              color: 'var(--text-pure)',
+              marginBottom: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+            }}
+          >
+            <motion.span {...reveal(0.25)} style={{ display: 'block' }}>
+              Find people whose minds
+            </motion.span>
             <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 280, damping: 22, delay: i * 0.13 }}
+              {...reveal(0.4)}
+              style={{ display: 'block', fontStyle: 'italic', color: 'var(--text-soft)' }}
+            >
+              <LivingText text="look like yours." fonts={["font-serif", "font-playfair", "font-libre"]} />
+            </motion.span>
+          </h1>
+
+          <motion.p
+            {...reveal(0.6)}
+            style={{
+              fontFamily: 'var(--sans)',
+              fontWeight: 300,
+              fontSize: 'clamp(1rem, 1.6vw, 1.2rem)',
+              lineHeight: 1.8,
+              color: 'var(--text-soft)',
+              maxWidth: '34rem',
+              marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)',
+            }}
+          >
+            The Fourth Place is a room for the films, albums, books, and games
+            that made you — and a way of finding the people whose rooms rhyme
+            with yours. Pune first. Then Mumbai. Then Bengaluru.
+          </motion.p>
+
+          <motion.div
+            {...reveal(0.75)}
+            style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}
+          >
+            <a href="#waitlist" className="editorial-btn interactive">
+              Join the waitlist
+            </a>
+            <a
+              href="#manifesto"
+              className="interactive"
               style={{
-                display: 'block',
-                fontFamily: 'var(--serif)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                fontFamily: 'var(--sans)',
                 fontWeight: 400,
-                fontSize: 'clamp(2.6rem, 3.5vw, 6.5rem)',
-                letterSpacing: '-0.02em',
-                lineHeight: 1.08,
-                fontStyle: line.italic ? 'italic' : 'normal',
-                color: line.italic ? 'rgba(255,255,255,0.52)' : 'rgba(255,255,255,0.96)',
+                fontSize: '0.82rem',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: 'var(--text-soft)',
+                borderBottom: '1px solid var(--border-crisp)',
+                paddingBottom: '0.35rem',
               }}
             >
-              <LivingText text={line.text} />
-            </motion.span>
-          ))}
-        </h1>
+              Walk through <MoveRight strokeWidth={1.5} size={15} />
+            </a>
+          </motion.div>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            fontFamily: 'var(--sans)',
-            fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
-            lineHeight: 1.85,
-            color: 'rgba(255,255,255,0.52)',
-            fontWeight: 300,
-            maxWidth: '35rem',
-            marginBottom: 'clamp(2.5rem, 6vw, 3.75rem)',
-          }}
+        {/* Right — museum wall labels */}
+        <div
+          className="hero-labels"
+          style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: 'var(--border-crisp)', border: '1px solid var(--border-crisp)' }}
         >
-          The Fourth Place maps your inner world, finds the people whose inner world rhymes with yours, a few blocks away or a hemisphere apart, and brings you together in the physical one. Designed for depth, curated like a gallery
-        </motion.p>
-
-        {/* Waitlist Form */}
-        <div style={{ width: '100%', maxWidth: '25rem', position: 'relative', marginTop: '1rem' }}>
-          <AnimatePresence mode="wait">
-            {!submitted ? (
-              <motion.form
-                key="form"
-                onSubmit={handleSubmit}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ background: 'var(--bg-warm)', overflow: 'hidden', height: 'clamp(180px, 22vh, 240px)' }}
+          >
+            <img
+              src="/assets/editorial/records.webp"
+              alt="A crate of worn record sleeves, mid-flip"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', filter: 'contrast(0.96)' }}
+            />
+          </motion.div>
+          {exhibits.map((ex, i) => (
+            <motion.div
+              key={ex.num}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.9 + i * 0.18, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                background: 'var(--bg-warm)',
+                padding: 'clamp(1.25rem, 2vw, 1.75rem) clamp(1.25rem, 2.2vw, 2rem)',
+              }}
+            >
+              <div
                 style={{
                   display: 'flex',
-                  alignItems: 'flex-end',
-                  width: '100%',
-                  borderBottom: '1px solid rgba(255,255,255,0.18)',
-                  paddingBottom: '0.5rem',
-                  position: 'relative',
+                  justifyContent: 'space-between',
+                  alignItems: 'baseline',
+                  marginBottom: '0.75rem',
                 }}
-                className="group waitlist-form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
-                transition={{ duration: 0.8, delay: 0.5 }}
               >
-                <div style={{ flex: 1, textAlign: 'left' }}>
-                  <label
-                    htmlFor="email"
-                    style={{
-                      display: 'block',
-                      fontSize: '0.72rem',
-                      fontFamily: 'var(--font-mono)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.12em',
-                      color: 'rgba(255,255,255,0.35)',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    Enter the waitlist
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    style={{
-                      width: '100%',
-                      background: 'transparent',
-                      fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
-                      outline: 'none',
-                      border: 'none',
-                      fontFamily: 'var(--serif)',
-                      color: 'rgba(255,255,255,0.88)',
-                    }}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  style={{
-                    paddingBottom: '0.25rem',
-                    paddingLeft: '1rem',
-                    opacity: 0.4,
-                    transition: 'opacity 0.3s',
-                    cursor: 'pointer',
-                    background: 'none',
-                    border: 'none',
-                    minWidth: '2.75rem',
-                    minHeight: '2.75rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'white',
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '0.4'}
-                >
-                  <MoveRight strokeWidth={1} size={32} color="white" />
-                </button>
                 <span
                   style={{
-                    position: 'absolute',
-                    left: 0,
-                    bottom: 0,
-                    width: '100%',
-                    height: '1px',
-                    background: 'rgba(255,255,255,0.7)',
-                    transform: 'scaleX(0)',
-                    transition: 'transform 1s cubic-bezier(0.19,1,0.22,1)',
-                    transformOrigin: 'left',
+                    fontFamily: 'var(--sans)',
+                    fontWeight: 400,
+                    fontSize: '0.62rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-soft)',
+                    opacity: 0.7,
                   }}
-                  className="waitlist-underline"
-                />
-                <style jsx>{`
-                  .waitlist-form:focus-within .waitlist-underline {
-                    transform: scaleX(1) !important;
-                  }
-                  #email::placeholder {
-                    color: rgba(255,255,255,0.2);
-                  }
-                `}</style>
-              </motion.form>
-            ) : (
-              <motion.div
-                key="success"
-                style={{ textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '1.25rem', color: 'rgba(255,255,255,0.88)' }}
-                initial={{ opacity: 0, y: 10, filter: "blur(5px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-              >
-                <motion.span
-                  style={{ display: 'inline-block' }}
-                  animate={{ y: [-5, -20, -50], opacity: [1, 0.8, 0], scale: [1, 1.2, 0.5] }}
-                  transition={{ duration: 3, ease: "easeOut", type: "tween" }}
                 >
-                  🕊️
-                </motion.span>
-                <p style={{ marginTop: '1rem' }}>Your room awaits.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  Exhibit {ex.num}
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--serif)',
+                    fontStyle: 'italic',
+                    fontSize: '0.95rem',
+                    color: 'var(--text-soft)',
+                  }}
+                >
+                  {ex.label}
+                </span>
+              </div>
+              <p
+                style={{
+                  fontFamily: 'var(--serif)',
+                  fontWeight: 400,
+                  fontSize: 'clamp(1.05rem, 1.4vw, 1.25rem)',
+                  lineHeight: 1.5,
+                  color: 'var(--text-pure)',
+                }}
+              >
+                {ex.text}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
 
+      <style jsx>{`
+        @media (max-width: 900px) {
+          .hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 3rem !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .hero-labels {
+            display: none !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -68,7 +68,7 @@ export default function UserJourney() {
           marginBottom: '8px',
           whiteSpace: 'nowrap',
         }}>
-          V. A Case Study
+          VI. A Case Study
         </div>
       </div>
 

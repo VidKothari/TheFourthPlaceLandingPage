@@ -3,12 +3,12 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const fonts = ["font-sans", "font-serif", "font-mono", "font-playfair", "font-libre"];
+const defaultFonts = ["font-sans", "font-serif", "font-mono", "font-playfair", "font-libre"];
 
 // Synchronous before-paint detection to avoid animation flash
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-export default function LivingText({ text, className = "" }) {
+export default function LivingText({ text, className = "", fonts = defaultFonts }) {
   const [isClient, setIsClient] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
