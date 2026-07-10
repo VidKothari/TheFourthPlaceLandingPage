@@ -5,10 +5,18 @@
   /* Sharp Editorial Palette */
   --bg-pure: #FFFFFF;
   --bg-off: #FAFAFA;
-  --text-pure: #000000;
+  --text-pure: #111110;
   --text-soft: #333333;
   --border-crisp: #E5E5E5;
-  --border-dark: #111111;
+  --border-dark: #111110;
+
+  /* Room lighting — the page moves light → dark → warm as you scroll */
+  --bg-warm: #f8f6f2;            /* morning paper */
+  --bg-dusk: #161512;            /* dusk room (people/architecture) */
+  --ink-dusk: rgba(248, 244, 238, 0.9);
+  --ink-dusk-soft: rgba(248, 244, 238, 0.55);
+  --border-dusk: rgba(248, 244, 238, 0.12);
+  --bg-night: #0a0a09;           /* the darkened gallery */
 
   /* Fonts */
   --serif: var(--font-serif), 'Georgia', serif;
@@ -52,30 +60,8 @@ a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; object-fit: cover; }
 button { font-family: inherit; }
 
-/* Custom Cursor */
-#cursor-dot {
-  position: fixed;
-  width: 12px;
-  height: 12px;
-  background: var(--text-pure);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s;
-  mix-blend-mode: difference;
-}
-
-#cursor-dot.hovered {
-  width: 60px;
-  height: 60px;
-  background: transparent;
-  border: 1px solid var(--bg-pure);
-}
-
 /* UI Elements - Razor Sharp */
-/* Scoped: exclude cursor-dot and animated Framer elements */
-*:not(#cursor-dot):not([style*="border-radius"]) {
+*:not([style*="border-radius"]) {
   border-radius: 0;
 }
 
@@ -163,19 +149,6 @@ button { font-family: inherit; }
 
 /* ─── MOBILE RESPONSIVENESS ─── */
 @media (max-width: 768px) {
-  #cursor-dot {
-    display: none !important;
-  }
-
-  body {
-    cursor: auto;
-  }
-
-  /* Restore pointer cursor on all interactive elements for touch */
-  a, button, [role="button"], .interactive, .editorial-btn {
-    cursor: pointer;
-  }
-
   /* Fix: only override horizontal padding so vertical is never zeroed out */
   .mobile-padding {
     padding-left: 20px !important;

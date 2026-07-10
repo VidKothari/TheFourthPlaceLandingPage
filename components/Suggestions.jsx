@@ -8,21 +8,23 @@ export default function Suggestions() {
   const [thought, setThought] = useState('');
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!thought.trim()) return;
+    setError(false);
     try {
-      await fetch('/api/suggestions', {
+      const res = await fetch('/api/suggestions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ thought, email }),
       });
+      if (!res.ok) throw new Error('failed');
+      setSubmitted(true);
     } catch {
-      // fail silently
+      setError(true);
     }
-    setNotes((prev) => [{ id: Date.now(), text: thought.trim() }, ...prev]);
-    setSubmitted(true);
   };
 
   return (
@@ -80,6 +82,23 @@ export default function Suggestions() {
             If you can picture a feature that would make this feel more like home — write it down.
             The founders read every submission personally.
           </p>
+          <div
+            className="mobile-hide"
+            style={{
+              marginTop: '2.5rem',
+              maxWidth: '17rem',
+              border: '1px solid var(--border-crisp)',
+              padding: '0.75rem',
+              background: 'var(--bg-pure)',
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/editorial/books.webp"
+              alt="A bedside stack of well-read paperbacks"
+              style={{ width: '100%', display: 'block' }}
+            />
+          </div>
         </motion.div>
 
         {/* Right — form */}
@@ -168,6 +187,15 @@ export default function Suggestions() {
                     onBlur={(e) => { e.target.style.borderColor = 'var(--border-crisp)'; }}
                   />
                 </div>
+
+                {error && (
+                  <p aria-live="polite" style={{
+                    fontFamily: 'var(--sans)', fontWeight: 300,
+                    fontSize: '0.85rem', color: '#8a3a2e', margin: 0,
+                  }}>
+                    That didn't go through. Try once more?
+                  </p>
+                )}
 
                 {/* Submit row */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>

@@ -106,7 +106,6 @@ const ConnectionCard = ({ card, index }) => {
       style={{
         background: hovered ? '#111' : 'var(--bg-pure)',
         border: `1px solid ${hovered ? 'transparent' : 'var(--border-crisp)'}`,
-        borderRadius: '18px',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -191,7 +190,6 @@ const ConnectionCard = ({ card, index }) => {
                 gap: '14px',
                 padding: '36px 20px',
                 border: `1px dashed ${hovered ? 'rgba(255,255,255,0.18)' : 'var(--border-crisp)'}`,
-                borderRadius: '12px',
                 transition: 'border-color 0.45s ease',
                 flex: 1,
               }}
@@ -268,7 +266,6 @@ const ConnectionCard = ({ card, index }) => {
               {/* Suggestion block */}
               <div style={{
                 background: hovered ? 'rgba(255,255,255,0.045)' : 'var(--bg-off)',
-                borderRadius: '12px',
                 padding: '20px 22px',
                 transition: 'background 0.45s ease',
                 display: 'flex',
@@ -374,7 +371,7 @@ export default function RealWorld() {
             color: 'var(--text-soft)',
             marginBottom: '32px',
           }}>
-            IV. The Physical
+            V. The Physical
           </div>
           <h2 style={{
             fontFamily: 'var(--serif)',
@@ -396,7 +393,7 @@ export default function RealWorld() {
             fontWeight: 300,
             maxWidth: '500px',
           }}>
-            When two taste maps share enough — the app sends you a card. Not a match. A suggestion. They might be a few streets over, or in a city on the other side of the world. Either way: something real, somewhere real, with someone who actually gets it.
+            This ends offline. When two maps share enough, the app sends you a card — not a match, a suggestion. They might be a few streets over, or a hemisphere apart. Either way: something real, somewhere real, with someone who actually gets it.
           </p>
         </div>
       </div>

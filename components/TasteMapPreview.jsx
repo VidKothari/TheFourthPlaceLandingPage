@@ -45,7 +45,7 @@ export default function TasteMapPreview() {
   return (
     <>
       <section id="tastemap" style={{
-        background: 'var(--text-pure)',
+        background: 'var(--bg-night)',
         borderTop: '1px solid var(--border-crisp)',
         position: 'relative',
       }}>
@@ -62,7 +62,7 @@ export default function TasteMapPreview() {
             letterSpacing: '0.1em', textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', display: 'block',
           }}>
-            Taste Map
+            III. The Darkened Gallery
           </motion.span>
 
           <motion.h2 {...stagger(1)} style={{
@@ -70,7 +70,7 @@ export default function TasteMapPreview() {
             fontSize: 'clamp(2.2rem, 5vw, 4.5rem)', lineHeight: 1.05,
             color: 'var(--bg-pure)', marginBottom: '1.25rem',
           }}>
-            Your <em style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.6)' }}>cultural constellation.</em>
+            Every collection becomes <em style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.6)' }}>a constellation.</em>
           </motion.h2>
 
           <motion.p {...stagger(2)} style={{
@@ -78,8 +78,9 @@ export default function TasteMapPreview() {
             lineHeight: 1.6, color: 'rgba(255,255,255,0.8)', fontWeight: 300,
             maxWidth: '35rem',
           }}>
-            Every node is something that moved you. Every cluster is a part of your inner world.
-            Switch between two people. Hit Merge — watch what you share glow gold.
+            Every node is something that moved you. Every cluster is a part of your
+            inner world. Switch between two people, hit Merge, and watch what they
+            share glow gold. Yours will look nothing like this — that's the point.
           </motion.p>
 
           {/* Mobile CTA — only rendered on mobile */}
@@ -92,7 +93,6 @@ export default function TasteMapPreview() {
                   padding: '1rem 2rem',
                   background: 'rgba(255,255,255,0.08)',
                   border: '0.5px solid rgba(255,255,255,0.3)',
-                  borderRadius: '3rem',
                   color: '#fff',
                   fontFamily: 'var(--sans)',
                   fontSize: '1rem',

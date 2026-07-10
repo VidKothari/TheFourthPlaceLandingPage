@@ -1,8 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request) {
   const { thought, email } = await request.json();
 
@@ -10,9 +8,15 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Thought is required' }, { status: 400 });
   }
 
+  if (!process.env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY is not set — suggestion dropped');
+    return NextResponse.json({ error: 'Not configured' }, { status: 500 });
+  }
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   try {
     // Notify founders
-    await resend.emails.send({
+    const { error: sendError } = await resend.emails.send({
       from: 'permanentresident@thefourthplace.me',
       to: 'founders@thefourthplace.me',
       subject: 'New feature idea',
@@ -29,6 +33,10 @@ export async function POST(request) {
         </div>
       `,
     });
+    if (sendError) {
+      console.error('Resend send error:', sendError);
+      return NextResponse.json({ error: 'Failed to send' }, { status: 500 });
+    }
 
     // Send acknowledgement to the user if they left their email
     if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

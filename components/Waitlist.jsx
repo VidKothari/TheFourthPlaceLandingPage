@@ -5,13 +5,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
 
 export default function Waitlist() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const [position, setPosition] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
-    setSubmitted(true);
+    if (!email || status === 'sending') return;
+    setStatus('sending');
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error('failed');
+      const data = await res.json().catch(() => ({}));
+      if (data?.position) setPosition(data.position);
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
@@ -20,7 +34,7 @@ export default function Waitlist() {
       className="mobile-padding"
       style={{
         position: 'relative',
-        background: 'var(--bg-pure)',
+        background: 'var(--bg-warm)',
         padding: 'clamp(80px, 14vw, 200px) clamp(20px, 5vw, 60px)',
         borderTop: '1px solid var(--border-crisp)',
         display: 'flex',
@@ -49,14 +63,14 @@ export default function Waitlist() {
 
         <div style={{
           fontFamily: 'var(--sans)',
-          fontSize: '0.8rem',
-          fontWeight: 500,
-          letterSpacing: '0.1em',
+          fontSize: '0.75rem',
+          fontWeight: 400,
+          letterSpacing: '0.24em',
           textTransform: 'uppercase',
           color: 'var(--text-soft)',
           marginBottom: '32px',
         }}>
-          Access Request
+          The Waitlist
         </div>
 
         <h2 style={{
@@ -72,126 +86,186 @@ export default function Waitlist() {
         <p style={{
           fontFamily: 'var(--sans)',
           fontSize: 'clamp(1rem, 1.8vw, 1.25rem)',
-          lineHeight: 1.6,
+          lineHeight: 1.7,
           color: 'var(--text-soft)',
           fontWeight: 300,
           marginBottom: 'clamp(40px, 6vw, 64px)',
           maxWidth: '560px',
         }}>
-          We are constructing this space slowly and deliberately, starting in Pune. Submit an access request and we will dispatch an invite when your city's grid goes live.
+          We're opening slowly and deliberately — Pune first, then Mumbai,
+          then Bengaluru. Leave your email, and we'll write to you when your
+          city opens.
         </p>
 
         <div style={{ width: '100%', maxWidth: '400px', position: 'relative', marginBottom: 'clamp(40px, 5vw, 60px)' }}>
           <AnimatePresence mode="wait">
-            {!submitted ? (
+            {status !== 'success' ? (
               <motion.form
                 key="form"
                 onSubmit={handleSubmit}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  width: '100%',
-                  borderBottom: '1px solid rgba(0,0,0,0.2)',
-                  paddingBottom: '8px',
-                  position: 'relative',
-                }}
-                className="group waitlist-form2"
+                style={{ width: '100%' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
+                exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
                 transition={{ duration: 0.8, delay: 0.1 }}
               >
-                <div style={{ flex: 1, textAlign: 'left' }}>
-                  <label
-                    htmlFor="waitlist-email"
+                <div
+                  className="group waitlist-form2"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    width: '100%',
+                    borderBottom: '1px solid rgba(17,17,16,0.25)',
+                    paddingBottom: '8px',
+                    position: 'relative',
+                  }}
+                >
+                  <div style={{ flex: 1, textAlign: 'left' }}>
+                    <label
+                      htmlFor="waitlist-email"
+                      style={{
+                        display: 'block',
+                        fontSize: '0.72rem',
+                        fontFamily: 'var(--sans)',
+                        fontWeight: 400,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.14em',
+                        color: 'var(--text-soft)',
+                        opacity: 0.7,
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Join the waitlist
+                    </label>
+                    <input
+                      id="waitlist-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); if (status === 'error') setStatus('idle'); }}
+                      placeholder="your@email.com"
+                      disabled={status === 'sending'}
+                      style={{
+                        width: '100%',
+                        background: 'transparent',
+                        fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+                        outline: 'none',
+                        border: 'none',
+                        fontFamily: 'var(--serif)',
+                        color: 'var(--text-pure)',
+                        opacity: status === 'sending' ? 0.5 : 1,
+                      }}
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    aria-label="Submit email"
+                    disabled={status === 'sending'}
                     style={{
-                      display: 'block',
-                      fontSize: '0.75rem',
-                      fontFamily: 'var(--font-mono)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em',
-                      opacity: 0.5,
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Enter email
-                  </label>
-                  <input
-                    id="waitlist-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    style={{
-                      width: '100%',
-                      background: 'transparent',
-                      fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
-                      outline: 'none',
+                      paddingBottom: '4px',
+                      paddingLeft: '16px',
+                      opacity: status === 'sending' ? 0.25 : 0.5,
+                      transition: 'opacity 0.3s',
+                      cursor: status === 'sending' ? 'wait' : 'pointer',
+                      background: 'none',
                       border: 'none',
-                      fontFamily: 'var(--serif)',
+                      minWidth: '44px',
+                      minHeight: '44px',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
-                    required
+                    onMouseEnter={(e) => { if (status !== 'sending') e.currentTarget.style.opacity = '1'; }}
+                    onMouseLeave={(e) => { if (status !== 'sending') e.currentTarget.style.opacity = '0.5'; }}
+                  >
+                    <MoveRight strokeWidth={1} size={32} />
+                  </button>
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      bottom: 0,
+                      width: '100%',
+                      height: '1px',
+                      background: 'var(--text-pure)',
+                      transform: 'scaleX(0)',
+                      transition: 'transform 1s cubic-bezier(0.19,1,0.22,1)',
+                      transformOrigin: 'left',
+                    }}
+                    className="waitlist-underline2"
                   />
                 </div>
-                <button
-                  type="submit"
-                  style={{
-                    paddingBottom: '4px',
-                    paddingLeft: '16px',
-                    opacity: 0.5,
-                    transition: 'opacity 0.3s',
-                    cursor: 'pointer',
-                    background: 'none',
-                    border: 'none',
-                    minWidth: '44px',
-                    minHeight: '44px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '0.5'}
-                >
-                  <MoveRight strokeWidth={1} size={32} />
-                </button>
-                <span
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    bottom: 0,
-                    width: '100%',
-                    height: '1px',
-                    background: 'black',
-                    transform: 'scaleX(0)',
-                    transition: 'transform 1s cubic-bezier(0.19,1,0.22,1)',
-                    transformOrigin: 'left',
-                  }}
-                  className="waitlist-underline2"
-                />
+
+                <div aria-live="polite" style={{ minHeight: '1.6rem', marginTop: '0.75rem', textAlign: 'left' }}>
+                  {status === 'error' && (
+                    <span style={{
+                      fontFamily: 'var(--sans)',
+                      fontWeight: 300,
+                      fontSize: '0.85rem',
+                      color: '#8a3a2e',
+                    }}>
+                      That didn't go through. Try once more?
+                    </span>
+                  )}
+                  {status === 'sending' && (
+                    <span style={{
+                      fontFamily: 'var(--serif)',
+                      fontStyle: 'italic',
+                      fontSize: '0.95rem',
+                      color: 'var(--text-soft)',
+                    }}>
+                      One moment…
+                    </span>
+                  )}
+                </div>
+
                 <style jsx>{`
                   .waitlist-form2:focus-within .waitlist-underline2 {
                     transform: scaleX(1) !important;
                   }
                   input::placeholder {
-                    color: rgba(0,0,0,0.2);
+                    color: rgba(17, 17, 16, 0.25);
                   }
                 `}</style>
               </motion.form>
             ) : (
               <motion.div
                 key="success"
-                style={{ textAlign: 'center', fontFamily: 'var(--serif)', fontSize: '1.25rem' }}
-                initial={{ opacity: 0, y: 10, filter: "blur(5px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
+                style={{ textAlign: 'center' }}
+                initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1.2, ease: 'easeOut' }}
               >
-                <motion.span
-                  style={{ display: 'inline-block' }}
-                  animate={{ y: [-5, -20, -50], opacity: [1, 0.8, 0], scale: [1, 1.2, 0.5] }}
-                  transition={{ duration: 3, ease: "easeOut", type: "tween" }}
-                >
-                  🕊️
-                </motion.span>
-                <p style={{ marginTop: '16px' }}>Your room awaits.</p>
+                <p style={{
+                  fontFamily: 'var(--serif)',
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  color: 'var(--text-pure)',
+                  marginBottom: '0.75rem',
+                }}>
+                  You're in.
+                </p>
+                <p style={{
+                  fontFamily: 'var(--sans)',
+                  fontWeight: 300,
+                  fontSize: '1rem',
+                  color: 'var(--text-soft)',
+                  lineHeight: 1.6,
+                }}>
+                  We'll write to you when your city opens.
+                </p>
+                {position && (
+                  <p style={{
+                    fontFamily: 'var(--sans)',
+                    fontWeight: 400,
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-soft)',
+                    opacity: 0.6,
+                    marginTop: '1.5rem',
+                  }}>
+                    No. {position} on the list
+                  </p>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -199,13 +273,14 @@ export default function Waitlist() {
 
         <div style={{
           fontFamily: 'var(--sans)',
-          fontSize: '0.8rem',
-          fontWeight: 500,
-          letterSpacing: '0.1em',
+          fontSize: '0.75rem',
+          fontWeight: 400,
+          letterSpacing: '0.14em',
           textTransform: 'uppercase',
           color: 'var(--text-soft)',
+          opacity: 0.7,
         }}>
-          Sequence: Pune — Mumbai — Bengaluru
+          Pune — Mumbai — Bengaluru
         </div>
       </motion.div>
     </section>
