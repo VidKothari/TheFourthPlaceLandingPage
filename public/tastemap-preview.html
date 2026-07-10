@@ -7,7 +7,7 @@
   <title>TasteMap</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap"
     rel="stylesheet">
   <style>
     * {
@@ -17,20 +17,28 @@
     }
 
     :root {
-      --a: #ff4fd8;
-      --b: #4fc3ff;
-      --c: #7c6bff;
-      --d: #7affc6;
-      --e: #ff7a3d;
-      --gold: #ffd700
+      --a: #b8541f;
+      --b: #3f6b8a;
+      --c: #6a5a86;
+      --d: #4f7a5e;
+      --e: #b8763e;
+      --gold: #b8963e;
+      --paper: #f8f6f2;
+      --paper2: #efece6;
+      --ink: #111110;
+      --ink-soft: rgba(17, 17, 16, 0.55);
+      --ink-mute: rgba(17, 17, 16, 0.35);
+      --ink-line: rgba(17, 17, 16, 0.12);
+      --ink-line2: rgba(17, 17, 16, 0.2)
     }
 
     body {
       overflow: hidden;
-      background: #000;
-      font-family: 'DM Sans', sans-serif;
-      cursor: crosshair;
-      user-select: none
+      background: #f8f6f2;
+      font-family: 'Jost', sans-serif;
+      cursor: default;
+      user-select: none;
+      color: var(--ink)
     }
 
     body.bg #topbar,
@@ -58,48 +66,48 @@
       justify-content: space-between;
       padding: 0 28px;
       z-index: 100;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent)
+      background: linear-gradient(to bottom, rgba(248, 246, 242, 0.95), rgba(248, 246, 242, 0))
     }
 
     #logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 18px;
-      letter-spacing: -0.02em;
-      color: #fff;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: 0;
+      color: var(--ink);
       display: flex;
       align-items: center;
       gap: 10px
     }
 
     #logo-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--a);
-      box-shadow: 0 0 12px var(--a);
-      animation: pdot 2s ease-in-out infinite
+      background: var(--gold);
+      animation: pdot 2.4s ease-in-out infinite
     }
 
     @keyframes pdot {
 
       0%,
       100% {
-        transform: scale(1)
+        transform: scale(1);
+        opacity: 1
       }
 
       50% {
-        transform: scale(1.5);
-        opacity: 0.6
+        transform: scale(1.4);
+        opacity: 0.55
       }
     }
 
     #tagline {
-      font-size: 11px;
-      letter-spacing: 0.12em;
+      font-size: 10px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.28);
-      font-weight: 300
+      color: var(--ink-mute);
+      font-weight: 400
     }
 
     #topright {
@@ -110,34 +118,40 @@
 
     .tbtn {
       height: 32px;
-      padding: 0 14px;
-      border-radius: 100px;
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.6);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
+      padding: 0 16px;
+      border-radius: 0;
+      border: 1px solid var(--ink-line2);
+      background: rgba(255, 255, 255, 0.4);
+      color: var(--ink-soft);
+      font-family: 'Jost', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: all .2s;
-      backdrop-filter: blur(8px)
+      transition: all .2s
     }
 
     .tbtn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.3)
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink)
     }
 
     .tbtn.active {
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.4)
+      background: rgba(17, 17, 16, 0.06);
+      color: var(--ink);
+      border-color: var(--ink)
     }
 
     .tbtn.merge-lit {
-      background: linear-gradient(135deg, rgba(255, 79, 216, 0.25), rgba(79, 195, 255, 0.25));
-      border-color: rgba(255, 215, 0, 0.4);
-      color: #ffd700
+      background: rgba(184, 150, 62, 0.12);
+      border-color: var(--gold);
+      color: #8a6f28
+    }
+
+    .tbtn.merge-lit:hover {
+      background: var(--gold);
+      color: #fff
     }
 
     #switcher {
@@ -148,49 +162,46 @@
       z-index: 200;
       display: flex;
       align-items: center;
-      border-radius: 100px;
+      border-radius: 0;
       overflow: hidden;
-      border: 0.5px solid rgba(255, 255, 255, 0.14);
-      background: rgba(8, 8, 14, 0.94);
-      backdrop-filter: blur(20px)
+      border: 1px solid var(--ink-line2);
+      background: rgba(248, 246, 242, 0.92);
+      backdrop-filter: blur(10px)
     }
 
     .stab {
       padding: 8px 22px;
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      font-family: 'Jost', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all .3s;
-      color: rgba(255, 255, 255, 0.38);
+      color: var(--ink-mute);
       border: none;
       background: transparent
     }
 
     .stab.u1.on {
-      color: #fff;
-      background: rgba(255, 79, 216, 0.22);
-      text-shadow: 0 0 14px var(--a)
+      color: var(--ink);
+      background: rgba(17, 17, 16, 0.07)
     }
 
     .stab.u2.on {
-      color: #fff;
-      background: rgba(79, 195, 255, 0.22);
-      text-shadow: 0 0 14px var(--b)
+      color: var(--ink);
+      background: rgba(17, 17, 16, 0.07)
     }
 
     .stab.mg.on {
-      color: #ffd700;
-      background: linear-gradient(135deg, rgba(255, 79, 216, 0.18), rgba(79, 195, 255, 0.18));
-      text-shadow: 0 0 14px var(--gold)
+      color: #8a6f28;
+      background: rgba(184, 150, 62, 0.14)
     }
 
     .ssep {
-      width: 0.5px;
-      background: rgba(255, 255, 255, 0.1);
-      height: 36px
+      width: 1px;
+      background: var(--ink-line);
+      height: 30px
     }
 
     #merge-banner {
@@ -202,7 +213,7 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       pointer-events: none
     }
 
@@ -211,20 +222,18 @@
     }
 
     #mb-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: linear-gradient(90deg, var(--a), var(--b));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: 0;
+      color: var(--ink)
     }
 
     #mb-sub {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.28);
-      letter-spacing: 0.06em
+      font-size: 10px;
+      color: var(--ink-mute);
+      letter-spacing: 0.1em;
+      text-transform: uppercase
     }
 
     #legend {
@@ -234,7 +243,7 @@
       z-index: 100;
       display: flex;
       flex-direction: column;
-      gap: 6px
+      gap: 5px
     }
 
     .leg {
@@ -242,24 +251,24 @@
       align-items: center;
       gap: 9px;
       cursor: pointer;
-      padding: 5px 12px 5px 8px;
-      border-radius: 100px;
-      border: 0.5px solid rgba(255, 255, 255, 0.07);
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(12px);
+      padding: 5px 12px 5px 9px;
+      border-radius: 0;
+      border: 1px solid var(--ink-line);
+      background: rgba(248, 246, 242, 0.8);
+      backdrop-filter: blur(8px);
       transition: all .25s;
       position: relative;
       overflow: hidden
     }
 
     .leg:hover {
-      border-color: rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.06)
+      border-color: var(--ink-line2);
+      background: rgba(255, 255, 255, 0.7)
     }
 
     .leg.focused {
-      border-color: rgba(255, 255, 255, 0.45);
-      background: rgba(255, 255, 255, 0.1)
+      border-color: var(--ink);
+      background: rgba(255, 255, 255, 0.9)
     }
 
     .leg::after {
@@ -267,27 +276,27 @@
       position: absolute;
       right: 10px;
       font-size: 10px;
-      color: rgba(255, 255, 255, 0);
+      color: rgba(17, 17, 16, 0);
       transition: all .25s
     }
 
     .leg:hover::after {
-      color: rgba(255, 255, 255, 0.4)
+      color: var(--ink-mute)
     }
 
     .leg-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0
     }
 
     .leg-lbl {
       font-size: 10px;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.5);
-      font-family: 'Syne', sans-serif;
+      color: var(--ink-soft);
+      font-family: 'Jost', sans-serif;
       font-weight: 500;
       padding-right: 14px
     }
@@ -299,17 +308,16 @@
       top: 50%;
       transform: translateY(-50%) translateX(370px);
       width: 310px;
-      background: rgba(6, 6, 12, 0.97);
-      border-radius: 22px;
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: var(--paper);
+      border-radius: 0;
+      border: 1px solid var(--ink-line2);
+      color: var(--ink);
       display: block;
-      box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.05), 0 28px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      box-shadow: 0 24px 70px rgba(17, 17, 16, 0.18);
       transition: transform .45s cubic-bezier(.23, 1, .32, 1), opacity .35s, box-shadow .4s;
       opacity: 0;
       overflow: hidden;
-      z-index: 200;
-      backdrop-filter: blur(28px)
+      z-index: 200
     }
 
     #card.on {
@@ -318,27 +326,28 @@
     }
 
     #card.gold-glow {
-      box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.28), 0 0 50px rgba(255, 215, 0, 0.1), 0 28px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1)
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(184, 150, 62, 0.4), 0 24px 70px rgba(17, 17, 16, 0.18)
     }
 
     #ch {
       position: relative;
       height: 188px;
-      overflow: hidden
+      overflow: hidden;
+      background: var(--paper2)
     }
 
     #cp {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
-      filter: brightness(0.75)
+      display: block
     }
 
     #co {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, transparent 35%, rgba(6, 6, 12, 0.97) 100%)
+      background: linear-gradient(to bottom, transparent 45%, var(--paper) 100%)
     }
 
     #ctype {
@@ -347,18 +356,17 @@
       left: 14px;
       height: 22px;
       padding: 0 10px;
-      border-radius: 100px;
-      background: rgba(0, 0, 0, 0.65);
-      border: 0.5px solid rgba(255, 255, 255, 0.2);
-      font-size: 10px;
-      letter-spacing: 0.1em;
+      border-radius: 0;
+      background: rgba(248, 246, 242, 0.9);
+      border: 1px solid var(--ink-line2);
+      font-size: 9px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--ink);
       display: flex;
       align-items: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 500;
-      backdrop-filter: blur(8px)
+      font-family: 'Jost', sans-serif;
+      font-weight: 500
     }
 
     #crown {
@@ -369,10 +377,9 @@
       align-items: center;
       gap: 5px;
       padding: 4px 10px;
-      border-radius: 100px;
-      background: rgba(255, 215, 0, 0.18);
-      border: 0.5px solid rgba(255, 215, 0, 0.45);
-      backdrop-filter: blur(8px)
+      border-radius: 0;
+      background: rgba(184, 150, 62, 0.16);
+      border: 1px solid rgba(184, 150, 62, 0.5)
     }
 
     #crown.on {
@@ -380,59 +387,59 @@
     }
 
     #crown span {
-      font-size: 10px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 9px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #ffd700
+      color: #8a6f28
     }
 
     #cclose {
       position: absolute;
       top: 12px;
       right: 12px;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.65);
-      border: 0.5px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.75);
+      background: rgba(248, 246, 242, 0.9);
+      border: 1px solid var(--ink-line2);
+      color: var(--ink-soft);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       transition: all .2s;
-      z-index: 10;
-      backdrop-filter: blur(8px)
+      z-index: 10
     }
 
     #cclose:hover {
-      background: rgba(255, 255, 255, 0.18);
-      color: #fff
+      background: var(--ink);
+      color: var(--paper)
     }
 
     #cbody {
-      padding: 16px 20px 20px
+      padding: 14px 20px 20px
     }
 
     #ctitle {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cormorant Garamond', serif;
       font-weight: 700;
-      font-size: 19px;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-      color: #fff;
-      margin-bottom: 4px
+      font-size: 25px;
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: var(--ink);
+      margin-bottom: 3px
     }
 
     #cmeta {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.35);
-      font-weight: 300;
+      font-size: 11px;
+      color: var(--ink-mute);
+      font-weight: 400;
       margin-bottom: 13px;
-      font-style: italic
+      font-style: italic;
+      letter-spacing: 0.03em
     }
 
     #crrow {
@@ -445,7 +452,7 @@
     #crbar {
       flex: 1;
       height: 3px;
-      background: rgba(255, 255, 255, 0.09);
+      background: rgba(17, 17, 16, 0.1);
       border-radius: 100px;
       overflow: hidden
     }
@@ -453,15 +460,15 @@
     #crfill {
       height: 100%;
       border-radius: 100px;
-      background: linear-gradient(90deg, var(--d), var(--b));
+      background: var(--gold);
       transition: width .6s cubic-bezier(.23, 1, .32, 1)
     }
 
     #crnum {
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
       font-weight: 700;
-      color: #fff;
+      color: var(--ink);
       flex-shrink: 0
     }
 
@@ -475,31 +482,31 @@
     .ctag {
       height: 22px;
       padding: 0 10px;
-      border-radius: 100px;
-      font-size: 10px;
-      letter-spacing: 0.06em;
+      border-radius: 0;
+      font-size: 9px;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Jost', sans-serif;
       font-weight: 500;
       display: flex;
       align-items: center;
-      border: 0.5px solid
+      border: 1px solid
     }
 
     #cdesc {
-      font-size: 12.5px;
-      line-height: 1.65;
-      color: rgba(255, 255, 255, 0.47);
-      font-weight: 300;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      font-weight: 400;
       margin-bottom: 14px
     }
 
     #spanel {
       display: none;
-      border-radius: 14px;
+      border-radius: 0;
       padding: 14px;
-      background: linear-gradient(135deg, rgba(255, 79, 216, 0.07), rgba(79, 195, 255, 0.07));
-      border: 0.5px solid rgba(255, 215, 0, 0.22)
+      background: rgba(184, 150, 62, 0.07);
+      border: 1px solid rgba(184, 150, 62, 0.3)
     }
 
     #spanel.on {
@@ -524,32 +531,32 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
+      font-family: 'Jost', sans-serif;
+      font-weight: 600;
       font-size: 9px;
-      border: 1.5px solid rgba(0, 0, 0, 0.8)
+      border: 1.5px solid var(--paper)
     }
 
     .sav.a {
       background: var(--a);
-      color: #000;
+      color: #fff;
       z-index: 2
     }
 
     .sav.b {
       background: var(--b);
-      color: #000;
+      color: #fff;
       margin-left: -7px;
       z-index: 1
     }
 
     #sptitle {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--gold)
+      color: #8a6f28
     }
 
     #sloading {
@@ -599,10 +606,10 @@
     }
 
     #stext {
-      font-size: 12px;
-      line-height: 1.72;
-      color: rgba(255, 255, 255, 0.54);
-      font-weight: 300
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      font-weight: 400
     }
 
     /* ── CLUSTER CARD ── */
@@ -613,18 +620,17 @@
       transform: translateY(-50%) translateX(420px);
       width: 340px;
       max-height: 80vh;
-      background: rgba(6, 6, 12, 0.98);
-      border-radius: 22px;
-      border: 0.5px solid rgba(255, 255, 255, 0.14);
-      color: #fff;
+      background: var(--paper);
+      border-radius: 0;
+      border: 1px solid var(--ink-line2);
+      color: var(--ink);
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.05), 0 28px 90px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 24px 70px rgba(17, 17, 16, 0.18);
       transition: transform .5s cubic-bezier(.23, 1, .32, 1), opacity .4s;
       opacity: 0;
       overflow: hidden;
       z-index: 200;
-      backdrop-filter: blur(32px);
       pointer-events: none
     }
 
@@ -637,30 +643,30 @@
     #cc-head {
       padding: 20px 20px 16px;
       flex-shrink: 0;
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.08)
+      border-bottom: 1px solid var(--ink-line)
     }
 
     #cc-close {
       position: absolute;
       top: 14px;
       right: 14px;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.06);
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.75);
+      background: rgba(17, 17, 16, 0.05);
+      border: 1px solid var(--ink-line2);
+      color: var(--ink-soft);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       transition: all .2s
     }
 
     #cc-close:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff
+      background: var(--ink);
+      color: var(--paper)
     }
 
     #cc-dot-wrap {
@@ -677,18 +683,18 @@
     }
 
     #cc-tag {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Cormorant Garamond', serif;
       font-weight: 700;
-      font-size: 20px;
-      letter-spacing: -0.01em;
+      font-size: 26px;
+      letter-spacing: 0;
       text-transform: capitalize
     }
 
     #cc-count {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.3);
-      letter-spacing: 0.06em;
-      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      color: var(--ink-mute);
+      letter-spacing: 0.12em;
+      font-family: 'Jost', sans-serif;
       text-transform: uppercase;
       font-weight: 500
     }
@@ -709,7 +715,7 @@
     }
 
     #cc-list::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--ink-line2);
       border-radius: 2px
     }
 
@@ -718,37 +724,37 @@
       align-items: center;
       gap: 12px;
       padding: 10px 10px;
-      border-radius: 12px;
+      border-radius: 0;
       cursor: pointer;
       transition: all .2s;
-      margin-bottom: 3px;
-      border: 0.5px solid transparent
+      margin-bottom: 2px;
+      border: 1px solid transparent
     }
 
     .cc-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.08)
+      background: rgba(17, 17, 16, 0.04);
+      border-color: var(--ink-line)
     }
 
     .cc-item.shared {
-      border-color: rgba(255, 215, 0, 0.15)
+      border-color: rgba(184, 150, 62, 0.3)
     }
 
     .cc-item.shared:hover {
-      background: rgba(255, 215, 0, 0.05)
+      background: rgba(184, 150, 62, 0.07)
     }
 
     .cc-item-icon {
       width: 36px;
       height: 36px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.06);
+      border-radius: 0;
+      background: rgba(17, 17, 16, 0.04);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 14px;
       flex-shrink: 0;
-      border: 0.5px solid rgba(255, 255, 255, 0.1)
+      border: 1px solid var(--ink-line)
     }
 
     .cc-item-info {
@@ -757,27 +763,27 @@
     }
 
     .cc-item-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.88);
+      color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.3;
-      margin-bottom: 2px
+      line-height: 1.2;
+      margin-bottom: 1px
     }
 
     .cc-item-meta {
       font-size: 10px;
-      color: rgba(255, 255, 255, 0.28);
-      font-weight: 300;
-      letter-spacing: 0.03em
+      color: var(--ink-mute);
+      font-weight: 400;
+      letter-spacing: 0.04em
     }
 
     .cc-item-badge {
-      font-size: 9px;
-      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-family: 'Jost', sans-serif;
       font-weight: 700;
       color: var(--gold);
       letter-spacing: 0.06em;
@@ -786,10 +792,10 @@
 
     .cc-section-label {
       font-size: 9px;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.2);
-      font-family: 'Syne', sans-serif;
+      color: var(--ink-mute);
+      font-family: 'Jost', sans-serif;
       font-weight: 500;
       padding: 8px 10px 4px;
       margin-top: 4px
@@ -797,38 +803,37 @@
 
     /* ── TYPE ICONS ── */
     .icon-movie {
-      background: rgba(79, 195, 255, 0.1);
-      border-color: rgba(79, 195, 255, 0.2)
+      background: rgba(63, 107, 138, 0.1);
+      border-color: rgba(63, 107, 138, 0.28)
     }
 
     .icon-book {
-      background: rgba(124, 107, 255, 0.1);
-      border-color: rgba(124, 107, 255, 0.2)
+      background: rgba(106, 90, 134, 0.1);
+      border-color: rgba(106, 90, 134, 0.28)
     }
 
     .icon-album {
-      background: rgba(255, 79, 216, 0.1);
-      border-color: rgba(255, 79, 216, 0.2)
+      background: rgba(184, 84, 31, 0.1);
+      border-color: rgba(184, 84, 31, 0.28)
     }
 
     .icon-artist {
-      background: rgba(122, 255, 198, 0.1);
-      border-color: rgba(122, 255, 198, 0.2)
+      background: rgba(79, 122, 94, 0.1);
+      border-color: rgba(79, 122, 94, 0.28)
     }
 
     /* ── TOOLTIP ── */
     #tip {
       position: fixed;
       pointer-events: none;
-      background: rgba(6, 6, 12, 0.95);
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      border-radius: 0;
       padding: 7px 12px;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Jost', sans-serif;
       font-size: 12px;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
+      font-weight: 400;
+      color: var(--paper);
       opacity: 0;
       transition: opacity .12s;
       z-index: 300;
@@ -840,10 +845,10 @@
     }
 
     #tip-shared {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--gold);
       font-weight: 600;
-      letter-spacing: .05em;
+      letter-spacing: .1em;
       text-transform: uppercase;
       margin-top: 3px;
       display: none
@@ -854,8 +859,8 @@
     }
 
     #tip-cluster {
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.4);
+      font-size: 9px;
+      color: rgba(248, 246, 242, 0.6);
       margin-top: 2px;
       display: none
     }
@@ -876,7 +881,7 @@
     }
 
     #zoom-flash.on {
-      opacity: 0.04
+      opacity: 0.18
     }
 
     #hint {
@@ -884,11 +889,11 @@
       bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 11px;
-      letter-spacing: .08em;
+      font-size: 10px;
+      letter-spacing: .16em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.18);
-      font-family: 'Syne', sans-serif;
+      color: var(--ink-mute);
+      font-family: 'Jost', sans-serif;
       pointer-events: none;
       transition: opacity .5s;
       white-space: nowrap
@@ -897,7 +902,7 @@
     #loader {
       position: fixed;
       inset: 0;
-      background: #000;
+      background: var(--paper);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -913,17 +918,17 @@
     }
 
     #ll {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 32px;
-      letter-spacing: -.03em;
-      color: #fff
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 40px;
+      letter-spacing: 0;
+      color: var(--ink)
     }
 
     #lbw {
       width: 140px;
       height: 2px;
-      background: rgba(255, 255, 255, .1);
+      background: var(--ink-line);
       border-radius: 100px;
       overflow: hidden
     }
@@ -931,7 +936,7 @@
     #lb {
       height: 100%;
       border-radius: 100px;
-      background: linear-gradient(90deg, var(--a), var(--b));
+      background: var(--gold);
       animation: lf 1.4s ease forwards
     }
 
@@ -946,11 +951,11 @@
     }
 
     #ls {
-      font-size: 11px;
-      letter-spacing: .15em;
+      font-size: 10px;
+      letter-spacing: .2em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, .22);
-      font-family: 'Syne', sans-serif
+      color: var(--ink-mute);
+      font-family: 'Jost', sans-serif
     }
 
     #howto {
@@ -974,10 +979,10 @@
       align-items: flex-start;
       gap: 8px;
       padding: 9px 12px;
-      border-radius: 12px;
-      background: rgba(8, 8, 14, 0.88);
-      border: 0.5px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px)
+      border-radius: 0;
+      background: rgba(248, 246, 242, 0.9);
+      border: 1px solid var(--ink-line);
+      backdrop-filter: blur(8px)
     }
 
     .hw-n {
@@ -987,31 +992,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Jost', sans-serif;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       flex-shrink: 0;
-      margin-top: 1px
+      margin-top: 1px;
+      color: #fff
     }
 
     .n1 {
-      background: rgba(255, 79, 216, 0.3);
-      color: var(--a)
+      background: var(--a)
     }
 
     .n2 {
-      background: rgba(79, 195, 255, 0.3);
-      color: var(--b)
+      background: var(--b)
     }
 
     .n3 {
-      background: rgba(255, 215, 0, 0.2);
-      color: var(--gold)
+      background: var(--gold)
     }
 
     .hw-t {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.42);
+      color: var(--ink-soft);
       line-height: 1.5
     }
 
@@ -1023,7 +1026,7 @@
       }
 
       #logo {
-        font-size: 16px
+        font-size: 20px
       }
 
       #tagline {
@@ -1036,7 +1039,7 @@
 
       .tbtn {
         padding: 0 10px;
-        font-size: 11px;
+        font-size: 10px;
         height: 28px
       }
 
@@ -1050,7 +1053,7 @@
 
       .stab {
         padding: 7px 14px;
-        font-size: 11px
+        font-size: 10px
       }
 
       #legend {
@@ -1077,7 +1080,6 @@
         font-size: 9px
       }
 
-      /* Cards go bottom sheet on mobile */
       #card {
         right: 0;
         left: 0;
@@ -1085,7 +1087,7 @@
         top: auto;
         width: 100%;
         max-width: 100%;
-        border-radius: 22px 22px 0 0;
+        border-radius: 0;
         transform: translateY(110%) !important;
         transition: transform .45s cubic-bezier(.23, 1, .32, 1), opacity .35s;
         opacity: 1 !important;
@@ -1108,7 +1110,7 @@
         width: 100%;
         max-width: 100%;
         max-height: 75vh;
-        border-radius: 22px 22px 0 0;
+        border-radius: 0;
         transform: translateY(110%) !important;
         transition: transform .5s cubic-bezier(.23, 1, .32, 1), opacity .4s;
         opacity: 1 !important;
@@ -1132,14 +1134,15 @@
       }
 
       #mb-title {
-        font-size: 12px
+        font-size: 18px
       }
 
       #mb-sub {
-        font-size: 10px
+        font-size: 9px
       }
     }
   </style>
+
   <script type="importmap">
 {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
 </script>
@@ -1273,6 +1276,23 @@
     const TCSS = ["#ff4fd8", "#ff7a3d", "#4fc3ff", "#7c6bff", "#ff5ea8", "#7affc6", "#d7ff5a"]
     const TYPE_ICONS = { "Movie": "🎬", "Book": "📖", "Album": "🎵", "Artist": "🎨" }
 
+    function _mix(hex, tgt, t) { const c = new THREE.Color(hex), g = new THREE.Color(tgt); return c.lerp(g, t) }
+    function desatColor(hex) { return _mix(hex, 0xe4ddce, 0.42) }
+    const INK_EDGE = 0x2b2a27, GOLD_EDGE = 0xb8963e
+    const ALEX_EDGE = _mix(0xff4fd8, 0xd8cfc0, 0.4).getHex()
+    const JORDAN_EDGE = _mix(0x4fc3ff, 0xd8cfc0, 0.4).getHex()
+    const ALEX_DESAT = _mix(0xff4fd8, 0xe4ddce, 0.4)
+    const JORDAN_DESAT = _mix(0x4fc3ff, 0xe4ddce, 0.4)
+    const GOLD_DESAT = new THREE.Color(0xcaa24a)
+    const GLOW_TEX = (() => {
+      const s = 128, cv = document.createElement("canvas"); cv.width = cv.height = s
+      const g = cv.getContext("2d")
+      const r = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2)
+      r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.4, "rgba(255,255,255,0.5)"); r.addColorStop(1, "rgba(255,255,255,0)")
+      g.fillStyle = r; g.fillRect(0, 0, s, s)
+      return new THREE.CanvasTexture(cv)
+    })()
+
     const ALL = [
       { id: "blade-runner", title: "Blade Runner 2049", type: "Movie", year: 2017, rating: 9.1, tags: ["sci-fi", "philosophy"], desc: "A haunting neo-noir asking what it means to be human in a world of artificial beings." },
       { id: "annihilation", title: "Annihilation", type: "Movie", year: 2018, rating: 8.7, tags: ["sci-fi", "psychology"], desc: "A mesmerising expedition into an alien zone where biology and identity collapse." },
@@ -1385,11 +1405,14 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" })
     renderer.setSize(innerWidth, innerHeight)
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+    renderer.setClearColor(0xf8f6f2, 1)
     document.body.appendChild(renderer.domElement)
+    scene.background = new THREE.Color(0xf8f6f2)
+    scene.fog = new THREE.Fog(0xf8f6f2, 2600, 8200)
 
     const composer = new EffectComposer(renderer)
     composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.8, 0.5, 0.12)
+    const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.0, 0.4, 1.0)
     composer.addPass(bloom)
 
     // Stub — no OrbitControls. We rotate the universe group on drag, zoom camera on scroll.
@@ -1456,10 +1479,27 @@
     const sp = []
     for (let i = 0; i < 15000; i++) sp.push(THREE.MathUtils.randFloatSpread(15000), THREE.MathUtils.randFloatSpread(15000), THREE.MathUtils.randFloatSpread(15000))
     const sg = new THREE.BufferGeometry(); sg.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3))
-    universe.add(new THREE.Points(sg, new THREE.PointsMaterial({ size: 0.85, color: 0xffffff, transparent: true, opacity: 0.5 })))
+    universe.add(new THREE.Points(sg, new THREE.PointsMaterial({ size: 1.1, color: 0x111110, transparent: true, opacity: 0.06 })))
 
-    const userNode = new THREE.Mesh(new THREE.SphereGeometry(22, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffff }))
+    const userNode = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0xffffff, transparent: true, depthWrite: false }))
+    userNode.userData.baseScale = 84
+    userNode.scale.set(84, 84, 1)
+    userNode.renderOrder = 2
     universe.add(userNode)
+    ;(function () {
+      const img = new Image()
+      img.onload = () => {
+        const s = 320, cv = document.createElement("canvas"); cv.width = cv.height = s
+        const g = cv.getContext("2d")
+        g.save(); g.beginPath(); g.arc(s / 2, s / 2, s / 2 - 10, 0, Math.PI * 2); g.closePath(); g.clip()
+        const iw = img.width, ih = img.height, sc = Math.max(s / iw, s / ih), dw = iw * sc, dh = ih * sc
+        g.drawImage(img, (s - dw) / 2, (s - dh) / 2, dw, dh); g.restore()
+        g.beginPath(); g.arc(s / 2, s / 2, s / 2 - 10, 0, Math.PI * 2); g.lineWidth = 8; g.strokeStyle = "rgba(17,17,16,0.4)"; g.stroke()
+        const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace
+        userNode.material.map = tex; userNode.material.needsUpdate = true
+      }
+      img.src = "assets/editorial/records.webp"
+    })()
 
     function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
 
@@ -1467,50 +1507,74 @@
     TAGS.forEach((tag, i) => {
       const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2, r = 1150
       const x = r * Math.sin(phi) * Math.cos(theta), y = r * Math.sin(phi) * Math.sin(theta), z = r * Math.cos(phi)
-      const m = new THREE.Mesh(new THREE.SphereGeometry(18, 24, 24), new THREE.MeshBasicMaterial({ color: COLORS[i] }))
+      const m = new THREE.Mesh(new THREE.SphereGeometry(14, 24, 24), new THREE.MeshBasicMaterial({ color: desatColor(COLORS[i]).getHex() }))
       m.position.set(x, y, z); m.userData.tag = tag; m.userData.tagIndex = i; m.userData.isClusterNode = true
       universe.add(m); clusters.push(m)
       const pos = [], col = []
       for (let j = 0; j < 45000; j++) {
         pos.push(x + gauss() * 315, y + gauss() * 168, z + gauss() * 315)
-        const c = new THREE.Color(COLORS[i]); col.push(c.r, c.g, c.b)
+        const c = desatColor(COLORS[i]); col.push(c.r, c.g, c.b)
       }
       const geo = new THREE.BufferGeometry()
       geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3))
       geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3))
       const tex = new THREE.TextureLoader().load("https://threejs.org/examples/textures/sprites/disc.png")
-      const mat = new THREE.PointsMaterial({ size: 4.2, vertexColors: true, transparent: true, opacity: 0.38, blending: THREE.AdditiveBlending, depthWrite: false, map: tex })
+      const mat = new THREE.PointsMaterial({ size: 5.5, vertexColors: true, transparent: true, opacity: 0.06, blending: THREE.NormalBlending, depthWrite: false, map: tex })
       const cloud = new THREE.Points(geo, mat); universe.add(cloud); nebulas.push(cloud)
     })
 
     const nodes = []
+    const halos = []
+    const texLoader = new THREE.TextureLoader()
+    const _thumb = p => "assets/thumbs/" + p + ".webp"
+    function _pool(prefix, n) { const a = []; for (let i = 1; i <= n; i++) a.push(_thumb(prefix + i)); return a }
+    const POOLS = {
+      Movie: _pool("movie", 21),
+      Book: _pool("book", 17),
+      Album: _pool("music", 11),
+      Artist: ["artist1", "artist2", "artist5", "artist9", "artist11", "artist3wbg", "artist4wbg", "artist6wbg", "artist7wbg", "artist8wbg", "artist10wbg"].map(_thumb)
+    }
+    const _typeCount = {}
     ALL.forEach((d, i) => {
       const isShared = SHARED_IDS.has(d.id)
-      const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(isShared ? 11 : 7, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xffffff })
-      )
-      mesh.userData = { ...d, poster: `https://picsum.photos/400/600?random=${i + 8}`, isShared }
-      universe.add(mesh); nodes.push(mesh)
+      const pool = POOLS[d.type] || POOLS.Movie
+      const pi = (_typeCount[d.type] = (_typeCount[d.type] || 0) + 1) - 1
+      const posterPath = pool[pi % pool.length]
+      const portrait = (d.type === "Movie" || d.type === "Book")
+      const baseW = isShared ? 62 : 48
+      const w = baseW, h = portrait ? baseW * 1.46 : baseW
+      const tex = texLoader.load(posterPath); tex.colorSpace = THREE.SRGBColorSpace
+      const mesh = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: true }))
+      mesh.scale.set(w, h, 1)
+      mesh.renderOrder = 1
+      const ci = TAGS.indexOf(d.tags[0]); const cidx = ci < 0 ? 0 : ci
+      const desat = desatColor(COLORS[cidx])
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW_TEX, color: desat, transparent: true, depthWrite: false, opacity: 0.5, blending: THREE.NormalBlending }))
+      const hs = Math.max(w, h) * 2.0
+      halo.scale.set(hs, hs, 1); halo.renderOrder = -1; halo.raycast = () => { }
+      mesh.userData = { ...d, poster: posterPath, isShared, halo, clusterColorDesat: desat }
+      universe.add(halo); universe.add(mesh)
+      nodes.push(mesh); halos.push(halo)
     })
     nodes.forEach(n => {
       const ci = TAGS.indexOf(n.userData.tags[0]); const cl = clusters[ci < 0 ? 0 : ci]
       const sp2 = n.userData.isShared ? 680 : 860
       n.position.set(cl.position.x + THREE.MathUtils.randFloatSpread(sp2), cl.position.y + THREE.MathUtils.randFloatSpread(sp2), cl.position.z + THREE.MathUtils.randFloatSpread(sp2))
+      n.userData.halo.position.copy(n.position)
     })
 
     /* Edges */
     const edges = []
-    function addEdge(a, b, color = 0x8899ff, opacity = 0.15) {
+    function addEdge(a, b, color = 0x2b2a27, opacity = 0.18) {
       const geo = new THREE.BufferGeometry().setFromPoints([a.position, b.position])
       const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color, transparent: true, opacity }))
       line.userData = { a, b }; universe.add(line); edges.push(line)
     }
-    clusters.forEach(c => addEdge(userNode, c, 0x8899ff, 0.1))
+    clusters.forEach(c => addEdge(userNode, c, 0x2b2a27, 0.12))
     nodes.forEach(n => {
       n.userData.tags.forEach(tag => {
         const ci = TAGS.indexOf(tag)
-        if (ci >= 0) addEdge(n, clusters[ci], n.userData.isShared ? 0xffd700 : 0x8899ff, n.userData.isShared ? 0.28 : 0.13)
+        if (ci >= 0) addEdge(n, clusters[ci], n.userData.isShared ? GOLD_EDGE : INK_EDGE, n.userData.isShared ? 0.4 : 0.16)
       })
     })
 
@@ -1638,37 +1702,42 @@
     }
 
     function getNodeBaseColor(n) {
-      const id = n.userData.id, isS = SHARED_IDS.has(id), inA = ALEX_IDS.has(id)
-      if (mode === "merged") {
-        if (isS) return null
-        if (inA) return new THREE.Color(0xff4fd8)
-        return new THREE.Color(0x4fc3ff)
-      }
       return new THREE.Color(0xffffff)
+    }
+    function haloColorFor(n) {
+      const id = n.userData.id
+      if (mode === "merged") {
+        if (SHARED_IDS.has(id)) return GOLD_DESAT
+        if (ALEX_IDS.has(id)) return ALEX_DESAT
+        return JORDAN_DESAT
+      }
+      return n.userData.clusterColorDesat
     }
 
     function applyNodeVisibility() {
       nodes.forEach(n => {
         const id = n.userData.id
+        const halo = n.userData.halo
         let modeVisible
         if (mode === "alex") modeVisible = ALEX_IDS.has(id)
         else if (mode === "jordan") modeVisible = JORDAN_IDS.has(id)
         else modeVisible = true
         n.visible = modeVisible
+        if (halo) halo.visible = modeVisible
         if (!modeVisible) return
 
         const isS = SHARED_IDS.has(id) && mode === "merged"
-        if (!isS) { const bc = getNodeBaseColor(n); if (bc) n.material.color.copy(bc) }
+        n.material.color.setRGB(1, 1, 1)
+        if (halo && !isS) halo.material.color.copy(haloColorFor(n))
 
+        let vis = 1
         if (focusedNode) {
-          const match = n.userData.tags.some(t => focusedNode.userData.tags.includes(t))
-          n.material.opacity = match ? 1 : 0.04; n.material.transparent = true
+          vis = n.userData.tags.some(t => focusedNode.userData.tags.includes(t)) ? 1 : 0.06
         } else if (focusedTag) {
-          const match = n.userData.tags.includes(focusedTag)
-          n.material.opacity = match ? 1 : 0.04; n.material.transparent = true
-        } else {
-          n.material.opacity = 1; n.material.transparent = isS
+          vis = n.userData.tags.includes(focusedTag) ? 1 : 0.06
         }
+        n.material.opacity = vis; n.material.transparent = true
+        if (halo) halo.material.opacity = vis < 0.5 ? 0.03 : 0.5
       })
       clusters.forEach((c, i) => {
         if (focusedNode) {
@@ -1682,11 +1751,11 @@
       })
       nebulas.forEach((nb, i) => {
         if (focusedNode) {
-          nb.material.opacity = focusedNode.userData.tags.includes(TAGS[i]) ? 0.38 : 0.015
+          nb.material.opacity = focusedNode.userData.tags.includes(TAGS[i]) ? 0.07 : 0.01
         } else if (focusedTag) {
-          nb.material.opacity = TAGS[i] === focusedTag ? 0.38 : 0.015
+          nb.material.opacity = TAGS[i] === focusedTag ? 0.07 : 0.01
         } else {
-          nb.material.opacity = 0.38
+          nb.material.opacity = 0.06
         }
       })
       edges.forEach(e => {
@@ -1702,11 +1771,11 @@
         }
         if (mode === "merged" && aNode) {
           const id = aNode.userData.id
-          if (SHARED_IDS.has(id)) e.material.color.setHex(0xffd700)
-          else if (ALEX_IDS.has(id)) e.material.color.setHex(0xff4fd8)
-          else e.material.color.setHex(0x4fc3ff)
+          if (SHARED_IDS.has(id)) e.material.color.setHex(GOLD_EDGE)
+          else if (ALEX_IDS.has(id)) e.material.color.setHex(ALEX_EDGE)
+          else e.material.color.setHex(JORDAN_EDGE)
         } else {
-          e.material.color.setHex(0x8899ff)
+          e.material.color.setHex(INK_EDGE)
         }
         if (focusedNode) {
           const rel = (e.userData.a === focusedNode || e.userData.b === focusedNode)
@@ -1725,7 +1794,7 @@
         } else {
           e.visible = true
           // restore default opacity
-          e.material.opacity = aNode ? (aNode.userData.isShared ? 0.28 : 0.13) : 0.1
+          e.material.opacity = aNode ? (aNode.userData.isShared ? 0.4 : 0.16) : 0.12
         }
       })
     }
@@ -1868,24 +1937,15 @@
 
     async function getInsight(d) {
       if (insightCache[d.id]) return insightCache[d.id]
-      try {
-        const r = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            system: "You are TasteMap, an AI that finds the deep connection between two friends' shared taste. Write a single warm, insightful paragraph of 2-3 sentences (max 55 words) explaining what Alex and Jordan likely both love about this work and what it reveals about their shared aesthetic sensibility. Be specific and poetic. Sound like a perceptive friend, not a critic. No preamble, no mention of their names at the start.",
-            messages: [{ role: "user", content: `Shared work: "${d.title}" (${d.type}, ${d.year > 0 ? d.year : Math.abs(d.year) + " BCE"}). Tags: ${d.tags.join(", ")}. Description: ${d.desc}` }]
-          })
-        })
-        const data = await r.json()
-        const txt = (data.content || []).map(b => b.text || "").join("")
-        insightCache[d.id] = txt || "A rare work rich enough to resonate across different sensibilities — both probably return to it for the depth, craft, and emotional truth it carries."
-        return insightCache[d.id]
-      } catch (e) {
-        return "Something here speaks across different sensibilities — rich enough to mean different things to different listeners, yet essential to both."
-      }
+      const lines = [
+        "Something here speaks across different sensibilities \u2014 rich enough to mean different things to each of you, yet essential to both.",
+        "You both keep returning to this one. It rewards attention: depth, craft, and a kind of emotional honesty that is hard to fake.",
+        "A shared touchstone. What draws you both is less the surface than the feeling underneath \u2014 patient, searching, unafraid of the dark.",
+        "This sits at the overlap of your two maps: a work that trusts its audience and asks something real in return."
+      ]
+      let h = 0; for (const ch of d.id) h = (h * 31 + ch.charCodeAt(0)) >>> 0
+      insightCache[d.id] = lines[h % lines.length]
+      return insightCache[d.id]
     }
 
     /* ── RAYCASTER ── */
@@ -2028,11 +2088,14 @@
         _velX *= 0.88; _velY *= 0.88
       }
 
-      userNode.scale.setScalar(1 + Math.sin(T * 2.2) * 0.07)
+      { const us = userNode.userData.baseScale * (1 + Math.sin(T * 2.2) * 0.05); userNode.scale.set(us, us, 1) }
       if (mode === "merged") {
-        const pulse = 0.78 + Math.sin(T * 2.8) * 0.22
+        const pulse = 0.6 + Math.sin(T * 2.8) * 0.4
         nodes.forEach(n => {
-          if (n.userData.isShared && n.visible) n.material.color.setRGB(1, pulse * 0.85, 0)
+          if (n.userData.isShared && n.visible && n.userData.halo) {
+            n.userData.halo.material.color.setRGB(0.79 * pulse + 0.12, 0.62 * pulse + 0.08, 0.29 * pulse + 0.04)
+            n.userData.halo.material.opacity = 0.3 + pulse * 0.45
+          }
         })
       }
       clusters.forEach((c, i) => {
