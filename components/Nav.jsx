@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const links = [
   { label: 'The Room', href: '#manifesto' },
+  { label: 'The Map', href: '#tastemap' },
   { label: 'The Exhibition', href: '#thread' },
-  { label: 'The Gallery', href: '#tastemap' },
 ];
 
 export default function Nav() {

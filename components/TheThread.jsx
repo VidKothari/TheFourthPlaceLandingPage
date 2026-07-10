@@ -326,22 +326,23 @@ export default function TheThread() {
             textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(0,0,0,0.4)',
             display: 'block', marginBottom: '1.5rem',
           }}>
-            II. The Exhibition
+            III. The Exhibition
           </span>
           <h2 style={{
             fontFamily: 'var(--serif)', fontWeight: 400,
             fontSize: 'clamp(2.2rem, 5vw, 4.5rem)', lineHeight: 1.05,
             color: 'var(--text-pure)', marginBottom: '1rem',
           }}>
-            Save what <em style={{ fontStyle: 'italic', color: 'var(--text-soft)' }}>matters.</em>
+            What goes <em style={{ fontStyle: 'italic', color: 'var(--text-soft)' }}>on your map.</em>
           </h2>
           <p style={{
             fontFamily: 'var(--sans)', fontWeight: 300,
             fontSize: 'clamp(1rem, 1.6vw, 1.2rem)', lineHeight: 1.7,
-            color: 'var(--text-soft)', maxWidth: '32rem',
+            color: 'var(--text-soft)', maxWidth: '34rem',
           }}>
-            Everything that ever moved you — films, books, music, rabbit
-            holes, other worlds — kept in one place, not scrolled past.
+            You save the things that actually moved you and write a line
+            about why. Each one becomes a star on the map you just saw.
+            These are the kinds of things people keep:
           </p>
         </div>
         <span style={{

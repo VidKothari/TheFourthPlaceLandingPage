@@ -22,8 +22,8 @@ export default function Home() {
       <Hero />
       <Marquee />
       <Manifesto />
-      <ThreadSection defaultMobile={isMobileUA} />
       <TasteMapPreview />
+      <ThreadSection defaultMobile={isMobileUA} />
       <InPractice />
       <Waitlist />
       <Suggestions />

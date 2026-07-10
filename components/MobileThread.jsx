@@ -101,7 +101,7 @@ export default function MobileThread() {
           color: 'var(--text-soft)',
           marginBottom: '1.25rem',
         }}>
-          II. The Exhibition
+          III. The Exhibition
         </div>
         <h2 style={{
           fontFamily: 'var(--serif)',
@@ -111,7 +111,7 @@ export default function MobileThread() {
           color: 'var(--text-pure)',
           marginBottom: '0.75rem',
         }}>
-          Save what <em style={{ fontStyle: 'italic', color: 'var(--text-soft)' }}>matters.</em>
+          What goes <em style={{ fontStyle: 'italic', color: 'var(--text-soft)' }}>on your map.</em>
         </h2>
         <p style={{
           fontFamily: 'var(--sans)',
@@ -120,8 +120,9 @@ export default function MobileThread() {
           lineHeight: 1.7,
           color: 'var(--text-soft)',
         }}>
-          Everything that ever moved you — films, books, music, rabbit holes,
-          other worlds — kept in one place, not scrolled past.
+          You save the things that actually moved you and write a line about
+          why. Each one becomes a star on the map you just saw. These are the
+          kinds of things people keep:
         </p>
       </div>
 
