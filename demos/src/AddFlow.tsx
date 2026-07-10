@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { SERIF, UI, T, labelUpper, TYPE_BG } from './tokens';
 
 const TYPES = [
@@ -10,43 +10,60 @@ const TYPES = [
 ];
 
 const QUERY = 'Pyramid Song';
+const NOTE = 'The strings at the end undo me every time.';
 const TAGS = ['melancholy', '2am', 'floating'];
+
+// The user's existing library, visible behind the search panel.
+const LIBRARY = [
+  'movie1', 'book2', 'music2', 'movie4', 'book3', 'music3',
+  'movie2', 'book5', 'music6', 'movie5', 'book7', 'movie7',
+];
 
 export const AddFlow: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Phase 1: search panel
   const panelIn = spring({ frame, fps, config: { damping: 200 } });
   const tabLit = interpolate(frame, [8, 14], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const typed = QUERY.slice(0, Math.round(interpolate(frame, [14, 38], [0, QUERY.length], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })));
-  const rowIn = interpolate(frame, [40, 50], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const rowPress = frame >= 54 && frame <= 58 ? 0.97 : 1;
+  const typed = QUERY.slice(0, Math.round(interpolate(frame, [14, 36], [0, QUERY.length], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })));
+  const rowIn = interpolate(frame, [38, 48], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const rowPress = frame >= 52 && frame <= 56 ? 0.97 : 1;
 
-  // Phase 2: modal
-  const MODAL_AT = 60;
+  const MODAL_AT = 58;
   const modalScale = spring({ frame: frame - MODAL_AT, fps, config: { damping: 14, stiffness: 160 } });
   const modalVisible = frame >= MODAL_AT;
+
+  const noteTyped = NOTE.slice(0, Math.round(interpolate(frame, [72, 112], [0, NOTE.length], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })));
   const tagIn = (i: number) =>
-    interpolate(frame, [84 + i * 8, 92 + i * 8], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const visSel = interpolate(frame, [112, 118], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const btnPress = frame >= 126 && frame <= 131 ? 0.97 : 1;
-  const adding = frame >= 130;
-  const done = interpolate(frame, [138, 146], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+    interpolate(frame, [116 + i * 7, 123 + i * 7], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const visSel = interpolate(frame, [140, 146], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const btnPress = frame >= 152 && frame <= 157 ? 0.97 : 1;
+  const adding = frame >= 156;
+  const done = interpolate(frame, [164, 172], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{ background: T.paper, fontFamily: UI, justifyContent: 'center', alignItems: 'center' }}>
+      {/* The library — thumbnails behind everything, like the open collection */}
+      <AbsoluteFill style={{ padding: 30, opacity: modalVisible ? 0.1 : 0.22 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 18 }}>
+          {LIBRARY.map((name, i) => (
+            <div key={name} style={{ border: `1px solid ${T.border}`, background: T.surface, overflow: 'hidden', height: 300 }}>
+              <Img src={staticFile(`${name}.webp`)} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+            </div>
+          ))}
+        </div>
+      </AbsoluteFill>
+
       {/* Search panel */}
       <div
         style={{
           width: 700,
-          opacity: modalVisible ? 0.25 : panelIn,
+          opacity: modalVisible ? 0.2 : panelIn,
           transform: `translateY(${(1 - panelIn) * 30}px) scale(${rowPress})`,
-          border: `1px solid ${T.border}`,
+          border: `1px solid ${T.borderStrong}`,
           background: T.paper,
         }}
       >
-        {/* Type tabs */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 7, padding: '15px 17px', borderBottom: `1px solid ${T.border}` }}>
           {TYPES.map((t, i) => {
             const sel = i === 0 ? tabLit : 0;
@@ -68,7 +85,6 @@ export const AddFlow: React.FC = () => {
           })}
         </div>
 
-        {/* Search input */}
         <div style={{ padding: '20px 28px 8px' }}>
           <div style={{ borderBottom: '1.5px solid rgba(255,255,255,0.12)', padding: '13px 0', fontSize: 20, fontWeight: 300 }}>
             {typed ? (
@@ -82,7 +98,6 @@ export const AddFlow: React.FC = () => {
           </div>
         </div>
 
-        {/* Result row */}
         <div
           style={{
             opacity: rowIn,
@@ -114,7 +129,6 @@ export const AddFlow: React.FC = () => {
               opacity: Math.min(1, modalScale * 1.4),
             }}
           >
-            {/* Header */}
             <div style={{ display: 'flex', gap: 22, marginBottom: 34 }}>
               <div style={{ width: 84, height: 84, background: TYPE_BG.song, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, color: 'rgba(17,17,16,0.4)' }}>♪</div>
               <div>
@@ -124,18 +138,24 @@ export const AddFlow: React.FC = () => {
               </div>
             </div>
 
-            {/* Note */}
+            {/* Note — being written */}
             <div style={{ marginBottom: 30 }}>
               <span style={{ ...labelUpper, marginBottom: 10 }}>What does this mean to you?</span>
-              <div style={{ borderBottom: `1px solid ${T.borderStrong}`, padding: '10px 0 14px', fontSize: 17, fontWeight: 300, color: 'rgba(255,255,255,0.22)' }}>
-                A note, a feeling, a memory… @mention a friend
+              <div style={{ borderBottom: `1px solid ${T.borderStrong}`, padding: '10px 0 14px', fontSize: 18, fontWeight: 300, minHeight: 46 }}>
+                {noteTyped ? (
+                  <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 21, color: 'rgba(255,255,255,0.75)' }}>
+                    {noteTyped}
+                    {noteTyped.length < NOTE.length && <span style={{ opacity: frame % 18 < 9 ? 1 : 0 }}>|</span>}
+                  </span>
+                ) : (
+                  <span style={{ color: 'rgba(255,255,255,0.22)' }}>A note, a feeling, a memory… @mention a friend</span>
+                )}
               </div>
             </div>
 
-            {/* Tags */}
             <div style={{ marginBottom: 30 }}>
               <span style={{ ...labelUpper, marginBottom: 10 }}>Clusters / Tags</span>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 12 }}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 12, minHeight: 36 }}>
                 {TAGS.map((tag, i) => (
                   <div
                     key={tag}
@@ -156,7 +176,6 @@ export const AddFlow: React.FC = () => {
               </div>
             </div>
 
-            {/* Visibility */}
             <div style={{ marginBottom: 38 }}>
               <span style={{ ...labelUpper, marginBottom: 10 }}>Visibility</span>
               <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
@@ -182,10 +201,8 @@ export const AddFlow: React.FC = () => {
                   );
                 })}
               </div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.32)', marginTop: 9 }}>Friends only</div>
             </div>
 
-            {/* Footer */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 18, alignItems: 'center' }}>
               <div style={{ border: '1px solid rgba(255,255,255,0.18)', color: 'rgba(255,255,255,0.65)', padding: '13px 34px', fontSize: 13, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 500 }}>
                 Cancel
@@ -207,7 +224,6 @@ export const AddFlow: React.FC = () => {
             </div>
           </div>
 
-          {/* Added confirmation */}
           {done > 0 && (
             <AbsoluteFill style={{ background: T.paper, justifyContent: 'center', alignItems: 'center', opacity: done }}>
               <div style={{ textAlign: 'center' }}>

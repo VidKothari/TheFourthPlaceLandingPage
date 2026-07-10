@@ -15,32 +15,32 @@ function seededShuffle(arr, seed = 42) {
   return a;
 }
 
-const wikipediaImages = seededShuffle(Array.from({length: 14}, (_, i) => `/assets/wikipedia${i+1}.webp`), 7);
+const wikipediaImages = seededShuffle(Array.from({length: 14}, (_, i) => `/assets/thumbs/wikipedia${i+1}.webp`), 7);
 const youtubeImages = seededShuffle([
-  "/assets/youtubeVid.webp",
-  ...Array.from({length: 21}, (_, i) => `/assets/youtubeVid${i+2}.webp`)
+  "/assets/thumbs/youtubeVid.webp",
+  ...Array.from({length: 21}, (_, i) => `/assets/thumbs/youtubeVid${i+2}.webp`)
 ], 13);
-const bookImages = seededShuffle(Array.from({length: 17}, (_, i) => `/assets/book${i+1}.webp`), 31);
+const bookImages = seededShuffle(Array.from({length: 17}, (_, i) => `/assets/thumbs/book${i+1}.webp`), 31);
 const movieImages = seededShuffle([
-  ...Array.from({length: 10}, (_, i) => `/assets/movie${i+1}.webp`),
-  '/assets/movie11.webp',
-  ...Array.from({length: 9}, (_, i) => `/assets/movie${i+12}.webp`),
-  '/assets/movie21.webp',
+  ...Array.from({length: 10}, (_, i) => `/assets/thumbs/movie${i+1}.webp`),
+  '/assets/thumbs/movie11.webp',
+  ...Array.from({length: 9}, (_, i) => `/assets/thumbs/movie${i+12}.webp`),
+  '/assets/thumbs/movie21.webp',
 ], 57);
 const musicianImages = seededShuffle([
   ...Array.from({length: 11}, (_, i) => {
     const name = i + 1;
-    if ([3, 4, 6, 7, 8, 10].includes(name)) return `/assets/artist${name}wbg.webp`;
-    return `/assets/artist${name}.webp`;
+    if ([3, 4, 6, 7, 8, 10].includes(name)) return `/assets/thumbs/artist${name}wbg.webp`;
+    return `/assets/thumbs/artist${name}.webp`;
   })
 ], 88);
 const songImages = seededShuffle([
-  "/assets/music1.webp", "/assets/music2.webp", "/assets/music3.webp",
-  "/assets/music4.webp", "/assets/music5.webp", "/assets/music6.webp",
-  "/assets/music7.webp", "/assets/music8.webp", "/assets/music9.webp",
-  "/assets/music10.webp", "/assets/music11.webp"
+  "/assets/thumbs/music1.webp", "/assets/thumbs/music2.webp", "/assets/thumbs/music3.webp",
+  "/assets/thumbs/music4.webp", "/assets/thumbs/music5.webp", "/assets/thumbs/music6.webp",
+  "/assets/thumbs/music7.webp", "/assets/thumbs/music8.webp", "/assets/thumbs/music9.webp",
+  "/assets/thumbs/music10.webp", "/assets/thumbs/music11.webp"
 ], 99);
-const gameImages = seededShuffle(Array.from({length: 12}, (_, i) => `/assets/game${i+1}.jpg`), 21);
+const gameImages = seededShuffle(Array.from({length: 12}, (_, i) => `/assets/thumbs/game${i+1}.webp`), 21);
 
 const STOP_HEIGHT = '400vh';
 const S = 0.05;
@@ -316,21 +316,40 @@ export default function TheThread() {
 
       {/* Section header */}
       <div style={{
-        padding: 'clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 3.75rem)',
+        padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 3.75rem)',
         borderTop: '1px solid var(--border-crisp)', borderBottom: '1px solid var(--border-crisp)',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '2rem',
       }}>
-        <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 500,
-          textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(0,0,0,0.4)',
-        }}>
-          II. The Exhibition
-        </span>
+        <div>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 500,
+            textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(0,0,0,0.4)',
+            display: 'block', marginBottom: '1.5rem',
+          }}>
+            II. The Exhibition
+          </span>
+          <h2 style={{
+            fontFamily: 'var(--serif)', fontWeight: 400,
+            fontSize: 'clamp(2.2rem, 5vw, 4.5rem)', lineHeight: 1.05,
+            color: 'var(--text-pure)', marginBottom: '1rem',
+          }}>
+            Save what <em style={{ fontStyle: 'italic', color: 'var(--text-soft)' }}>matters.</em>
+          </h2>
+          <p style={{
+            fontFamily: 'var(--sans)', fontWeight: 300,
+            fontSize: 'clamp(1rem, 1.6vw, 1.2rem)', lineHeight: 1.7,
+            color: 'var(--text-soft)', maxWidth: '32rem',
+          }}>
+            Everything that ever moved you — films, books, music, rabbit
+            holes, other worlds — kept in one place, not scrolled past.
+          </p>
+        </div>
         <span style={{
           fontFamily: 'var(--serif)', fontStyle: 'italic',
           fontSize: 'clamp(1rem, 1.5vw, 1.25rem)', color: 'var(--text-soft)',
+          whiteSpace: 'nowrap', paddingBottom: '0.5rem',
         }}>
-          Scroll to explore
+          Scroll to explore ↓
         </span>
       </div>
 

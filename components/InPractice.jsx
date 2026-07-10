@@ -17,8 +17,14 @@ const clips = [
     caption: 'When someone’s collection overlaps yours, you see exactly what you share — weighted by rarity, not popularity.',
   },
   {
-    src: 'recs',
+    src: 'tastemap',
     num: '03',
+    title: 'Merge',
+    caption: 'Your collection becomes a constellation. Lay it over someone else’s, and what you share glows gold.',
+  },
+  {
+    src: 'recs',
+    num: '04',
     title: 'Pass it on',
     caption: 'Recommend something to a specific friend — and get a quiet note when it lands on their map.',
   },
@@ -61,7 +67,7 @@ function DemoClip({ clip, index }) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        marginTop: index === 1 ? 'clamp(0px, 4vw, 56px)' : 0,
+        marginTop: index % 2 === 1 ? 'clamp(0px, 4vw, 56px)' : 0,
       }}
     >
       <div style={{ border: '1px solid var(--border-dusk)', overflow: 'hidden' }}>
@@ -155,9 +161,11 @@ export default function InPractice() {
           className="practice-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 'clamp(1.5rem, 3vw, 3rem)',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 'clamp(2rem, 4vw, 4.5rem)',
             alignItems: 'start',
+            maxWidth: '1080px',
+            margin: '0 auto',
           }}
         >
           {clips.map((clip, i) => (

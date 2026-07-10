@@ -158,6 +158,8 @@ button { font-family: inherit; }
   .mobile-stack {
     flex-direction: column !important;
     gap: 32px !important;
+    align-items: flex-start !important;
+    text-align: left !important;
   }
 
   .mobile-text-left {

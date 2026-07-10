@@ -7,7 +7,7 @@ const categories = [
     id: 'books',
     label: 'Books',
     sub: 'The literature that rewired your brain.',
-    images: Array.from({ length: 17 }, (_, i) => `/assets/book${i + 1}.webp`),
+    images: Array.from({ length: 17 }, (_, i) => `/assets/thumbs/book${i + 1}.webp`),
     cardWidth: '160px',
     cardHeight: 'auto',
     objectFit: 'contain',
@@ -18,10 +18,10 @@ const categories = [
     label: 'Films',
     sub: "Moving images that articulated a feeling you couldn't put into words.",
     images: [
-      ...Array.from({ length: 10 }, (_, i) => `/assets/movie${i + 1}.webp`),
-      '/assets/movie11.webp',
-      ...Array.from({ length: 9 }, (_, i) => `/assets/movie${i + 12}.webp`),
-      '/assets/movie21.webp',
+      ...Array.from({ length: 10 }, (_, i) => `/assets/thumbs/movie${i + 1}.webp`),
+      '/assets/thumbs/movie11.webp',
+      ...Array.from({ length: 9 }, (_, i) => `/assets/thumbs/movie${i + 12}.webp`),
+      '/assets/thumbs/movie21.webp',
     ],
     cardWidth: '160px',
     cardHeight: 'auto',
@@ -33,14 +33,14 @@ const categories = [
     label: 'Music',
     sub: 'The albums and artists that mean something real.',
     images: [
-      '/assets/artist1.webp', '/assets/music1.webp', '/assets/artist2.webp',
-      '/assets/music2.webp', '/assets/artist3wbg.webp', '/assets/music3.webp',
-      '/assets/artist4wbg.webp', '/assets/music4.webp', '/assets/artist5.webp',
-      '/assets/music5.webp', '/assets/artist6wbg.webp', '/assets/music6.webp',
-      '/assets/artist7wbg.webp', '/assets/music7.webp', '/assets/artist8wbg.webp',
-      '/assets/music8.webp', '/assets/artist9.webp', '/assets/music9.webp',
-      '/assets/artist10wbg.webp', '/assets/music10.webp', '/assets/artist11.webp',
-      '/assets/music11.webp',
+      '/assets/thumbs/artist1.webp', '/assets/thumbs/music1.webp', '/assets/thumbs/artist2.webp',
+      '/assets/thumbs/music2.webp', '/assets/thumbs/artist3wbg.webp', '/assets/thumbs/music3.webp',
+      '/assets/thumbs/artist4wbg.webp', '/assets/thumbs/music4.webp', '/assets/thumbs/artist5.webp',
+      '/assets/thumbs/music5.webp', '/assets/thumbs/artist6wbg.webp', '/assets/thumbs/music6.webp',
+      '/assets/thumbs/artist7wbg.webp', '/assets/thumbs/music7.webp', '/assets/thumbs/artist8wbg.webp',
+      '/assets/thumbs/music8.webp', '/assets/thumbs/artist9.webp', '/assets/thumbs/music9.webp',
+      '/assets/thumbs/artist10wbg.webp', '/assets/thumbs/music10.webp', '/assets/thumbs/artist11.webp',
+      '/assets/thumbs/music11.webp',
     ],
     cardWidth: '200px',
     cardHeight: '200px',
@@ -51,7 +51,7 @@ const categories = [
     id: 'wikipedia',
     label: 'Wikipedia',
     sub: 'The 2AM rabbit holes that made you feel less alone.',
-    images: Array.from({ length: 14 }, (_, i) => `/assets/wikipedia${i + 1}.webp`),
+    images: Array.from({ length: 14 }, (_, i) => `/assets/thumbs/wikipedia${i + 1}.webp`),
     cardWidth: '280px',
     cardHeight: 'auto',
     objectFit: 'contain',
@@ -62,13 +62,23 @@ const categories = [
     label: 'YouTube',
     sub: 'Video essays, lectures, and music videos you rewatch every year.',
     images: [
-      '/assets/youtubeVid.webp',
-      ...Array.from({ length: 21 }, (_, i) => `/assets/youtubeVid${i + 2}.webp`),
+      '/assets/thumbs/youtubeVid.webp',
+      ...Array.from({ length: 21 }, (_, i) => `/assets/thumbs/youtubeVid${i + 2}.webp`),
     ],
     cardWidth: '280px',
     cardHeight: 'auto',
     objectFit: 'contain',
     bg: '#fff',
+  },
+  {
+    id: 'games',
+    label: 'Games',
+    sub: 'The other worlds that swallowed whole summers.',
+    images: Array.from({ length: 12 }, (_, i) => `/assets/thumbs/game${i + 1}.webp`),
+    cardWidth: '160px',
+    cardHeight: 'auto',
+    objectFit: 'contain',
+    bg: '#f0eee8',
   },
 ];
 
@@ -81,17 +91,38 @@ export default function MobileThread() {
       paddingTop: '72px',
       paddingBottom: '80px',
     }}>
-      <div style={{
-        fontFamily: 'var(--sans)',
-        fontSize: '0.7rem',
-        fontWeight: 500,
-        textTransform: 'uppercase',
-        letterSpacing: '0.12em',
-        color: 'var(--text-soft)',
-        padding: '0 24px',
-        marginBottom: '56px',
-      }}>
-        II. The Exhibition
+      <div style={{ padding: '0 24px', marginBottom: '48px' }}>
+        <div style={{
+          fontFamily: 'var(--sans)',
+          fontSize: '0.7rem',
+          fontWeight: 500,
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          color: 'var(--text-soft)',
+          marginBottom: '1.25rem',
+        }}>
+          II. The Exhibition
+        </div>
+        <h2 style={{
+          fontFamily: 'var(--serif)',
+          fontWeight: 400,
+          fontSize: '2.4rem',
+          lineHeight: 1.08,
+          color: 'var(--text-pure)',
+          marginBottom: '0.75rem',
+        }}>
+          Save what <em style={{ fontStyle: 'italic', color: 'var(--text-soft)' }}>matters.</em>
+        </h2>
+        <p style={{
+          fontFamily: 'var(--sans)',
+          fontWeight: 300,
+          fontSize: '0.95rem',
+          lineHeight: 1.7,
+          color: 'var(--text-soft)',
+        }}>
+          Everything that ever moved you — films, books, music, rabbit holes,
+          other worlds — kept in one place, not scrolled past.
+        </p>
       </div>
 
       {categories.map((cat, i) => (
@@ -148,7 +179,7 @@ export default function MobileThread() {
                 <img
                   src={src}
                   alt={cat.label}
-                  loading="eager"
+                  loading="lazy"
                   style={{
                     width: '100%',
                     height: cat.cardHeight === 'auto' ? 'auto' : '100%',

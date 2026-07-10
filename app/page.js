@@ -6,6 +6,7 @@ import Manifesto from '../components/Manifesto';
 import ThreadSection from '../components/ThreadSection';
 import TasteMapPreview from '../components/TasteMapPreview';
 import InPractice from '../components/InPractice';
+import WaitlistFab from '../components/WaitlistFab';
 import Waitlist from '../components/Waitlist';
 import Suggestions from '../components/Suggestions';
 import Footer from '../components/Footer';
@@ -27,6 +28,7 @@ export default function Home() {
       <Waitlist />
       <Suggestions />
       <Footer />
+      <WaitlistFab />
     </main>
   );
 }

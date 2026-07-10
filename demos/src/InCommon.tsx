@@ -1,6 +1,6 @@
 import React from 'react';
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { SERIF, SERIF_ITALIC, UI, T, TC, TYPE_BG, avatarColor } from './tokens';
+import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
+import { SERIF, SERIF_ITALIC, UI, T, TC } from './tokens';
 
 const SHARED = [
   { title: 'Stalker', type: 'film', icon: '◈' },
@@ -20,8 +20,6 @@ export const InCommon: React.FC = () => {
   const press = frame >= 116 && frame <= 122;
   const requested = interpolate(frame, [124, 134], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
-  const field = avatarColor('maya');
-
   return (
     <AbsoluteFill style={{ background: T.paper, fontFamily: UI, alignItems: 'center', justifyContent: 'center' }}>
       <div
@@ -31,18 +29,16 @@ export const InCommon: React.FC = () => {
           borderRadius: 20,
           overflow: 'hidden',
           position: 'relative',
-          background: field,
+          background: '#0c0b0a',
           transform: `translateY(${(1 - cardIn) * 60}px)`,
           opacity: Math.min(1, cardIn * 1.3),
         }}
       >
-        {/* Giant initial on the avatar-color field */}
-        <div style={{
-          position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-          fontFamily: SERIF, fontSize: 420, fontWeight: 300, color: 'rgba(17,17,16,0.13)', lineHeight: 1.1,
-        }}>
-          M
-        </div>
+        {/* The person's photo fills the whole card */}
+        <Img
+          src={staticFile('maya.png')}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
+        />
 
         {/* Top vignette */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 160, background: 'linear-gradient(rgba(0,0,0,0.6), transparent)' }} />
