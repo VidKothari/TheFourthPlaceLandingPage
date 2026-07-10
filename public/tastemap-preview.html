@@ -1481,25 +1481,36 @@
     const sg = new THREE.BufferGeometry(); sg.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3))
     universe.add(new THREE.Points(sg, new THREE.PointsMaterial({ size: 1.1, color: 0x111110, transparent: true, opacity: 0.06 })))
 
-    const userNode = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0xffffff, transparent: true, depthWrite: false }))
-    userNode.userData.baseScale = 84
-    userNode.scale.set(84, 84, 1)
-    userNode.renderOrder = 2
-    universe.add(userNode)
-    ;(function () {
+    function makeAvatar(src, name, ringColor) {
+      const av = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0xffffff, transparent: true, depthWrite: false }))
+      av.userData.baseW = 92; av.userData.baseH = 115
+      av.userData.target = new THREE.Vector3()
+      av.scale.set(92, 115, 1)
+      av.renderOrder = 2
+      av.raycast = () => { }
       const img = new Image()
       img.onload = () => {
-        const s = 320, cv = document.createElement("canvas"); cv.width = cv.height = s
+        const W = 320, H = 400
+        const cv = document.createElement("canvas"); cv.width = W; cv.height = H
         const g = cv.getContext("2d")
-        g.save(); g.beginPath(); g.arc(s / 2, s / 2, s / 2 - 10, 0, Math.PI * 2); g.closePath(); g.clip()
-        const iw = img.width, ih = img.height, sc = Math.max(s / iw, s / ih), dw = iw * sc, dh = ih * sc
-        g.drawImage(img, (s - dw) / 2, (s - dh) / 2, dw, dh); g.restore()
-        g.beginPath(); g.arc(s / 2, s / 2, s / 2 - 10, 0, Math.PI * 2); g.lineWidth = 8; g.strokeStyle = "rgba(17,17,16,0.4)"; g.stroke()
+        g.save(); g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 12, 0, Math.PI * 2); g.closePath(); g.clip()
+        const iw = img.width, ih = img.height, sc = Math.max(W / iw, W / ih), dw = iw * sc, dh = ih * sc
+        g.drawImage(img, (W - dw) / 2, (W - dh) / 2, dw, dh); g.restore()
+        g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 12, 0, Math.PI * 2); g.lineWidth = 14; g.strokeStyle = ringColor; g.stroke()
+        g.fillStyle = "#111110"; g.textAlign = "center"; g.textBaseline = "middle"
+        try { g.letterSpacing = "7px" } catch (e) { }
+        g.font = "600 36px Jost, sans-serif"
+        g.fillText(name.toUpperCase(), W / 2, W + 44)
         const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace
-        userNode.material.map = tex; userNode.material.needsUpdate = true
+        av.material.map = tex; av.material.needsUpdate = true
       }
-      img.src = "assets/editorial/records.webp"
-    })()
+      img.src = src
+      universe.add(av)
+      return av
+    }
+    const avatarA = makeAvatar("assets/editorial/records.webp", "Alex", "rgba(184,84,31,0.9)")
+    const avatarB = makeAvatar("assets/editorial/books.webp", "Jordan", "rgba(63,107,138,0.9)")
+    avatarB.visible = false
 
     function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
 
@@ -1552,7 +1563,7 @@
       const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW_TEX, color: desat, transparent: true, depthWrite: false, opacity: 0.5, blending: THREE.NormalBlending }))
       const hs = Math.max(w, h) * 2.0
       halo.scale.set(hs, hs, 1); halo.renderOrder = -1; halo.raycast = () => { }
-      mesh.userData = { ...d, poster: posterPath, isShared, halo, clusterColorDesat: desat }
+      mesh.userData = { ...d, poster: posterPath, isShared, halo, clusterColorDesat: desat, baseW: w, baseH: h, target: new THREE.Vector3(), homePos: new THREE.Vector3() }
       universe.add(halo); universe.add(mesh)
       nodes.push(mesh); halos.push(halo)
     })
@@ -1561,22 +1572,88 @@
       const sp2 = n.userData.isShared ? 680 : 860
       n.position.set(cl.position.x + THREE.MathUtils.randFloatSpread(sp2), cl.position.y + THREE.MathUtils.randFloatSpread(sp2), cl.position.z + THREE.MathUtils.randFloatSpread(sp2))
       n.userData.halo.position.copy(n.position)
+      n.userData.homePos.copy(n.position)
+      n.userData.target.copy(n.position)
     })
 
-    /* Edges */
-    const edges = []
-    function addEdge(a, b, color = 0x2b2a27, opacity = 0.18) {
-      const geo = new THREE.BufferGeometry().setFromPoints([a.position, b.position])
-      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color, transparent: true, opacity }))
-      line.userData = { a, b }; universe.add(line); edges.push(line)
+    /* Shared-item decorations (merged mode): ink frame + SHARED chip + gathered layout */
+    function frameTex(aspect) {
+      const w = 256, h = Math.round(256 * aspect)
+      const cv = document.createElement("canvas"); cv.width = w; cv.height = h
+      const g = cv.getContext("2d")
+      g.strokeStyle = "#111110"; g.lineWidth = 16
+      g.strokeRect(8, 8, w - 16, h - 16)
+      return new THREE.CanvasTexture(cv)
     }
-    clusters.forEach(c => addEdge(userNode, c, 0x2b2a27, 0.12))
+    const FRAME_P = frameTex(1.46), FRAME_S = frameTex(1)
+    const BADGE_TEX = (() => {
+      const cv = document.createElement("canvas"); cv.width = 288; cv.height = 84
+      const g = cv.getContext("2d")
+      g.fillStyle = "#b8963e"; g.fillRect(0, 0, 288, 84)
+      g.strokeStyle = "#111110"; g.lineWidth = 6; g.strokeRect(3, 3, 282, 78)
+      g.fillStyle = "#ffffff"; g.textAlign = "center"; g.textBaseline = "middle"
+      try { g.letterSpacing = "10px" } catch (e) { }
+      g.font = "700 38px Jost, sans-serif"
+      g.fillText("SHARED", 149, 46)
+      return new THREE.CanvasTexture(cv)
+    })()
+    const sharedNodes = nodes.filter(n => n.userData.isShared)
+    sharedNodes.forEach((n, i) => {
+      const u = n.userData
+      const cols = 7, rows = Math.ceil(sharedNodes.length / cols)
+      const row = Math.floor(i / cols), col = i % cols
+      u.mergedPos = new THREE.Vector3((col - (cols - 1) / 2) * 150, ((rows - 1) / 2 - row) * 168, THREE.MathUtils.randFloatSpread(40))
+      const mw = u.baseW * 1.4, mh = u.baseH * 1.4
+      const frame = new THREE.Sprite(new THREE.SpriteMaterial({ map: u.baseH > u.baseW ? FRAME_P : FRAME_S, transparent: true, depthWrite: false, depthTest: false }))
+      frame.scale.set(mw * 1.12, mh * 1.12, 1); frame.renderOrder = 3; frame.visible = false; frame.raycast = () => { }
+      const badge = new THREE.Sprite(new THREE.SpriteMaterial({ map: BADGE_TEX, transparent: true, depthWrite: false, depthTest: false }))
+      const bw = 78, bh = 78 * 84 / 288
+      badge.scale.set(bw, bh, 1)
+      badge.center.set(0.5, 1 + (mh / 2 + 8) / bh)
+      badge.renderOrder = 3; badge.visible = false; badge.raycast = () => { }
+      universe.add(frame); universe.add(badge)
+      u.frame = frame; u.badge = badge
+    })
+
+    /* Edges — airy resting view: only near-neighbour links inside each cluster.
+       Long-range (node → cluster hub) edges appear only on focus.
+       Olive-gold avatar↔shared edges appear only in merged mode. */
+    const edges = []
+    function addEdge(a, b, color = 0x2b2a27, opacity = 0.12, kind = "near") {
+      const geo = new THREE.BufferGeometry().setFromPoints([a.position, b.position])
+      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color, transparent: true, opacity, linewidth: kind === "shared" ? 2 : 1 }))
+      line.userData = { a, b, kind }; universe.add(line); edges.push(line)
+    }
+    TAGS.forEach((tag, ti) => {
+      const members = nodes.filter(n => { const ci = TAGS.indexOf(n.userData.tags[0]); return (ci < 0 ? 0 : ci) === ti })
+      members.forEach(n => {
+        members.filter(m => m !== n)
+          .map(m => ({ m, d: m.position.distanceTo(n.position) }))
+          .sort((x, y) => x.d - y.d).slice(0, 2)
+          .forEach(({ m }) => {
+            if (!edges.some(e => (e.userData.a === m && e.userData.b === n) || (e.userData.a === n && e.userData.b === m))) addEdge(n, m, INK_EDGE, 0.12, "near")
+          })
+      })
+    })
     nodes.forEach(n => {
       n.userData.tags.forEach(tag => {
         const ci = TAGS.indexOf(tag)
-        if (ci >= 0) addEdge(n, clusters[ci], n.userData.isShared ? GOLD_EDGE : INK_EDGE, n.userData.isShared ? 0.4 : 0.16)
+        if (ci >= 0) addEdge(n, clusters[ci], INK_EDGE, 0.22, "long")
       })
     })
+    nodes.filter(n => n.userData.isShared).forEach(n => {
+      addEdge(avatarA, n, 0x8a6a1f, 0.6, "shared")
+      addEdge(avatarB, n, 0x8a6a1f, 0.6, "shared")
+    })
+    function updateEdgeGeometries() {
+      edges.forEach(e => {
+        if (!e.visible) return
+        const p = e.geometry.attributes.position
+        p.setXYZ(0, e.userData.a.position.x, e.userData.a.position.y, e.userData.a.position.z)
+        p.setXYZ(1, e.userData.b.position.x, e.userData.b.position.y, e.userData.b.position.z)
+        p.needsUpdate = true
+      })
+    }
 
     /* ── LEGEND ── */
     const legEl = document.getElementById("legend")
@@ -1690,9 +1767,25 @@
     /* ── MODE ── */
     let mode = "alex", mergeUnlocked = false
     let focusedNode = null, focusedTag = null
+    let settleUntil = 0
+
+    function layoutForMode() {
+      const merged = mode === "merged"
+      avatarA.visible = (mode === "alex" || merged)
+      avatarB.visible = (mode === "jordan" || merged)
+      avatarA.userData.target.set(merged ? -660 : 0, 0, 0)
+      avatarB.userData.target.set(merged ? 660 : 0, 0, 0)
+      if (!merged) { avatarA.position.set(0, 0, 0); avatarB.position.set(0, 0, 0) }
+      nodes.forEach(n => {
+        const u = n.userData
+        u.target.copy(merged && u.mergedPos ? u.mergedPos : u.homePos)
+      })
+      if (merged) settleUntil = performance.now() + 1500
+    }
 
     function setMode(m) {
       mode = m
+      layoutForMode()
       hideCard(); hideClusterCard(); resetVis()
         ;["t1", "t2", "tmg"].forEach(id => document.getElementById(id).classList.remove("on"))
       if (m === "alex") document.getElementById("t1").classList.add("on")
@@ -1716,14 +1809,17 @@
 
     function applyNodeVisibility() {
       nodes.forEach(n => {
-        const id = n.userData.id
-        const halo = n.userData.halo
+        const u = n.userData
+        const id = u.id
+        const halo = u.halo
         let modeVisible
         if (mode === "alex") modeVisible = ALEX_IDS.has(id)
         else if (mode === "jordan") modeVisible = JORDAN_IDS.has(id)
         else modeVisible = true
         n.visible = modeVisible
         if (halo) halo.visible = modeVisible
+        if (u.frame) u.frame.visible = false
+        if (u.badge) u.badge.visible = false
         if (!modeVisible) return
 
         const isS = SHARED_IDS.has(id) && mode === "merged"
@@ -1732,12 +1828,18 @@
 
         let vis = 1
         if (focusedNode) {
-          vis = n.userData.tags.some(t => focusedNode.userData.tags.includes(t)) ? 1 : 0.06
+          vis = u.tags.some(t => focusedNode.userData.tags.includes(t)) ? 1 : 0.06
         } else if (focusedTag) {
-          vis = n.userData.tags.includes(focusedTag) ? 1 : 0.06
+          vis = u.tags.includes(focusedTag) ? 1 : 0.06
         }
+        // merged mode: non-shared items recede so shared taste is countable
+        if (mode === "merged" && !isS && vis === 1) { vis = 0.3; n.material.color.setHex(0xbbbbb8) }
         n.material.opacity = vis; n.material.transparent = true
-        if (halo) halo.material.opacity = vis < 0.5 ? 0.03 : 0.5
+        if (halo) halo.material.opacity = vis < 0.5 ? 0.03 : (mode === "merged" && !isS ? 0.12 : 0.5)
+        const sc = isS ? 1.4 : 1
+        n.scale.set(u.baseW * sc, u.baseH * sc, 1)
+        if (halo) { const hs = Math.max(u.baseW, u.baseH) * sc * 2.0; halo.scale.set(hs, hs, 1) }
+        if (isS && vis >= 0.5) { if (u.frame) u.frame.visible = true; if (u.badge) u.badge.visible = true }
       })
       clusters.forEach((c, i) => {
         if (focusedNode) {
@@ -1759,42 +1861,30 @@
         }
       })
       edges.forEach(e => {
-        const aNode = nodes.find(x => x === e.userData.a)
-        const isUserEdge = !aNode
-        if (aNode) {
-          const id = aNode.userData.id
-          let modeVis
-          if (mode === "alex") modeVis = ALEX_IDS.has(id)
-          else if (mode === "jordan") modeVis = JORDAN_IDS.has(id)
-          else modeVis = true
-          if (!modeVis) { e.visible = false; return }
+        const { a, b, kind } = e.userData
+        if (kind === "shared") { e.visible = (mode === "merged" && !focusedNode && !focusedTag); return }
+        const ends = [a, b].filter(o => o.userData && o.userData.id)
+        const endVisible = ends.every(o => {
+          const id = o.userData.id
+          if (mode === "alex") return ALEX_IDS.has(id)
+          if (mode === "jordan") return JORDAN_IDS.has(id)
+          return true
+        })
+        if (!endVisible) { e.visible = false; return }
+        if (kind === "long") {
+          e.visible = !!(focusedNode && (a === focusedNode || b === focusedNode))
+          return
         }
-        if (mode === "merged" && aNode) {
-          const id = aNode.userData.id
-          if (SHARED_IDS.has(id)) e.material.color.setHex(GOLD_EDGE)
-          else if (ALEX_IDS.has(id)) e.material.color.setHex(ALEX_EDGE)
-          else e.material.color.setHex(JORDAN_EDGE)
-        } else {
-          e.material.color.setHex(INK_EDGE)
-        }
+        // near-neighbour edges
+        if (mode === "merged" && ends.some(o => o.userData.isShared)) { e.visible = false; return }
         if (focusedNode) {
-          const rel = (e.userData.a === focusedNode || e.userData.b === focusedNode)
-          e.visible = rel
+          e.visible = (a === focusedNode || b === focusedNode)
         } else if (focusedTag) {
-          // Show edges belonging to nodes in this tag cluster, hide others
-          if (aNode) {
-            const inTag = aNode.userData.tags.includes(focusedTag)
-            e.visible = inTag
-            if (inTag) e.material.opacity = 0.22
-          } else {
-            // cluster-to-origin edges: show the one for this tag
-            const bCluster = clusters.find(c => c === e.userData.b)
-            e.visible = bCluster ? bCluster.userData.tag === focusedTag : false
-          }
+          e.visible = ends.some(o => o.userData.tags.includes(focusedTag))
+          e.material.opacity = 0.16
         } else {
           e.visible = true
-          // restore default opacity
-          e.material.opacity = aNode ? (aNode.userData.isShared ? 0.4 : 0.16) : 0.12
+          e.material.opacity = mode === "merged" ? 0.07 : 0.12
         }
       })
     }
@@ -2088,7 +2178,20 @@
         _velX *= 0.88; _velY *= 0.88
       }
 
-      { const us = userNode.userData.baseScale * (1 + Math.sin(T * 2.2) * 0.05); userNode.scale.set(us, us, 1) }
+      ;[avatarA, avatarB].forEach((av, ai) => {
+        const p = 1 + Math.sin(T * 2.2 + ai * 1.7) * 0.04
+        av.scale.set(av.userData.baseW * p, av.userData.baseH * p, 1)
+        av.position.lerp(av.userData.target, 0.07)
+      })
+      nodes.forEach(n => {
+        const u = n.userData
+        if (u.target && n.position.distanceToSquared(u.target) > 0.25) n.position.lerp(u.target, 0.07)
+        if (u.halo) u.halo.position.copy(n.position)
+        if (u.frame) u.frame.position.copy(n.position)
+        if (u.badge) u.badge.position.copy(n.position)
+      })
+      updateEdgeGeometries()
+      if (performance.now() < settleUntil && !_drag && !camAnim) { universe.rotation.x *= 0.9; universe.rotation.y *= 0.9 }
       if (mode === "merged") {
         const pulse = 0.6 + Math.sin(T * 2.8) * 0.4
         nodes.forEach(n => {
