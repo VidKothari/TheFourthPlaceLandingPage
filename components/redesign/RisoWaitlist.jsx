@@ -1,29 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
 import { INK, cutout, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
+import AutoplayLoopVideo from './AutoplayLoopVideo';
 
 export default function RisoWaitlist({ waitlist }) {
   const reduce = useReducedMotion();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
   const [position, setPosition] = useState(null);
-  const pulseRef = useRef(null);
-
-  // Same muted-property autoplay fix as the demo clips (React SSR drops the attr).
-  useEffect(() => {
-    const el = pulseRef.current;
-    if (!el) return;
-    el.muted = true;
-    el.defaultMuted = true;
-    el.play()?.catch(() => {});
-    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
-    el.addEventListener('canplay', onCanPlay);
-    return () => el.removeEventListener('canplay', onCanPlay);
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,12 +59,7 @@ export default function RisoWaitlist({ waitlist }) {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* The poster halo breathes: 2.5s loop, posters pulsing in rhythm. */}
-          <video
-            ref={pulseRef}
-            autoPlay
-            muted
-            loop
-            playsInline
+          <AutoplayLoopVideo
             preload="metadata"
             poster="/assets/redesign/waitlist-pulse-poster.webp"
             aria-label={waitlist.imgAlt}
@@ -84,7 +67,7 @@ export default function RisoWaitlist({ waitlist }) {
           >
             <source src="/assets/redesign/waitlist-pulse.webm" type="video/webm" />
             <source src="/assets/redesign/waitlist-pulse.mp4" type="video/mp4" />
-          </video>
+          </AutoplayLoopVideo>
         </motion.div>
 
         <motion.div

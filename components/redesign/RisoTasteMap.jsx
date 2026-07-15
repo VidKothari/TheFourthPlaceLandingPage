@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { INK, cutout, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
+import AutoplayLoopVideo from './AutoplayLoopVideo';
 
 export default function RisoTasteMap({ eyesTile }) {
   const [load, setLoad] = useState(false);
@@ -160,11 +161,7 @@ export default function RisoTasteMap({ eyesTile }) {
             justifyContent: 'center',
           }}
         >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
+          <AutoplayLoopVideo
             preload="metadata"
             poster="/assets/demos/profile-share-loop-poster.jpg"
             aria-label="A profile link is copied from The Fourth Place and pasted into a social profile"
@@ -172,7 +169,7 @@ export default function RisoTasteMap({ eyesTile }) {
           >
             <source src="/assets/demos/profile-share-loop.webm" type="video/webm" />
             <source src="/assets/demos/profile-share-loop.mp4" type="video/mp4" />
-          </video>
+          </AutoplayLoopVideo>
           <div>
             <h3 style={{
               fontFamily: 'var(--serif)', fontWeight: 400,

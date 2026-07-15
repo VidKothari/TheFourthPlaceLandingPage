@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { INK } from './shared';
 import InkSettleHeading from './InkSettle';
+import AutoplayLoopVideo from './AutoplayLoopVideo';
 
 const clips = [
   {
@@ -28,20 +28,6 @@ const clips = [
 ];
 
 function PosterClip({ clip, index, reduce }) {
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    el.muted = true;
-    el.defaultMuted = true;
-    const p = el.play();
-    if (p) p.catch(() => {});
-    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
-    el.addEventListener('canplay', onCanPlay);
-    return () => el.removeEventListener('canplay', onCanPlay);
-  }, []);
-
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, y: 28 }}
@@ -58,20 +44,14 @@ function PosterClip({ clip, index, reduce }) {
       }}
     >
       <div style={{ border: `2px solid ${INK.ink}`, overflow: 'hidden' }}>
-        {/* Kept dead simple on purpose: always autoplaying, no observers. */}
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
+        <AutoplayLoopVideo
           preload="metadata"
           poster={`/assets/demos/${clip.src}-poster.jpg`}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         >
           <source src={`/assets/demos/${clip.src}.webm`} type="video/webm" />
           <source src={`/assets/demos/${clip.src}.mp4`} type="video/mp4" />
-        </video>
+        </AutoplayLoopVideo>
       </div>
       <div style={{ padding: '1.2rem 0.2rem 0.3rem' }}>
         <div style={{

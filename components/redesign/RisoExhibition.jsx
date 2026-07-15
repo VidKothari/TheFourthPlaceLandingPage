@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   AnimatePresence,
   motion,
@@ -11,6 +11,7 @@ import {
 import { INK, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
 import { EXHIBIT_CARDS, EXHIBIT_ITEMS } from './variants';
+import AutoplayLoopVideo from './AutoplayLoopVideo';
 
 const keepClip = {
   src: 'add-flow-loop',
@@ -19,20 +20,6 @@ const keepClip = {
 };
 
 function KeepPoster({ reduce, compact = false }) {
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    el.muted = true;
-    el.defaultMuted = true;
-    const p = el.play();
-    if (p) p.catch(() => {});
-    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
-    el.addEventListener('canplay', onCanPlay);
-    return () => el.removeEventListener('canplay', onCanPlay);
-  }, []);
-
   return (
     <motion.article
       initial={reduce ? false : { opacity: 0, y: 24 }}
@@ -48,19 +35,14 @@ function KeepPoster({ reduce, compact = false }) {
       }}
     >
       <div className="keep-media" style={{ border: `2px solid ${INK.ink}`, overflow: 'hidden', background: INK.ink }}>
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
+        <AutoplayLoopVideo
           preload="metadata"
           poster={`/assets/demos/${keepClip.src}-poster.jpg`}
           style={{ width: '100%', height: 'auto', aspectRatio: '4 / 5', objectFit: 'contain', display: 'block' }}
         >
           <source src={`/assets/demos/${keepClip.src}.webm`} type="video/webm" />
           <source src={`/assets/demos/${keepClip.src}.mp4`} type="video/mp4" />
-        </video>
+        </AutoplayLoopVideo>
       </div>
       <div className="keep-copy" style={{ padding: 'clamp(1.1rem, 2.5vw, 2rem) clamp(0.2rem, 1vw, 0.8rem) 0.35rem' }}>
         <h3 style={{
