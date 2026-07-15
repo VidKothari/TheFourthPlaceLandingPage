@@ -260,23 +260,36 @@ function HeroArt({ hero }) {
     if (!mq.matches) setShowVideo(true);
   }, [hero.video]);
 
+  // Guarantee autoplay: set the muted PROPERTY and retry (React can drop the attr).
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || !showVideo) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.play()?.catch(() => {});
+    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
+    el.addEventListener('canplay', onCanPlay);
+    return () => el.removeEventListener('canplay', onCanPlay);
+  }, [showVideo]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-      style={{ justifySelf: 'center', width: 'min(30rem, 100%)' }}
+      style={{ justifySelf: 'center', width: hero.video ? 'min(36rem, 100%)' : 'min(30rem, 100%)' }}
     >
       {showVideo ? (
-        /* The hero film: hands enter and place the flowers. Plays once, holds. */
+        /* The hero film. Plays once, holds on the final frame. */
         <video
           ref={videoRef}
           autoPlay
           muted
           playsInline
+          preload="auto"
           poster={hero.video.poster}
           aria-label={hero.imgAlt}
-          style={{ ...cutout(), aspectRatio: '1 / 1', objectFit: 'cover' }}
+          style={{ ...cutout(), aspectRatio: hero.video.aspect || '1 / 1', objectFit: 'cover' }}
         >
           <source src={hero.video.webm} type="video/webm" />
           <source src={hero.video.mp4} type="video/mp4" />

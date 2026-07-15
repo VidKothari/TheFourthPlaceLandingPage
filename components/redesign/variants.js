@@ -7,14 +7,21 @@ export const VARIANTS = {
   1: {
     key: 'keeper',
     hero: {
-      // Door film retired (July 16 review). Static flowers portrait while the
-      // next short film direction gets picked off the board (Room 04⅞).
+      // "She shows up" (his choreography, July 16): he places the white daisy,
+      // she arrives with hers and gives him the marigold, then takes one too.
+      // Plays once and holds on the two of them.
       layout: 'split',
       field: INK.red,
       onField: { display: INK.paper, body: INK.bodyOnRed },
-      img: '/assets/redesign/hero-flowers.webp',
-      imgAlt: 'A halftone portrait on poster red: hands press a daisy and a marigold over his eyes',
-      imgRatio: '4 / 5',
+      img: '/assets/redesign/hero-flowers-still.webp',
+      imgAlt: 'A boy and a girl stand side by side on poster red, each with one white and one yellow flower over their eyes',
+      imgRatio: '3 / 2',
+      video: {
+        webm: '/assets/redesign/hero-flowers-film.webm',
+        mp4: '/assets/redesign/hero-flowers-film.mp4',
+        poster: '/assets/redesign/hero-flowers-film-poster.webp',
+        aspect: '3 / 2',
+      },
       cta: { bg: INK.paper, fg: INK.ink },
     },
     feed: { field: INK.chartreuse, onField: INK.ink }, // flagged: green too overpowering — re-ink next round
