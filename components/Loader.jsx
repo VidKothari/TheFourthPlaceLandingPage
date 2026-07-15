@@ -6,16 +6,17 @@ export default function Loader() {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const finish = () => {
+    // Never block the landing on window.load: the page includes videos and a
+    // live iframe, either of which can keep that event pending indefinitely.
+    const startFade = window.setTimeout(() => {
       setFadeOut(true);
-      setTimeout(() => setHidden(true), 800);
-    };
+    }, 350);
+    const hide = window.setTimeout(() => setHidden(true), 1150);
 
-    if (document.readyState === 'complete') {
-      setTimeout(finish, 400);
-    } else {
-      window.addEventListener('load', () => setTimeout(finish, 400));
-    }
+    return () => {
+      window.clearTimeout(startFade);
+      window.clearTimeout(hide);
+    };
   }, []);
 
   if (hidden) return null;
