@@ -1,19 +1,17 @@
 # Next round — Siddharth's review remarks (July 16, 2026)
 
-State at handoff: ONE consolidated version at `/v/1` (old v1 hero + old v2 waitlist art,
-Open Floor expanded by default). Old `/v/2` `/v/3` retired; their assets parked in
+State at handoff: ONE consolidated version at `/v/1` (red flower-exchange hero film +
+old v2 waitlist art, Open Floor expanded by default). Old `/v/2` `/v/3` retired; their assets parked in
 `public/assets/redesign/`. Dev server: port 3000 (kill squatters; phone via LAN IP).
-Repo is NOT a git repo — nothing committed; if git gets initialized, work on a branch.
+This landing directory is a Git repo.
 
 ## The remarks, verbatim intent → actionable spec
 
-1. **Hero (v1 flowers) is his favorite. Try variants of it + VIDEOS.**
-   Brainstorm with him first. Video directions to bring to that conversation:
-   the hands place the flowers over the eyes (motion = the act of being colored
-   by what you love), petals falling as halftone dots, the red field printing on
-   in layers (ink plates arriving one by one: paper → black plate → yellow flower plate).
-   kling3_0 start/end-frame on approved stills; ~20-40 cr. Static variants: crop, flower
-   choices, second person entering frame.
+1. **Hero iteration — RESTORED July 16.**
+   The selected hero is again “She shows up”: a boy places a white daisy, a girl arrives
+   with hers, gives him the marigold, then takes one too. It plays once and holds on the
+   two of them against the red field. The later shared-scribbles loop remains parked in
+   `public/assets/redesign/`.
 
 2. **SCROLL section: chartreuse is TOO overpowering + bring the Mark Zuckerberg image back.**
    The old Manifesto used `public/assets/notSocial.webp` (alt "Not Social" — the Zuck
@@ -30,8 +28,9 @@ Repo is NOT a git repo — nothing committed; if git gets initialized, work on a
 4. **Remotion clips: regenerate "Merge" + "Meet".**
    - "Merge" (tastemap.webm): re-record/re-render so the map shown matches the RISO
      tastemap look of these landings (newsprint bed, magenta/cobalt accents, gold shared).
-     Note: no Remotion source in this repo — only rendered outputs at public/assets/demos/.
-     Find the Remotion project (ask Siddharth where it lives) or re-capture the riso map.
+     Remotion source now lives in `demos/src/`. The new `ProfileShare` / `ProfileShareLoop`
+     composition and rendered profile-share assets establish the in-repo workflow for the
+     remaining clips.
    - "Meet" (in-common.webm): the girl's picture is bad. New direction: edgy — girl
      standing in front of a graffiti wall striking a yo/victory pose. Generate via
      Higgsfield (nano_banana_2 still → video if needed), then rebuild the clip.
@@ -44,9 +43,8 @@ Repo is NOT a git repo — nothing committed; if git gets initialized, work on a
    a printed door in their chest, constellation landing on someone's palms, person stepping
    into their own poster. 2-3 trials, board or inline review.
 
-6. **Open Floor: expanded by default (DONE) + needs an asset.**
-   Generate a small riso piece for it — candidates: the eyes-grid (parked, `eyes-grid.webp`),
-   or a new "suggestion box" artifact (halftone hand dropping a folded note into a printed box).
+6. **Open Floor: expanded by default + asset — DONE.**
+   Uses `openfloor-box.webp`: a halftone hand dropping a folded note into a magenta box.
 
 7. **Animations subagent (his explicit instruction):** fire a subagent to add animations
    wherever they genuinely improve visual pleasure — NOT blanket motion. Constraints:
@@ -58,7 +56,8 @@ Repo is NOT a git repo — nothing committed; if git gets initialized, work on a
 ## Open questions for Siddharth (he said ask)
 - Remark 2: keep chartreuse anywhere in the Feed, or retire it from that section entirely?
 - Remark 3: what heading does the Exhibition get after donating "What goes on your map."?
-- Remark 4 "Merge": where does the Remotion source project live?
+- Remark 4 "Merge": should its next render reuse the interaction language established by
+  `ProfileShareLoop`, or stay visually closer to the existing map demo?
 - Hero videos: which brainstorm direction(s) above get trials?
 
 ## Credits/infra
@@ -77,11 +76,9 @@ the rest is ordered by impact/effort.
    `.tbtn` 40px tall, legend rows padded to comfortable thumb size, card close
    buttons (`#cclose`/`#cc-close`) 40x40, hint text bumped to 10px. CSS only —
    Three.js scene untouched.
-2. **P1 — iframe height on portrait.** In `RisoTasteMap.jsx`, give the iframe a
-   portrait-aware height: `min(100svh - header, ~140vw)` capped, or simply
-   `85svh` under `(orientation: portrait) and (max-width: 700px)`. Today the map
-   is too short a letterbox on phones; a taller viewport makes drag/pinch usable.
-   Use `svh` (not `vh`) so the mobile URL bar doesn't cause jumps.
+2. **P1 — iframe height on portrait (DONE, revised July 16).** Product review chose
+   a shorter mobile map instead of the earlier tall-map proposal. `RisoTasteMap.jsx`
+   now caps it at `min(72svh, 620px)` below 900px while desktop remains unchanged.
 3. **P1 — pinch-zoom vs page-zoom.** The pinch handler works, but the touch
    listeners are `{ passive: true }` so Safari may also pinch-zoom the page.
    Add `touch-action: none` on the canvas and call `preventDefault()` on

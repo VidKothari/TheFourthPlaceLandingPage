@@ -8,11 +8,15 @@ Each section lists competing asset plans — trials generated via Higgsfield bef
 Cream newsprint bar, black Jost, no change to structure. Logo gets the 2px misregistration
 offset in red. No generated asset.
 
-## 2. Hero — field red `#c8291e`
+## 2. Hero — poster red `#c8291e` + paper
 H1 stays "Find people whose minds look like yours." Eyebrow stays. Plain waitlist CTA.
 The hero image IS the section — album-cover composition, headline set into the field.
 
-- **Plan H-A "Flowers over eyes"** (hooks: 01+12): one portrait, black ink + paper duotone on
+**Selected July 16 — “She shows up.”** A boy places a white daisy over one eye; a girl
+arrives with hers, gives him the marigold, then takes one too. The film plays once and holds
+on the two of them against the poster-red field. The later shared-scribbles loop is parked.
+
+- **Plan H-A "Flowers over eyes" — selected** (hooks: 01+12): one portrait, black ink + paper duotone on
   red, halftone; hands/flowers covering the eyes — a daisy and a marigold where sight should be.
   What you love becomes how you see. Deadpan, not sad.
 - **Plan H-B "The accusation of taste"** (hook: 03): six photographic hands in magenta halftone
@@ -40,20 +44,27 @@ nodes become duotone cutouts with glow outlines, edges become hand-ruled ink lin
   cutouts (book covers, film one-sheets as engraved duotones with magenta ink).
 - **Plan T-B**: color-block grid ground (02's neon blocks) with halftone dots, nodes stay photo.
 
-## 6. Exhibition (ThreadSection) — cobalt `#2b3fb8`
-The save→why→star converge stops become a **poster wall in the dark gallery**: each artifact a
-cutout with mustard/coral glow outline on cobalt (07 treatment), coral halftone clouds drifting.
+## 6. Exhibition (ThreadSection) — app Taste DNA gradient
+The save→why→star converge stops become a **poster wall in the dark gallery** on the app's
+`#1a0e2e → #0e1828 → #091a1a` profile gradient, with paper mats retained for contrast.
+
+**Selected layout, July 16:** one sticky desktop viewport contains the heading and the complete
+exhibition composition. A persistent left Keep card reads video → title → subtitle. On the right,
+the active media family uses a wide label above two side-by-side framed artifacts; native scrolling
+swaps all six families in place. Mobile alone stacks compact, aspect-ratio-safe artifacts, keeps
+both visible inside the sticky viewport, and docks a tiny Keep card off the right edge behind a
+curved paper pull-tab with a black chevron.
 - **Plan E-A**: individual artifact cutouts w/ glow (paperback, vinyl, poster, cassette) on
   transparent-ish cobalt tiles.
 - **Plan E-B**: one wide mural — constellation of glowing artifacts on cobalt sky with coral
   clouds, section content overlaid.
 
-## 7. In Practice — coral `#ef6a55`
+## 7. In Practice — app ink `#0a0a09` with plum ambient light
 The 4 Remotion clips get riso poster frames: each clip sits in a paper-cream "gig poster" frame
 with stacked repeated title type (12 treatment) and halftone corner texture.
 - **Plan P-A**: generate 4 static poster frames (assets) + keep clips inside.
-- **Plan P-B**: two-ink halftone city strip (06: mustard/black on coral) as the section header
-  band — the real world enters here.
+- **Plan P-B**: the halftone city strip is dark/plum-tinted so the real world enters without
+  reintroducing a coral field that conflicts with the app UI.
 
 ## 8. Waitlist — mustard `#e8c53a`
 Plain "Join the waitlist", "You're in." + position number (locked).
@@ -62,9 +73,9 @@ Plain "Join the waitlist", "You're in." + position number (locked).
 - **Plan W-B**: eight hands pointing inward (03 recomposed) — at the input field. The match
   is you. Magenta hands on mustard.
 
-## 9. Open Floor (Suggestions) — paper
-Stays quiet after the loud rooms: paper, black ink, one eye-grid asset (11) as a small
-2×2 "four ways of seeing" tile next to the suggestion box. Plan O-A only.
+## 9. Open Floor (Suggestions) — ink-black
+Folded into the black footer and expanded by default. The small suggestion-box asset uses
+paper halftone and electric magenta linework; this black/magenta pair now echoes in the hero.
 
 ## 10. Footer — black
 Cream ink, IV easter egg unchanged. Optional: single mustard halftone skyline silhouette (06)

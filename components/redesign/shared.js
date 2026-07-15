@@ -28,7 +28,8 @@ export function InkCut({ from, to }) {
 
 export const eyebrowStyle = (color) => ({
   fontFamily: 'var(--sans)',
-  fontSize: '0.72rem',
+  fontSize: '0.75rem',
+  lineHeight: 1.35,
   fontWeight: 500,
   letterSpacing: '0.24em',
   textTransform: 'uppercase',

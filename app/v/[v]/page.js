@@ -40,9 +40,7 @@ export default function VersionPage({ params }) {
       <RisoTasteMap eyesTile={variant.eyesTile} />
       {/* No cut here — the map flows seamlessly into the exhibition wall. */}
       <RisoExhibition />
-      <InkCut from={INK.cobalt} to={INK.coral} />
       <RisoPractice />
-      <InkCut from={INK.coral} to={INK.mustard} />
       <RisoWaitlist waitlist={variant.waitlist} />
       <RisoFooter />
     </main>

@@ -151,7 +151,7 @@ export default function RisoWaitlist({ waitlist }) {
                         htmlFor="waitlist-email"
                         style={{
                           display: 'block',
-                          fontSize: '0.68rem',
+                          fontSize: '0.75rem',
                           fontFamily: 'var(--sans)',
                           fontWeight: 500,
                           textTransform: 'uppercase',
@@ -208,7 +208,7 @@ export default function RisoWaitlist({ waitlist }) {
                       <span style={{
                         fontFamily: 'var(--sans)',
                         fontWeight: 400,
-                        fontSize: '0.85rem',
+                        fontSize: '0.875rem',
                         color: '#6f1d12',
                       }}>
                         That didn't go through. Try once more?
@@ -267,7 +267,7 @@ export default function RisoWaitlist({ waitlist }) {
                     <p style={{
                       fontFamily: 'var(--sans)',
                       fontWeight: 500,
-                      fontSize: '0.72rem',
+                      fontSize: '0.75rem',
                       letterSpacing: '0.18em',
                       textTransform: 'uppercase',
                       color: 'rgba(22,19,16,0.6)',

@@ -18,7 +18,7 @@ function Ctas({ cta, display }) {
           background: cta.bg, color: cta.fg,
           border: `2px solid ${INK.ink}`,
           boxShadow: '5px 5px 0 rgba(22,19,16,0.35)',
-          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.85rem',
+          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.875rem',
           letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none',
         }}
       >
@@ -28,7 +28,7 @@ function Ctas({ cta, display }) {
         href="#tastemap"
         style={{
           display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.85rem',
+          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.875rem',
           letterSpacing: '0.06em', color: display, textDecoration: 'underline',
           textUnderlineOffset: '5px',
         }}
@@ -280,11 +280,12 @@ function HeroArt({ hero }) {
       style={{ justifySelf: 'center', width: hero.video ? 'min(36rem, 100%)' : 'min(30rem, 100%)' }}
     >
       {showVideo ? (
-        /* The hero film. Plays once, holds on the final frame. */
+        /* Films opt into looping only when their first and last frames match. */
         <video
           ref={videoRef}
           autoPlay
           muted
+          loop={hero.video.loop}
           playsInline
           preload="auto"
           poster={hero.video.poster}

@@ -45,7 +45,7 @@ export default function RisoNav() {
               key={label}
               href={href}
               style={{
-                fontFamily: 'var(--sans)', fontSize: '0.8rem', fontWeight: 500,
+                fontFamily: 'var(--sans)', fontSize: '0.875rem', fontWeight: 500,
                 letterSpacing: '0.05em', color: INK.ink, textDecoration: 'none',
               }}
             >
@@ -60,7 +60,7 @@ export default function RisoNav() {
               background: INK.ink,
               color: INK.paper,
               border: `2px solid ${INK.ink}`,
-              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.8rem',
+              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.875rem',
               letterSpacing: '0.06em', textTransform: 'uppercase',
               textDecoration: 'none',
             }}

@@ -20,10 +20,10 @@ const clips = [
     caption: 'Your collection becomes a constellation. Lay it over someone else’s, and what you share glows gold.',
   },
   {
-    src: 'recs-loop',
+    src: 'check-later-loop',
     num: '04',
-    title: 'Pass it on',
-    caption: 'Recommend something to a specific friend — and get a quiet note when it lands on their map.',
+    title: 'Check it out later',
+    caption: 'Save anything from the feed, then come back when you actually have time for it.',
   },
 ];
 
@@ -75,7 +75,7 @@ function PosterClip({ clip, index, reduce }) {
       </div>
       <div style={{ padding: '1.2rem 0.2rem 0.3rem' }}>
         <div style={{
-          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.62rem',
+          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.75rem',
           letterSpacing: '0.24em', textTransform: 'uppercase',
           color: INK.red, marginBottom: '0.5rem',
         }}>
@@ -90,7 +90,7 @@ function PosterClip({ clip, index, reduce }) {
         </h3>
         <p style={{
           fontFamily: 'var(--sans)', fontWeight: 300,
-          fontSize: 'clamp(0.85rem, 1.2vw, 0.95rem)', lineHeight: 1.65,
+          fontSize: 'clamp(0.9rem, 1.2vw, 0.95rem)', lineHeight: 1.65,
           color: 'rgba(22,19,16,0.8)',
         }}>
           {clip.caption}
@@ -104,13 +104,22 @@ export default function RisoPractice() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="in-practice" style={{ background: INK.coral }}>
+    <section
+      id="in-practice"
+      style={{
+        background: '#0a0a09',
+        backgroundImage: 'radial-gradient(circle at 18% 8%, rgba(26,14,46,0.9) 0%, rgba(10,10,9,0) 46%), linear-gradient(145deg, #111110 0%, #0a0a09 72%)',
+      }}
+    >
       {/* The real world enters: two-ink city band. */}
-      <img
-        src="/assets/redesign/practice-city.webp"
-        alt="A city street printed in mustard and black halftone against a coral sky"
-        style={{ width: '100%', height: 'clamp(120px, 22vw, 280px)', objectFit: 'cover', display: 'block', borderBottom: `3px solid ${INK.ink}` }}
-      />
+      <div style={{ position: 'relative', borderBottom: '1px solid rgba(255,255,255,0.12)', overflow: 'hidden' }}>
+        <img
+          src="/assets/redesign/practice-city.webp"
+          alt="A halftone city street at night"
+          style={{ width: '100%', height: 'clamp(120px, 22vw, 280px)', objectFit: 'cover', display: 'block', filter: 'grayscale(0.75) saturate(0.5) brightness(0.42) hue-rotate(210deg)' }}
+        />
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(26,14,46,0.72), rgba(10,10,9,0.2) 55%, rgba(9,26,26,0.62))', mixBlendMode: 'color' }} />
+      </div>
 
       <div className="mobile-padding" style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(48px, 7vw, 100px) clamp(20px, 5vw, 60px) clamp(64px, 9vw, 130px)' }}>
         <div
@@ -119,7 +128,7 @@ export default function RisoPractice() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-end',
-            borderBottom: `3px solid ${INK.ink}`,
+            borderBottom: '1px solid rgba(255,255,255,0.14)',
             paddingBottom: '32px',
             marginBottom: 'clamp(40px, 6vw, 80px)',
             gap: '1rem',
@@ -133,7 +142,7 @@ export default function RisoPractice() {
               fontWeight: 400,
               fontSize: 'clamp(2rem, 4.4vw, 3.8rem)',
               lineHeight: 1.05,
-              color: INK.ink,
+              color: INK.paper,
             }}
           >
             How it actually<br />
@@ -141,11 +150,11 @@ export default function RisoPractice() {
           </InkSettleHeading>
           <div style={{
             fontFamily: 'var(--sans)',
-            fontSize: '0.8rem',
+            fontSize: '0.875rem',
             fontWeight: 500,
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
-            color: 'rgba(22,19,16,0.7)',
+            color: 'rgba(239,230,208,0.68)',
             marginBottom: '8px',
             whiteSpace: 'nowrap',
           }}>

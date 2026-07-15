@@ -17,7 +17,7 @@ Each surface = ONE saturated field color + 1–2 inks + paper. Never more than 3
 
 | Token | Hex (working) | Source | Role |
 |---|---|---|---|
-| `--field-red` | `#c8291e` | 01, 12, 10 | Hero field, loudest room |
+| `--field-red` | `#c8291e` | 01, 12, 10 | Warm poster field, legacy hero ink |
 | `--field-chartreuse` | `#c6e02e` | 03 | Manifesto / the match |
 | `--ink-magenta` | `#e5399f` | 03, 05, 08, 09 | Duotone people ink |
 | `--field-coral` | `#ef6a55` | 06 sky | Softer warm rooms |
@@ -83,8 +83,8 @@ One joke per section maximum. Copy stays plain and warm (see taste rules — ban
   coral (6.2:1); paper text on cobalt (6.7:1); on field-red use white or darken the red until
   ≥4.5:1 — paper-on-red is 4.46:1, large text only. Magenta on chartreuse/mustard is decorative
   only — never instructional text or form affordances.
-- Section transitions: hard cuts + one consistent overprint device (16–24px static strip carrying
-  outgoing/incoming inks + 1px black registration rule). No gradients, no scroll-interpolated color.
+- Section transitions: direct hard cuts. Do not insert empty color strips between Exhibition,
+  In Practice, and Waitlist; their adjacent surfaces already create the transition.
 - Taste-map iframe is a separate redesign surface — restyle its tokens/Three.js materials
   internally; never CSS-filter the iframe element from outside.
 - Sharp corners everywhere (locked; don't force organic shapes angular). Motion stays gentle
@@ -93,12 +93,12 @@ One joke per section maximum. Copy stays plain and warm (see taste rules — ban
 
 ## 8. Chromatic tonal arc (a color per section)
 
-Nav (paper) → Hero (**red**) → Marquee (**black band**) → Manifesto (**chartreuse**) →
-Taste Map (**newsprint paper**) → Exhibition (**cobalt**) → In Practice (**coral**) →
-Waitlist (**mustard**) → Open Floor (**paper**) → Footer (**black**, IV easter egg stays).
+Nav (paper) → Hero (**poster red + paper**) → Marquee (**black band**) → Manifesto (**chartreuse**) →
+Taste Map (**newsprint paper**) → Exhibition (**app Taste DNA plum/navy**) → In Practice (**app ink + plum**) →
+Waitlist (**mustard**) → Open Floor + Footer (**ink-black**, IV easter egg stays).
 
-Crossing sections = crossing rooms = crossing ink colors. The old light→dark→light tonal arc
-survives as value: paper-light bookends, black band early, cobalt as the "dark gallery" moment.
+Crossing sections = crossing rooms = crossing ink colors. The red flower hero opens the saturated
+rooms; the app's plum/navy gradient is the "dark gallery" moment and Open Floor closes in black.
 
 ## 9. Asset systems (trial all three, mix per section)
 

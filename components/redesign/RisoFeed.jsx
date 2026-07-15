@@ -55,26 +55,10 @@ export default function RisoFeed() {
               textWrap: 'balance',
             }}
           >
-            The feed knows what you clicked. It has no idea{' '}
-            <em style={{
-              fontStyle: 'italic',
-              background: `linear-gradient(transparent 62%, ${INK.chartreuse} 62%)`,
-            }}>
-              who you are.
-            </em>
+            It can count every pause, replay, and scroll. It still can’t tell
+            which film changed you, which page you underlined, or which song
+            became part of a year.
           </InkSettleHeading>
-          <p style={{
-            fontFamily: 'var(--sans)',
-            fontWeight: 300,
-            fontSize: 'clamp(0.98rem, 1.4vw, 1.12rem)',
-            lineHeight: 1.75,
-            color: 'rgba(22,19,16,0.8)',
-            maxWidth: '36rem',
-          }}>
-            You don't open it to find your people. You open it because it's there.<br />
-            It was built to hold your attention — never to introduce you to anyone.<br />
-            Meanwhile the truest parts of you sit in notes apps and dog-eared pages, with nowhere to live.
-          </p>
         </motion.div>
 
         <motion.div

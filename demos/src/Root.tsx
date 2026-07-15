@@ -5,6 +5,8 @@ import { Recs } from './Recs';
 import { InCommon } from './InCommon';
 import { Tastemap } from './Tastemap';
 import { LoopClose } from './LoopClose';
+import { ProfileShare } from './ProfileShare';
+import { CheckLater } from './CheckLater';
 
 // -Loop variants close back to frame 0 so the clips loop seamlessly on the page.
 const AddFlowLoop: React.FC = () => (
@@ -27,6 +29,16 @@ const TastemapLoop: React.FC = () => (
     <Tastemap />
   </LoopClose>
 );
+const ProfileShareLoop: React.FC = () => (
+  <LoopClose fadeFrames={18}>
+    <ProfileShare />
+  </LoopClose>
+);
+const CheckLaterLoop: React.FC = () => (
+  <LoopClose fadeFrames={16}>
+    <CheckLater />
+  </LoopClose>
+);
 
 export const Root: React.FC = () => (
   <>
@@ -38,5 +50,9 @@ export const Root: React.FC = () => (
     <Composition id="RecsLoop" component={RecsLoop} durationInFrames={130} fps={30} width={900} height={1125} />
     <Composition id="InCommonLoop" component={InCommonLoop} durationInFrames={145} fps={30} width={900} height={1125} />
     <Composition id="TastemapLoop" component={TastemapLoop} durationInFrames={150} fps={30} width={900} height={1125} />
+    <Composition id="ProfileShare" component={ProfileShare} durationInFrames={225} fps={30} width={900} height={1125} />
+    <Composition id="ProfileShareLoop" component={ProfileShareLoop} durationInFrames={225} fps={30} width={900} height={1125} />
+    <Composition id="CheckLater" component={CheckLater} durationInFrames={165} fps={30} width={900} height={1125} />
+    <Composition id="CheckLaterLoop" component={CheckLaterLoop} durationInFrames={165} fps={30} width={900} height={1125} />
   </>
 );

@@ -116,19 +116,20 @@ export default function RisoTasteMap({ eyesTile }) {
         >
           {load ? (
             <iframe
+              className="tastemap-frame"
               src="/tastemap-preview-riso.html"
               title="A live taste map — two people's collections as a constellation of posters"
               style={{ width: '100%', height: 'min(88vh, 820px)', border: 'none', display: 'block' }}
             />
           ) : (
-            <div style={{ width: '100%', height: 'min(88vh, 820px)' }} />
+            <div className="tastemap-frame" style={{ width: '100%', height: 'min(88vh, 820px)' }} />
           )}
           <div style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.6rem',
             borderTop: `3px solid ${INK.ink}`, padding: '0.85rem 1.1rem', background: INK.paper,
           }}>
             <span style={{
-              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.7rem',
+              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.75rem', lineHeight: 1.45,
               letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(22,19,16,0.7)',
             }}>
               Drag to rotate · click any poster · hit Combined
@@ -159,11 +160,19 @@ export default function RisoTasteMap({ eyesTile }) {
             justifyContent: 'center',
           }}
         >
-          <img
-            src="/assets/redesign/profile-pass.webp"
-            alt="One halftone hand passes a small printed card with a glowing constellation to another hand"
-            style={{ width: '100%', border: `2px solid ${INK.ink}`, display: 'block', background: INK.paper }}
-          />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/assets/demos/profile-share-loop-poster.jpg"
+            aria-label="A profile link is copied from The Fourth Place and pasted into a social profile"
+            style={{ width: '100%', aspectRatio: '4 / 5', objectFit: 'cover', border: `2px solid ${INK.ink}`, display: 'block', background: '#0a0a09' }}
+          >
+            <source src="/assets/demos/profile-share-loop.webm" type="video/webm" />
+            <source src="/assets/demos/profile-share-loop.mp4" type="video/mp4" />
+          </video>
           <div>
             <h3 style={{
               fontFamily: 'var(--serif)', fontWeight: 400,
@@ -190,6 +199,9 @@ export default function RisoTasteMap({ eyesTile }) {
         @media (max-width: 900px) {
           .map-row {
             grid-template-columns: 1fr !important;
+          }
+          .tastemap-frame {
+            height: min(72svh, 620px) !important;
           }
         }
       `}</style>

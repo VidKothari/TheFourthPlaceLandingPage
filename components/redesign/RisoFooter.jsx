@@ -48,7 +48,7 @@ function OpenFloor() {
         }}
       >
         <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
+          fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 500,
           letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(239,230,208,0.6)',
         }}>
           Open Floor
@@ -96,7 +96,7 @@ function OpenFloor() {
                   <label
                     htmlFor="openfloor-thought"
                     style={{
-                      display: 'block', fontSize: '0.68rem', fontFamily: 'var(--sans)', fontWeight: 500,
+                      display: 'block', fontSize: '0.75rem', fontFamily: 'var(--sans)', fontWeight: 500,
                       textTransform: 'uppercase', letterSpacing: '0.14em',
                       color: 'rgba(239,230,208,0.6)', marginBottom: '0.5rem',
                     }}
@@ -112,7 +112,7 @@ function OpenFloor() {
                     style={{
                       width: '100%', background: 'rgba(239,230,208,0.06)', color: INK.paper,
                       border: '2px solid rgba(239,230,208,0.4)', padding: '0.8rem',
-                      fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.95rem',
+                      fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '1rem',
                       outline: 'none', resize: 'vertical', marginBottom: '1rem',
                     }}
                     required
@@ -120,7 +120,7 @@ function OpenFloor() {
                   <label
                     htmlFor="openfloor-email"
                     style={{
-                      display: 'block', fontSize: '0.68rem', fontFamily: 'var(--sans)', fontWeight: 500,
+                      display: 'block', fontSize: '0.75rem', fontFamily: 'var(--sans)', fontWeight: 500,
                       textTransform: 'uppercase', letterSpacing: '0.14em',
                       color: 'rgba(239,230,208,0.6)', marginBottom: '0.5rem',
                     }}
@@ -136,7 +136,7 @@ function OpenFloor() {
                     style={{
                       width: '100%', background: 'rgba(239,230,208,0.06)', color: INK.paper,
                       border: '2px solid rgba(239,230,208,0.4)', padding: '0.8rem',
-                      fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.95rem',
+                      fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '1rem',
                       outline: 'none', marginBottom: '1.25rem',
                     }}
                   />
@@ -148,7 +148,7 @@ function OpenFloor() {
                         display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
                         background: INK.paper, color: INK.ink,
                         border: 'none', padding: '0.8rem 1.6rem',
-                        fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.82rem',
+                        fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.875rem',
                         letterSpacing: '0.08em', textTransform: 'uppercase',
                         cursor: status === 'sending' ? 'wait' : 'pointer',
                         opacity: status === 'sending' ? 0.6 : 1,
@@ -156,13 +156,13 @@ function OpenFloor() {
                     >
                       Send it <MoveRight strokeWidth={1.5} size={16} />
                     </button>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'rgba(239,230,208,0.55)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'rgba(239,230,208,0.65)' }}>
                       → founders@thefourthplace.me
                     </span>
                   </div>
                   <div aria-live="polite" style={{ minHeight: '1.4rem', marginTop: '0.7rem' }}>
                     {status === 'error' && (
-                      <span style={{ fontFamily: 'var(--sans)', fontSize: '0.85rem', color: INK.coral }}>
+                      <span style={{ fontFamily: 'var(--sans)', fontSize: '0.875rem', color: INK.coral }}>
                         That didn't go through. Try once more?
                       </span>
                     )}
@@ -339,10 +339,10 @@ export default function RisoFooter() {
               <p style={{
                 fontFamily: 'var(--sans)',
                 fontWeight: 500,
-                fontSize: '0.62rem',
+                fontSize: '0.75rem',
                 letterSpacing: '0.24em',
                 textTransform: 'uppercase',
-                color: 'rgba(22,19,16,0.55)',
+                color: 'rgba(22,19,16,0.72)',
                 marginBottom: '1.5rem',
               }}>
                 Footnote iv.
@@ -362,7 +362,7 @@ export default function RisoFooter() {
               <p style={{
                 fontFamily: 'var(--sans)',
                 fontWeight: 300,
-                fontSize: '0.8rem',
+                fontSize: '0.875rem',
                 color: 'rgba(22,19,16,0.65)',
               }}>
                 — after Ray Oldenburg, <em style={{ fontStyle: 'italic' }}>The Great Good Place</em>, 1989

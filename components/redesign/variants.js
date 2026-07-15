@@ -1,15 +1,15 @@
 import { INK } from './shared';
 
-// Consolidated July 16 per Siddharth's review: ONE version. Hero from the old v1
-// (his favorite), waitlist art from the old v2 (engraved — his pick, pending an
-// "more original" round, see docs/inspo/NEXT-ROUND.md). Alternates parked below.
+// Consolidated July 16 per Siddharth's review: ONE version. The flower-exchange
+// hero is restored; the later shared-scribbles iteration remains parked in
+// public/assets/redesign/ for a possible future pass.
 export const VARIANTS = {
   1: {
     key: 'keeper',
     hero: {
-      // "She shows up" (his choreography, July 16): he places the white daisy,
-      // she arrives with hers and gives him the marigold, then takes one too.
-      // Plays once and holds on the two of them.
+      // "She shows up": he places the white daisy, she arrives with hers and
+      // gives him the marigold, then takes one too. The film plays once and
+      // holds on the two of them.
       layout: 'split',
       field: INK.red,
       onField: { display: INK.paper, body: INK.bodyOnRed },
@@ -17,11 +17,12 @@ export const VARIANTS = {
       imgAlt: 'A boy and a girl stand side by side on poster red, each with one white and one yellow flower over their eyes',
       imgRatio: '16 / 9',
       video: {
-        // mp4-only: h264 compresses the halftone grain 4x better than vp9 here.
+        // MP4-only: H.264 preserves the halftone grain efficiently here.
         webm: null,
         mp4: '/assets/redesign/hero-flowers-film.mp4',
         poster: '/assets/redesign/hero-flowers-film-poster.webp',
         aspect: '16 / 9',
+        loop: false,
       },
       cta: { bg: INK.paper, fg: INK.ink },
     },
