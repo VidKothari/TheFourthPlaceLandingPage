@@ -20,6 +20,17 @@ export default function RisoTasteMap({ eyesTile }) {
     return () => io.disconnect();
   }, []);
 
+  // The map hands scroll back to the page once it's fully zoomed out.
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.data && typeof e.data.tfpScrollBy === 'number') {
+        window.scrollBy({ top: e.data.tfpScrollBy, behavior: 'auto' });
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
   return (
     <section
       id="tastemap"

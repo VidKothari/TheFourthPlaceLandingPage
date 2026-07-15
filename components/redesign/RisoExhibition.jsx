@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { INK, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
-import { WALL_ARTIFACTS, WALL_LABELS } from './variants';
+import { WALL_SEQUENCE } from './variants';
 
 // The 1,200vh scroll becomes one poster wall in the dark gallery:
 // real artwork as cutouts with glow outlines on the cobalt bed.
@@ -65,127 +65,121 @@ export default function RisoExhibition() {
         </motion.div>
       </div>
 
-      {/* The wall. Desktop: scattered constellation. Mobile: tidy grid. */}
+      {/* The salon hang: matted, framed, disciplined. Hover one piece and its
+          whole family (same group) leans forward with it. */}
       <div
         className="wall"
         style={{
           position: 'relative',
-          backgroundImage: 'url(/assets/redesign/exhibition-bed.webp)',
+          backgroundImage: 'url(/assets/redesign/exhibition-wall.webp)',
+          backgroundColor: INK.cobalt,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderTop: `3px solid ${INK.ink}`,
-          minHeight: 'min(92vh, 860px)',
-          overflow: 'hidden',
+          padding: 'clamp(32px, 5vw, 72px) clamp(20px, 5vw, 60px) clamp(48px, 6vw, 88px)',
         }}
       >
-        {/* Artifacts hang with a slight extra tilt and settle to their final angle
-            as they enter — just hung on the wall. Hover lifts them 3px (shadow
-            grows via CSS below): exhibits worth leaning in to. Rotation lives in
-            framer's `rotate` so it survives the y animation (a string transform
-            gets overwritten by motion values). */}
-        {WALL_ARTIFACTS.map((a, i) => {
-          const inActiveGroup = activeGroup === a.group;
-          return (
-            <motion.img
-              key={a.src}
-              src={a.src}
-              alt=""
-              className="wall-item"
-              initial={{ opacity: 0, y: 18, rotate: reduce ? a.rot : a.rot + (i % 2 === 0 ? -2 : 2) }}
-              whileInView={{ opacity: 1, y: 0, rotate: a.rot }}
-              animate={{ scale: inActiveGroup ? 1.08 : 1 }}
-              whileHover={{ y: -3 }}
-              onHoverStart={() => setActiveGroup(a.group)}
-              onHoverEnd={() => setActiveGroup(null)}
-              viewport={{ once: true, margin: '-8%' }}
-              transition={{
-                duration: 0.8,
-                delay: i * 0.08,
-                ease: [0.16, 1, 0.3, 1],
-                scale: { duration: 0.25, delay: 0, ease: 'easeOut' },
-              }}
-              style={{
-                position: 'absolute',
-                top: `${a.top}%`,
-                left: `${a.left}%`,
-                width: `${a.w}%`,
-                zIndex: inActiveGroup ? 2 : 1,
-                '--glow-ring': inActiveGroup ? `${a.glow}aa` : `${a.glow}55`,
-                border: `3px solid ${a.glow}`,
-                boxShadow: `0 0 0 ${inActiveGroup ? 7 : 5}px var(--glow-ring), 8px 8px 0 rgba(0,0,0,0.35)`,
-              }}
-            />
-          );
-        })}
-
-        {WALL_LABELS.map((l, i) => (
-          <motion.div
-            key={l.num}
-            className="wall-label"
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-8%' }}
-            transition={{ duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: 'absolute',
-              top: `${l.top}%`,
-              left: `${l.left}%`,
-              width: 'clamp(13rem, 17vw, 16rem)',
-              rotate: l.rot,
-              background: INK.paper,
-              border: `2px solid ${INK.ink}`,
-              boxShadow: '6px 6px 0 rgba(0,0,0,0.35)',
-              padding: '1rem 1.1rem',
-            }}
-          >
-            <div style={{
-              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.6rem',
-              letterSpacing: '0.22em', textTransform: 'uppercase',
-              color: 'rgba(22,19,16,0.55)', marginBottom: '0.45rem',
-            }}>
-              {l.num}
-            </div>
-            <div style={{
-              fontFamily: 'var(--serif)', fontStyle: 'italic',
-              fontSize: '1.15rem', color: INK.ink, marginBottom: '0.4rem',
-            }}>
-              {l.label}
-            </div>
-            <p style={{
-              fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.82rem',
-              lineHeight: 1.55, color: 'rgba(22,19,16,0.8)',
-            }}>
-              {l.text}
-            </p>
-          </motion.div>
-        ))}
+        <div
+          className="salon-grid"
+          style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(6, 1fr)',
+            gap: 'clamp(14px, 2vw, 26px)',
+            alignItems: 'center',
+          }}
+        >
+          {WALL_SEQUENCE.map((item, i) => {
+            const active = activeGroup === item.group;
+            if (item.type === 'label') {
+              return (
+                <motion.div
+                  key={item.num}
+                  className="salon-label"
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  animate={{ scale: active ? 1.04 : 1 }}
+                  onHoverStart={() => setActiveGroup(item.group)}
+                  onHoverEnd={() => setActiveGroup(null)}
+                  viewport={{ once: true, margin: '-8%' }}
+                  transition={{ duration: 0.7, delay: (i % 6) * 0.06, ease: [0.16, 1, 0.3, 1], scale: { duration: 0.25, delay: 0 } }}
+                  style={{
+                    gridColumn: 'span 2',
+                    rotate: reduce ? 0 : item.rot,
+                    background: INK.paper,
+                    border: `2px solid ${INK.ink}`,
+                    boxShadow: active ? '8px 8px 0 rgba(0,0,0,0.45)' : '6px 6px 0 rgba(0,0,0,0.35)',
+                    padding: '1.1rem 1.2rem',
+                    transition: 'box-shadow 0.25s ease',
+                  }}
+                >
+                  <div style={{
+                    fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.6rem',
+                    letterSpacing: '0.22em', textTransform: 'uppercase',
+                    color: 'rgba(22,19,16,0.55)', marginBottom: '0.45rem',
+                  }}>
+                    {item.num}
+                  </div>
+                  <div style={{
+                    fontFamily: 'var(--serif)', fontStyle: 'italic',
+                    fontSize: '1.2rem', color: INK.ink, marginBottom: '0.4rem',
+                  }}>
+                    {item.label}
+                  </div>
+                  <p style={{
+                    fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.84rem',
+                    lineHeight: 1.55, color: 'rgba(22,19,16,0.8)',
+                  }}>
+                    {item.text}
+                  </p>
+                </motion.div>
+              );
+            }
+            return (
+              <motion.div
+                key={item.src}
+                className="salon-frame"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ scale: active ? 1.06 : 1 }}
+                whileHover={{ y: -4 }}
+                onHoverStart={() => setActiveGroup(item.group)}
+                onHoverEnd={() => setActiveGroup(null)}
+                viewport={{ once: true, margin: '-8%' }}
+                transition={{ duration: 0.7, delay: (i % 6) * 0.06, ease: [0.16, 1, 0.3, 1], scale: { duration: 0.25, delay: 0 } }}
+                style={{
+                  gridColumn: item.wide ? 'span 2' : 'span 1',
+                  rotate: reduce ? 0 : item.rot,
+                  zIndex: active ? 2 : 1,
+                  background: INK.paper,
+                  border: `2px solid ${INK.ink}`,
+                  padding: 'clamp(8px, 1vw, 14px)',
+                  boxShadow: active ? '10px 12px 0 rgba(0,0,0,0.5)' : '7px 8px 0 rgba(0,0,0,0.38)',
+                  transition: 'box-shadow 0.25s ease',
+                }}
+              >
+                <img
+                  src={item.src}
+                  alt=""
+                  style={{ width: '100%', height: 'auto', display: 'block', border: `1px solid ${INK.ink}` }}
+                />
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       <style jsx>{`
-        .wall :global(.wall-item) {
-          transition: box-shadow 0.25s ease;
-        }
-        .wall :global(.wall-item:hover) {
-          box-shadow: 0 0 0 6px var(--glow-ring), 11px 11px 0 rgba(0, 0, 0, 0.4) !important;
-        }
         @media (max-width: 860px) {
-          .wall {
-            min-height: 0 !important;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            padding: 24px 20px 40px;
+          .salon-grid {
+            grid-template-columns: 1fr 1fr !important;
           }
-          .wall :global(.wall-item),
-          .wall :global(.wall-label) {
-            position: static !important;
-            width: 100% !important;
-            top: auto !important;
-            left: auto !important;
+          .salon-grid :global(.salon-label) {
+            grid-column: span 2 !important;
           }
-          .wall :global(.wall-label) {
-            grid-column: span 2;
-            width: 100% !important;
+          .salon-grid :global(.salon-frame) {
+            grid-column: span 1 !important;
           }
         }
       `}</style>

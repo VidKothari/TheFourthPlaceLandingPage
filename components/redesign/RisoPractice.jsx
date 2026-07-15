@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { INK } from './shared';
 import InkSettleHeading from './InkSettle';
@@ -34,32 +33,6 @@ const clips = [
 ];
 
 function PosterClip({ clip, index }) {
-  const videoRef = useRef(null);
-  const [canPlay, setCanPlay] = useState(true);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setCanPlay(!mq.matches);
-    const onChange = (e) => setCanPlay(!e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    if (!canPlay) { el.pause(); return; }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) el.play().catch(() => {});
-        else el.pause();
-      },
-      { threshold: 0.25 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [canPlay]);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -76,12 +49,13 @@ function PosterClip({ clip, index }) {
       }}
     >
       <div style={{ border: `2px solid ${INK.ink}`, overflow: 'hidden' }}>
+        {/* Kept dead simple on purpose: always autoplaying, no observers. */}
         <video
-          ref={videoRef}
+          autoPlay
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           poster={`/assets/demos/${clip.src}-poster.jpg`}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         >

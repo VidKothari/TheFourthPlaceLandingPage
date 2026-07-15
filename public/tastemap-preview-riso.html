@@ -1493,6 +1493,14 @@
       }
     }, { passive: true })
     renderer.domElement.addEventListener("wheel", e => {
+      // Min-depth handoff: once fully zoomed out, scrolling down stops zooming
+      // and hands the scroll back to the host page (via postMessage — an iframe
+      // can't scroll its parent directly).
+      const atMaxZoomOut = _camDist >= CAM_MAX - 1
+      if (e.deltaY > 0 && atMaxZoomOut) {
+        window.parent.postMessage({ tfpScrollBy: e.deltaY }, "*")
+        return
+      }
       e.preventDefault()
       _camDist = Math.max(CAM_MIN, Math.min(CAM_MAX, _camDist + e.deltaY * 1.5))
     }, { passive: false })
