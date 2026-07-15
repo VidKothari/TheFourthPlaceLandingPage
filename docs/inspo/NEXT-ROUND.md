@@ -65,3 +65,44 @@ Repo is NOT a git repo — nothing committed; if git gets initialized, work on a
 ~36/506.5 cr spent. Higgsfield CLI gotcha: silently hangs on multi-MB --image-references
 uploads — always pass small JPEGs (board/img/*.jpg pattern). styled-jsx: one <style jsx>
 block per component (SWC panics on two).
+
+## Tastemap on portrait phones — plan (July 16)
+
+Context: `public/tastemap-preview-riso.html` inside the iframe from
+`components/redesign/RisoTasteMap.jsx`. Quick wins (P0, CSS-only) shipped July 16;
+the rest is ordered by impact/effort.
+
+1. **P0 — bigger tap targets (DONE, July 16).** `@media (max-width: 700px)` in the
+   -riso file: switcher tabs (`.stab`) now ~44px tall with 12px labels, toolbar
+   `.tbtn` 40px tall, legend rows padded to comfortable thumb size, card close
+   buttons (`#cclose`/`#cc-close`) 40x40, hint text bumped to 10px. CSS only —
+   Three.js scene untouched.
+2. **P1 — iframe height on portrait.** In `RisoTasteMap.jsx`, give the iframe a
+   portrait-aware height: `min(100svh - header, ~140vw)` capped, or simply
+   `85svh` under `(orientation: portrait) and (max-width: 700px)`. Today the map
+   is too short a letterbox on phones; a taller viewport makes drag/pinch usable.
+   Use `svh` (not `vh`) so the mobile URL bar doesn't cause jumps.
+3. **P1 — pinch-zoom vs page-zoom.** The pinch handler works, but the touch
+   listeners are `{ passive: true }` so Safari may also pinch-zoom the page.
+   Add `touch-action: none` on the canvas and call `preventDefault()` on
+   two-finger `touchmove` (needs `passive: false` on that listener only). Verify
+   the single-finger drag → page-scroll handoff still lets users scroll past the
+   section (mirror of the wheel `tfpScrollBy` handoff, which is desktop-only today).
+4. **P2 — node/sprite scale on small viewports.** Nodes/labels render tiny on a
+   ~390px-wide canvas. Cheap version: on `innerWidth < 700`, multiply sprite
+   `baseW/baseH` and label sprite scales by ~1.35 at build time (one constant,
+   no scene restructure). Alternative: lower initial `_camDist` (e.g. 1300) on
+   small screens so the default view is closer.
+5. **P2 — fullscreen affordance.** A "⤢ Fullscreen" `.tbtn` that calls
+   `requestFullscreen()` on the iframe/container (postMessage to parent, since
+   iOS Safari needs the gesture + `allowfullscreen`). iOS < 16.4 lacks element
+   fullscreen — fall back to a fixed-position "expanded" state driven by
+   RisoTasteMap.jsx.
+6. **P3 — touch handoff for scrolling past the map.** On portrait, a full-width
+   iframe traps vertical swipes. Options: require two fingers to rotate (one
+   finger scrolls page, posts `tfpScrollBy`), or an explicit "interact" overlay
+   tap-to-activate like map embeds do.
+7. **P3 — perf on low-end phones.** 15k-star field + bloom composer on a phone
+   GPU: consider halving star count and disabling bloom under
+   `innerWidth < 700` if frame drops show up in testing on the physical device
+   (QA is on a real phone via Expo anyway — same session can eyeball this).

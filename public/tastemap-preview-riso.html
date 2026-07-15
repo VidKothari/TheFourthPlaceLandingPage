@@ -1165,6 +1165,53 @@
         font-size: 9px
       }
     }
+
+    /* ── PORTRAIT-PHONE QUICK WINS: bigger tap targets, no layout/scene changes ── */
+    @media (max-width: 700px) {
+      .stab {
+        padding: 13px 16px;
+        font-size: 12px
+      }
+
+      .ssep {
+        height: 44px
+      }
+
+      .tbtn {
+        height: 40px;
+        padding: 0 14px;
+        font-size: 11px
+      }
+
+      #merge-banner {
+        top: 118px
+      }
+
+      .leg {
+        padding: 9px 14px 9px 10px
+      }
+
+      .leg-lbl {
+        font-size: 11px
+      }
+
+      .leg-dot {
+        width: 8px;
+        height: 8px
+      }
+
+      #cclose,
+      #cc-close {
+        width: 40px;
+        height: 40px;
+        font-size: 15px
+      }
+
+      #hint {
+        font-size: 10px;
+        padding: 9px 12px
+      }
+    }
   </style>
 
   <script type="importmap">
@@ -1444,8 +1491,8 @@
     const controls = { update: () => { }, target: new THREE.Vector3() }
 
     let _drag = false, _lastX = 0, _lastY = 0, _velX = 0, _velY = 0
-    let _camDist = camera.position.length()
-    const CAM_MIN = 300, CAM_MAX = 6000
+    const CAM_MIN = 300, CAM_MAX = 3600
+    let _camDist = Math.min(camera.position.length(), CAM_MAX)
 
     renderer.domElement.addEventListener("mousedown", e => {
       if (e.button !== 0) return
@@ -2005,12 +2052,10 @@
       unique.forEach(renderItem)
 
       clusterCardEl.classList.add("on")
-      document.getElementById("hint").style.opacity = "0"
     }
 
     function hideClusterCard() {
       clusterCardEl.classList.remove("on")
-      setTimeout(() => document.getElementById("hint").style.opacity = "1", 600)
     }
 
     /* ── MEDIA CARD ── */
@@ -2040,7 +2085,7 @@
       const isS = d.isShared && mode === "merged"
       document.getElementById("crown").classList.toggle("on", isS)
       cardEl.classList.toggle("gold-glow", isS)
-      cardEl.classList.add("on"); hint.style.opacity = "0"
+      cardEl.classList.add("on")
 
       const sp = document.getElementById("spanel"), sl = document.getElementById("sloading"), st = document.getElementById("stext")
       if (isS) {
@@ -2054,7 +2099,6 @@
 
     function hideCard() {
       cardEl.classList.remove("on", "gold-glow")
-      setTimeout(() => hint.style.opacity = "1", 600)
     }
 
     async function getInsight(d) {
@@ -2176,9 +2220,9 @@
     document.getElementById("tmg").addEventListener("click", () => { focusedNode = null; focusedTag = null; setMode("merged") })
 
     if (!document.body.classList.contains('bg')) {
+      // Persistent: fade in after the loader clears and stay visible (no auto-hide).
       setTimeout(() => {
-        const hw = document.getElementById("howto"); hw.classList.add("on")
-        setTimeout(() => hw.classList.remove("on"), 5500)
+        document.getElementById("howto").classList.add("on")
       }, 1700)
     }
 

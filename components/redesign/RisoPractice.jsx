@@ -1,17 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { INK } from './shared';
 import InkSettleHeading from './InkSettle';
 
 const clips = [
-  {
-    src: 'add-flow-loop',
-    num: '01',
-    title: 'Keep',
-    caption: 'Add the things that moved you. Write what they did to you, not what you think of them. They become your map.',
-  },
   {
     // Reverted to the original clip July 16 — the riso re-render wasn't good enough to ship.
     src: 'in-common-loop',
@@ -33,7 +27,7 @@ const clips = [
   },
 ];
 
-function PosterClip({ clip, index }) {
+function PosterClip({ clip, index, reduce }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -50,7 +44,7 @@ function PosterClip({ clip, index }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={reduce ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-10%' }}
       transition={{ duration: 0.9, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
@@ -107,6 +101,8 @@ function PosterClip({ clip, index }) {
 }
 
 export default function RisoPractice() {
+  const reduce = useReducedMotion();
+
   return (
     <section id="in-practice" style={{ background: INK.coral }}>
       {/* The real world enters: two-ink city band. */}
@@ -161,15 +157,15 @@ export default function RisoPractice() {
           className="practice-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 'clamp(2rem, 4vw, 4.5rem)',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: 'clamp(1.5rem, 3vw, 3rem)',
             alignItems: 'start',
-            maxWidth: '1080px',
+            maxWidth: '1280px',
             margin: '0 auto',
           }}
         >
           {clips.map((clip, i) => (
-            <PosterClip key={clip.src} clip={clip} index={i} />
+            <PosterClip key={clip.src} clip={clip} index={i} reduce={reduce} />
           ))}
         </div>
       </div>

@@ -1,30 +1,167 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { INK, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
 import { EXHIBIT_CARDS, EXHIBIT_ITEMS } from './variants';
 
-// v3 — the spotlight gallery. Album-cover confidence from the inspo: ONE artifact
-// at a time, huge and matted on the quiet cobalt wall, its exhibit card beside it,
-// a film-strip rail below. Click to re-hang; families pop together on hover; the
-// wall re-hangs itself slowly when left alone.
+const keepClip = {
+  src: 'add-flow-loop',
+  num: '01',
+  title: 'Keep',
+  caption: 'Add the things that moved you. Write what they did to you, not what you think of them. They become your map.',
+};
+
+function KeepPoster({ reduce }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    const p = el.play();
+    if (p) p.catch(() => {});
+    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
+    el.addEventListener('canplay', onCanPlay);
+    return () => el.removeEventListener('canplay', onCanPlay);
+  }, []);
+
+  return (
+    <motion.article
+      initial={reduce ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-10%' }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="keep-poster"
+      style={{
+        background: INK.paper,
+        border: `3px solid ${INK.ink}`,
+        boxShadow: '12px 14px 0 rgba(0,0,0,0.42)',
+        padding: 'clamp(0.8rem, 1.6vw, 1.35rem)',
+        marginBottom: 'clamp(5rem, 10vw, 9rem)',
+      }}
+    >
+      <div className="keep-media" style={{ border: `2px solid ${INK.ink}`, overflow: 'hidden', background: INK.ink }}>
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={`/assets/demos/${keepClip.src}-poster.jpg`}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        >
+          <source src={`/assets/demos/${keepClip.src}.webm`} type="video/webm" />
+          <source src={`/assets/demos/${keepClip.src}.mp4`} type="video/mp4" />
+        </video>
+      </div>
+      <div className="keep-copy" style={{ padding: 'clamp(1.1rem, 2.5vw, 2rem) clamp(0.2rem, 1vw, 0.8rem) 0.35rem' }}>
+        <div style={{
+          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.62rem',
+          letterSpacing: '0.24em', textTransform: 'uppercase',
+          color: INK.red, marginBottom: '0.55rem',
+        }}>
+          {keepClip.num}
+        </div>
+        <h3 style={{
+          fontFamily: 'var(--serif)', fontWeight: 400,
+          fontSize: 'clamp(1.7rem, 3vw, 2.6rem)',
+          color: INK.ink, marginBottom: '0.55rem',
+        }}>
+          {keepClip.title}
+        </h3>
+        <p style={{
+          fontFamily: 'var(--sans)', fontWeight: 300,
+          fontSize: 'clamp(0.9rem, 1.2vw, 1rem)', lineHeight: 1.65,
+          color: 'rgba(22,19,16,0.82)', maxWidth: '42rem',
+        }}>
+          {keepClip.caption}
+        </p>
+      </div>
+    </motion.article>
+  );
+}
+
+function ExhibitRow({ card, items, index, reduce }) {
+  return (
+    <motion.article
+      initial={reduce ? false : { opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-8%' }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`exhibit-row ${index % 2 ? 'exhibit-row-reverse' : ''}`}
+    >
+      <div
+        className="exhibit-label"
+        style={{
+          background: INK.paper,
+          border: `2px solid ${INK.ink}`,
+          boxShadow: '8px 8px 0 rgba(0,0,0,0.4)',
+          padding: 'clamp(1.25rem, 2.2vw, 1.9rem)',
+          alignSelf: 'center',
+        }}
+      >
+        <div style={{
+          display: 'inline-block', background: card.accent,
+          border: `2px solid ${INK.ink}`, padding: '0.25rem 0.6rem',
+          fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.6rem',
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          color: card.accentInk || INK.ink, marginBottom: '0.9rem',
+        }}>
+          {card.num}
+        </div>
+        <h3 style={{
+          fontFamily: 'var(--serif)', fontStyle: 'italic', fontWeight: 400,
+          fontSize: 'clamp(1.55rem, 2.7vw, 2.3rem)', lineHeight: 1.05,
+          color: INK.ink, marginBottom: '0.65rem', textWrap: 'balance',
+        }}>
+          {card.label}
+        </h3>
+        <p style={{
+          fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.95rem',
+          lineHeight: 1.65, color: 'rgba(22,19,16,0.82)',
+        }}>
+          {card.text}
+        </p>
+      </div>
+
+      <div className={`artifact-pair ${items[0]?.wide ? 'artifact-pair-wide' : ''}`}>
+        {items.map((item, itemIndex) => (
+          <div
+            className={`artifact-frame artifact-frame-${itemIndex + 1}`}
+            key={item.src}
+            style={{
+              background: INK.paper,
+              border: `3px solid ${INK.ink}`,
+              boxShadow: '11px 13px 0 rgba(0,0,0,0.42)',
+              padding: 'clamp(8px, 1.1vw, 15px)',
+            }}
+          >
+            <img
+              src={item.src}
+              alt={`${card.label} artifact ${itemIndex + 1}`}
+              style={{
+                width: '100%', height: '100%', objectFit: 'contain',
+                display: 'block', border: `1px solid ${INK.ink}`, background: INK.ink,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </motion.article>
+  );
+}
+
 export default function RisoExhibition() {
   const reduce = useReducedMotion();
-  const [featured, setFeatured] = useState(0);
-  const [activeGroup, setActiveGroup] = useState(null);
-  const [paused, setPaused] = useState(false);
-
-  const item = EXHIBIT_ITEMS[featured];
-  const card = EXHIBIT_CARDS[item.group];
-
-  // Slow self-advance, paused on any hover. Gentle state transition, not ambience.
-  useEffect(() => {
-    if (reduce || paused) return;
-    const t = setInterval(() => setFeatured((f) => (f + 1) % EXHIBIT_ITEMS.length), 4500);
-    return () => clearInterval(t);
-  }, [reduce, paused]);
+  const families = Object.entries(EXHIBIT_CARDS).map(([group, card]) => ({
+    group,
+    card,
+    items: EXHIBIT_ITEMS.filter((item) => item.group === group),
+  }));
 
   return (
     <section
@@ -40,7 +177,7 @@ export default function RisoExhibition() {
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
@@ -71,144 +208,100 @@ export default function RisoExhibition() {
           </p>
         </motion.div>
 
-        {/* The stage: one huge framed piece + its wall card. */}
-        <div
-          className="stage"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1.25fr) minmax(15rem, 0.75fr)',
-            gap: 'clamp(2rem, 4vw, 4rem)',
-            alignItems: 'center',
-            marginBottom: 'clamp(2rem, 4vw, 3.5rem)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'center', minHeight: 'min(58vh, 560px)', alignItems: 'center' }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={item.src}
-                initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.035, rotate: -0.6 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  background: INK.paper,
-                  border: `3px solid ${INK.ink}`,
-                  padding: 'clamp(12px, 1.4vw, 22px)',
-                  boxShadow: '14px 16px 0 rgba(0,0,0,0.45)',
-                  maxWidth: item.wide ? 'min(44rem, 100%)' : 'min(26rem, 100%)',
-                }}
-              >
-                <img
-                  src={item.src}
-                  alt={`${card.label} on the wall`}
-                  style={{
-                    width: '100%',
-                    maxHeight: 'min(48vh, 470px)',
-                    objectFit: 'contain',
-                    display: 'block',
-                    border: `1px solid ${INK.ink}`,
-                    background: INK.ink,
-                  }}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
+        <KeepPoster reduce={reduce} />
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={card.num}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                background: INK.paper,
-                border: `2px solid ${INK.ink}`,
-                boxShadow: '8px 8px 0 rgba(0,0,0,0.4)',
-                padding: 'clamp(1.3rem, 2vw, 1.8rem)',
-                justifySelf: 'start',
-                width: '100%',
-                maxWidth: '24rem',
-              }}
-            >
-              <div style={{
-                display: 'inline-block',
-                background: card.accent,
-                border: `2px solid ${INK.ink}`,
-                padding: '0.25rem 0.6rem',
-                fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.6rem',
-                letterSpacing: '0.22em', textTransform: 'uppercase',
-                color: card.accentInk || INK.ink,
-                marginBottom: '0.9rem',
-              }}>
-                {card.num}
-              </div>
-              <div style={{
-                fontFamily: 'var(--serif)', fontStyle: 'italic',
-                fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', color: INK.ink, marginBottom: '0.5rem',
-              }}>
-                {card.label}
-              </div>
-              <p style={{
-                fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.95rem',
-                lineHeight: 1.65, color: 'rgba(22,19,16,0.82)',
-              }}>
-                {card.text}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* The rail: every piece in the collection. Click to re-hang the wall. */}
-        <div
-          className="rail"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => { setPaused(false); setActiveGroup(null); }}
-          style={{
-            display: 'flex',
-            gap: 'clamp(10px, 1.4vw, 18px)',
-            overflowX: 'auto',
-            paddingBottom: '12px',
-          }}
-        >
-          {EXHIBIT_ITEMS.map((t, i) => {
-            const inGroup = activeGroup === t.group;
-            const isFeatured = i === featured;
-            return (
-              <motion.button
-                key={t.src}
-                onClick={() => setFeatured(i)}
-                onHoverStart={() => setActiveGroup(t.group)}
-                onHoverEnd={() => setActiveGroup(null)}
-                animate={{ scale: inGroup ? 1.07 : 1, y: inGroup ? -4 : 0 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-                aria-label={`Show this ${EXHIBIT_CARDS[t.group].label.toLowerCase()}`}
-                style={{
-                  flex: '0 0 auto',
-                  width: t.wide ? '7.5rem' : '4.6rem',
-                  background: INK.paper,
-                  border: `2px solid ${isFeatured ? EXHIBIT_CARDS[t.group].accent : INK.ink}`,
-                  outline: isFeatured ? `2px solid ${EXHIBIT_CARDS[t.group].accent}` : 'none',
-                  padding: '5px',
-                  cursor: 'pointer',
-                  boxShadow: '4px 4px 0 rgba(0,0,0,0.35)',
-                  opacity: activeGroup && !inGroup ? 0.55 : 1,
-                  transition: 'opacity 0.2s ease, border-color 0.2s ease',
-                }}
-              >
-                <img src={t.src} alt="" style={{ width: '100%', height: '4.2rem', objectFit: 'cover', display: 'block' }} />
-              </motion.button>
-            );
-          })}
+        <div className="exhibition-list">
+          {families.map(({ group, card, items }, index) => (
+            <ExhibitRow
+              key={group}
+              card={card}
+              items={items}
+              index={index}
+              reduce={reduce}
+            />
+          ))}
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
+        .keep-poster {
+          display: grid;
+          grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.55fr);
+          gap: clamp(1rem, 2.5vw, 2.5rem);
+          align-items: center;
+        }
+        .keep-media {
+          aspect-ratio: 16 / 9;
+        }
+        .exhibition-list {
+          display: grid;
+          gap: clamp(5rem, 10vw, 9rem);
+        }
+        .exhibit-row {
+          display: grid;
+          grid-template-columns: minmax(15rem, 0.68fr) minmax(0, 1.32fr);
+          gap: clamp(2rem, 6vw, 6rem);
+          align-items: center;
+        }
+        .exhibit-row-reverse {
+          grid-template-columns: minmax(0, 1.32fr) minmax(15rem, 0.68fr);
+        }
+        .exhibit-row-reverse .exhibit-label {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        .exhibit-row-reverse .artifact-pair {
+          grid-column: 1;
+          grid-row: 1;
+        }
+        .artifact-pair {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: clamp(1rem, 2.5vw, 2.3rem);
+          align-items: center;
+          min-width: 0;
+        }
+        .artifact-frame {
+          aspect-ratio: 3 / 4;
+          min-width: 0;
+        }
+        .artifact-pair-wide .artifact-frame {
+          aspect-ratio: 4 / 3;
+        }
+        .artifact-frame-1 {
+          transform: translateY(-clamp(0px, 2vw, 24px)) rotate(-0.5deg);
+        }
+        .artifact-frame-2 {
+          transform: translateY(clamp(0px, 2vw, 24px)) rotate(0.65deg);
+        }
         @media (max-width: 860px) {
-          .stage {
-            grid-template-columns: 1fr !important;
+          .keep-poster,
+          .exhibit-row,
+          .exhibit-row-reverse {
+            grid-template-columns: 1fr;
+          }
+          .exhibit-row-reverse .exhibit-label,
+          .exhibit-row-reverse .artifact-pair {
+            grid-column: 1;
+            grid-row: auto;
+          }
+          .exhibit-row-reverse .exhibit-label {
+            order: 0;
+          }
+          .exhibit-row-reverse .artifact-pair {
+            order: 1;
+          }
+          .keep-copy {
+            padding-top: 0.4rem !important;
+          }
+        }
+        @media (max-width: 520px) {
+          .artifact-pair {
+            gap: 0.75rem;
+          }
+          .artifact-frame {
+            padding: 6px !important;
+            box-shadow: 7px 8px 0 rgba(0,0,0,0.42) !important;
           }
         }
       `}</style>

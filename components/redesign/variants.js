@@ -15,12 +15,12 @@ export const VARIANTS = {
       onField: { display: INK.paper, body: INK.bodyOnRed },
       img: '/assets/redesign/hero-flowers-still.webp',
       imgAlt: 'A boy and a girl stand side by side on poster red, each with one white and one yellow flower over their eyes',
-      imgRatio: '3 / 2',
+      imgRatio: '16 / 9',
       video: {
         webm: '/assets/redesign/hero-flowers-film.webm',
         mp4: '/assets/redesign/hero-flowers-film.mp4',
         poster: '/assets/redesign/hero-flowers-film-poster.webp',
-        aspect: '3 / 2',
+        aspect: '16 / 9',
       },
       cta: { bg: INK.paper, fg: INK.ink },
     },
@@ -37,15 +37,15 @@ export const VARIANTS = {
 // hero-hands.webp (bleed layout), hero-busts.webp (split-reverse),
 // waitlist-sunburst.webp, waitlist-hands.webp, eyes-grid.webp.
 
-// The spotlight gallery. One piece on the wall at a time; each family has its
-// exhibit card. Card copy: i-iii verbatim from the old hero wall labels;
+// The passive exhibition. Every family and artifact stays visible in the page
+// flow. Card copy: i-iii verbatim from the old hero wall labels;
 // iv-vi verbatim from TheThread's category copy.
 export const EXHIBIT_CARDS = {
   films:   { num: 'Exhibit i',   label: 'Film',   accent: INK.coral,   text: 'The one that broke something open, that you still can’t explain to anyone.' },
-  albums:  { num: 'Exhibit ii',  label: 'Album',  accent: INK.mustard, text: 'The one you only play at 2am, when you need to feel something real.' },
+  albums:  { num: 'Exhibit ii',  label: 'Artists / Albums / Songs', accent: INK.mustard, text: 'The one you only play at 2am, when you need to feel something real.' },
   books:   { num: 'Exhibit iii', label: 'Book',   accent: INK.chartreuse, text: 'The dog-eared one you keep trying to give everyone you love.' },
-  spirals: { num: 'Exhibit iv',  label: 'Spiral', accent: INK.paperDeep, text: 'The rabbit holes that ate whole nights.' },
-  videos:  { num: 'Exhibit v',   label: 'Video',  accent: INK.red, accentInk: INK.paper, text: 'The ones you rewatch every year.' },
+  spirals: { num: 'Exhibit iv',  label: 'Wikipedia & Articles', accent: INK.paperDeep, text: 'The rabbit holes that ate whole nights.' },
+  videos:  { num: 'Exhibit v',   label: 'YouTube Videos', accent: INK.red, accentInk: INK.paper, text: 'The ones you rewatch every year.' },
   games:   { num: 'Exhibit vi',  label: 'Game',   accent: INK.magenta, accentInk: INK.paper, text: 'The ones that swallowed whole summers.' },
 };
 
