@@ -1,7 +1,7 @@
 # Next round — Siddharth's review remarks (July 16, 2026)
 
-State at handoff: ONE consolidated version at `/v/1` (red flower-exchange hero film +
-old v2 waitlist art, Open Floor expanded by default). Old `/v/2` `/v/3` retired; their assets parked in
+State at handoff: ONE consolidated production landing at `/` (red flower-exchange hero film +
+old v2 waitlist art, Open Floor expanded by default). Historical variant assets are parked in
 `public/assets/redesign/`. Dev server: port 3000 (kill squatters; phone via LAN IP).
 This landing directory is a Git repo.
 

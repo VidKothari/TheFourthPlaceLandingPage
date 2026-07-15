@@ -1,34 +1,7 @@
-import { headers } from 'next/headers';
-import Nav from '../components/Nav';
-import Hero from '../components/Hero';
-import Marquee from '../components/Marquee';
-import Manifesto from '../components/Manifesto';
-import ThreadSection from '../components/ThreadSection';
-import TasteMapPreview from '../components/TasteMapPreview';
-import InPractice from '../components/InPractice';
-import WaitlistFab from '../components/WaitlistFab';
-import Waitlist from '../components/Waitlist';
-import Suggestions from '../components/Suggestions';
-import Footer from '../components/Footer';
+import { VARIANTS } from '../components/redesign/variants';
+import RisoLanding from '../components/redesign/RisoLanding';
 
+// `/` is the only public landing route and renders the selected production variant.
 export default function Home() {
-  const headersList = headers();
-  const ua = headersList.get('user-agent') || '';
-  const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
-
-  return (
-    <main>
-      <Nav />
-      <Hero />
-      <Marquee />
-      <Manifesto />
-      <TasteMapPreview />
-      <ThreadSection defaultMobile={isMobileUA} />
-      <InPractice />
-      <Waitlist />
-      <Suggestions />
-      <Footer />
-      <WaitlistFab />
-    </main>
-  );
+  return <RisoLanding variant={VARIANTS[1]} />;
 }
