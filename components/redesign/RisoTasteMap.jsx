@@ -100,6 +100,12 @@ export default function RisoTasteMap({ eyesTile }) {
           )}
         </motion.div>
 
+        <div className="map-row" style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) clamp(17rem, 24vw, 22rem)',
+          gap: 'clamp(1.5rem, 3vw, 2.5rem)',
+          alignItems: 'stretch',
+        }}>
         <motion.div
           ref={holder}
           initial={{ opacity: 0, y: 24 }}
@@ -135,7 +141,58 @@ export default function RisoTasteMap({ eyesTile }) {
             </span>
           </div>
         </motion.div>
+
+        {/* The share card: your map travels. Cobalt, like the card in the artwork. */}
+        <motion.aside
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-5%' }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            background: INK.cobalt,
+            border: `3px solid ${INK.ink}`,
+            boxShadow: '12px 12px 0 rgba(22,19,16,0.28)',
+            padding: 'clamp(1.4rem, 2.2vw, 2rem)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.1rem',
+            justifyContent: 'center',
+          }}
+        >
+          <img
+            src="/assets/redesign/profile-pass.webp"
+            alt="One halftone hand passes a small printed card with a glowing constellation to another hand"
+            style={{ width: '100%', border: `2px solid ${INK.ink}`, display: 'block', background: INK.paper }}
+          />
+          <div>
+            <h3 style={{
+              fontFamily: 'var(--serif)', fontWeight: 400,
+              fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', lineHeight: 1.2,
+              color: INK.paper, marginBottom: '0.6rem', fontStyle: 'italic',
+            }}>
+              Your map travels.
+            </h3>
+            <p style={{
+              fontFamily: 'var(--sans)', fontWeight: 300,
+              fontSize: '0.95rem', lineHeight: 1.65,
+              color: 'rgba(239,230,208,0.88)',
+            }}>
+              Your map and profile share as one link — drop it in a bio, a story,
+              a chat. No screenshots, no explaining: anyone can walk through what
+              you love in one tap.
+            </p>
+          </div>
+        </motion.aside>
+        </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 900px) {
+          .map-row {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

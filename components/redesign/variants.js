@@ -30,27 +30,29 @@ export const VARIANTS = {
 // hero-hands.webp (bleed layout), hero-busts.webp (split-reverse),
 // waitlist-sunburst.webp, waitlist-hands.webp, eyes-grid.webp.
 
-// The salon hang: a disciplined museum wall. Every artwork is matted and framed;
-// each family has its exhibit card. `group` drives the family-pop hover.
-// Label copy: i-iii verbatim from the old hero wall labels; iv-vi verbatim from
-// TheThread's category copy (spirals/video essays/other worlds).
-export const WALL_SEQUENCE = [
-  { type: 'art', src: '/assets/movie3.webp', group: 'films', rot: -1.2 },
-  { type: 'label', group: 'films', num: 'Exhibit i', label: 'Film', text: 'The one that broke something open, that you still can’t explain to anyone.', rot: 0.8 },
-  { type: 'art', src: '/assets/music4.webp', group: 'albums', rot: 1 },
-  { type: 'art', src: '/assets/wikipedia3.webp', group: 'spirals', rot: -0.8 },
-  { type: 'label', group: 'albums', num: 'Exhibit ii', label: 'Album', text: 'The one you only play at 2am, when you need to feel something real.', rot: -1 },
-  { type: 'art', src: '/assets/book7.webp', group: 'books', rot: 0.9 },
-  { type: 'art', src: '/assets/game5.jpg', group: 'games', rot: -1 },
-  { type: 'label', group: 'books', num: 'Exhibit iii', label: 'Book', text: 'The dog-eared one you keep trying to give everyone you love.', rot: 1.1 },
-  { type: 'art', src: '/assets/youtubeVid15.webp', group: 'videos', rot: 0.7, wide: true },
-  { type: 'art', src: '/assets/movie14.webp', group: 'films', rot: 1.2 },
-  { type: 'label', group: 'spirals', num: 'Exhibit iv', label: 'Spiral', text: 'The rabbit holes that ate whole nights.', rot: -0.7 },
-  { type: 'art', src: '/assets/music9.webp', group: 'albums', rot: -1 },
-  { type: 'art', src: '/assets/wikipedia9.webp', group: 'spirals', rot: 0.8 },
-  { type: 'label', group: 'videos', num: 'Exhibit v', label: 'Video', text: 'The ones you rewatch every year.', rot: 1 },
-  { type: 'art', src: '/assets/game11.jpg', group: 'games', rot: -0.9 },
-  { type: 'art', src: '/assets/book2.webp', group: 'books', rot: 1 },
-  { type: 'label', group: 'games', num: 'Exhibit vi', label: 'Game', text: 'The ones that swallowed whole summers.', rot: -1.1 },
-  { type: 'art', src: '/assets/youtubeVid7.webp', group: 'videos', rot: -0.6, wide: true },
+// The spotlight gallery. One piece on the wall at a time; each family has its
+// exhibit card. Card copy: i-iii verbatim from the old hero wall labels;
+// iv-vi verbatim from TheThread's category copy.
+export const EXHIBIT_CARDS = {
+  films:   { num: 'Exhibit i',   label: 'Film',   accent: INK.coral,   text: 'The one that broke something open, that you still can’t explain to anyone.' },
+  albums:  { num: 'Exhibit ii',  label: 'Album',  accent: INK.mustard, text: 'The one you only play at 2am, when you need to feel something real.' },
+  books:   { num: 'Exhibit iii', label: 'Book',   accent: INK.chartreuse, text: 'The dog-eared one you keep trying to give everyone you love.' },
+  spirals: { num: 'Exhibit iv',  label: 'Spiral', accent: INK.paperDeep, text: 'The rabbit holes that ate whole nights.' },
+  videos:  { num: 'Exhibit v',   label: 'Video',  accent: INK.red, accentInk: INK.paper, text: 'The ones you rewatch every year.' },
+  games:   { num: 'Exhibit vi',  label: 'Game',   accent: INK.magenta, accentInk: INK.paper, text: 'The ones that swallowed whole summers.' },
+};
+
+export const EXHIBIT_ITEMS = [
+  { src: '/assets/movie3.webp', group: 'films' },
+  { src: '/assets/music4.webp', group: 'albums' },
+  { src: '/assets/book7.webp', group: 'books' },
+  { src: '/assets/wikipedia3.webp', group: 'spirals', wide: true },
+  { src: '/assets/youtubeVid15.webp', group: 'videos', wide: true },
+  { src: '/assets/game5.jpg', group: 'games' },
+  { src: '/assets/movie14.webp', group: 'films' },
+  { src: '/assets/music9.webp', group: 'albums' },
+  { src: '/assets/book2.webp', group: 'books' },
+  { src: '/assets/wikipedia9.webp', group: 'spirals', wide: true },
+  { src: '/assets/youtubeVid7.webp', group: 'videos', wide: true },
+  { src: '/assets/game11.jpg', group: 'games' },
 ];

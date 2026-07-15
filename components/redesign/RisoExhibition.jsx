@@ -1,54 +1,61 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { INK, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
-import { WALL_SEQUENCE } from './variants';
+import { EXHIBIT_CARDS, EXHIBIT_ITEMS } from './variants';
 
-// The 1,200vh scroll becomes one poster wall in the dark gallery:
-// real artwork as cutouts with glow outlines on the cobalt bed.
-// Seamless with the taste map above: the heading sits on the same newsprint
-// ground; only the wall itself is the cobalt room (July 16 review).
+// v3 — the spotlight gallery. Album-cover confidence from the inspo: ONE artifact
+// at a time, huge and matted on the quiet cobalt wall, its exhibit card beside it,
+// a film-strip rail below. Click to re-hang; families pop together on hover; the
+// wall re-hangs itself slowly when left alone.
 export default function RisoExhibition() {
   const reduce = useReducedMotion();
-  // Hovering one artifact makes its whole family pop (same-group items scale up
-  // and their glow ring brightens); everything settles when the hover ends.
+  const [featured, setFeatured] = useState(0);
   const [activeGroup, setActiveGroup] = useState(null);
+  const [paused, setPaused] = useState(false);
+
+  const item = EXHIBIT_ITEMS[featured];
+  const card = EXHIBIT_CARDS[item.group];
+
+  // Slow self-advance, paused on any hover. Gentle state transition, not ambience.
+  useEffect(() => {
+    if (reduce || paused) return;
+    const t = setInterval(() => setFeatured((f) => (f + 1) % EXHIBIT_ITEMS.length), 4500);
+    return () => clearInterval(t);
+  }, [reduce, paused]);
+
   return (
-    <section id="thread" style={{ position: 'relative', background: INK.paperDeep, paddingTop: 'clamp(40px, 6vw, 80px)', overflow: 'hidden' }}>
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'url(/assets/redesign/map-newsprint.webp)',
+    <section
+      id="thread"
+      style={{
+        background: INK.cobalt,
+        backgroundImage: 'url(/assets/redesign/exhibition-wall.webp)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center bottom',
-        opacity: 0.22,
-        pointerEvents: 'none',
-      }} />
-      <div className="mobile-padding" style={{ position: 'relative', maxWidth: '1400px', margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)' }}>
+        backgroundPosition: 'center',
+        borderTop: `3px solid ${INK.ink}`,
+        padding: 'clamp(64px, 9vw, 130px) clamp(20px, 5vw, 60px)',
+      }}
+    >
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            maxWidth: '46rem',
-            marginBottom: 'clamp(2rem, 4vw, 3.5rem)',
-            background: INK.paper,
-            padding: 'clamp(1.25rem, 2.5vw, 2rem)',
-            boxShadow: '8px 8px 0 rgba(22,19,16,0.15)',
-          }}
+          style={{ maxWidth: '46rem', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}
         >
-          <div style={{ ...eyebrowStyle(INK.ink), opacity: 0.75, fontFamily: 'var(--font-mono)', marginBottom: '1.3rem' }}>
+          <div style={{ ...eyebrowStyle(INK.paper), opacity: 0.75, fontFamily: 'var(--font-mono)', marginBottom: '1.3rem' }}>
             III. The Exhibition
           </div>
           <InkSettleHeading
             as="h2"
-            ink={INK.cobalt}
+            ink={INK.mustard}
             style={{
               fontFamily: 'var(--serif)', fontWeight: 400,
               fontSize: 'clamp(2rem, 4.4vw, 3.8rem)', lineHeight: 1.08,
-              color: INK.ink, marginBottom: '1.1rem', textWrap: 'balance',
+              color: INK.paper, marginBottom: '1.1rem', textWrap: 'balance',
             }}
           >
             What you can <em style={{ fontStyle: 'italic' }}>add.</em>
@@ -56,115 +63,143 @@ export default function RisoExhibition() {
           <p style={{
             fontFamily: 'var(--sans)', fontWeight: 300,
             fontSize: 'clamp(0.98rem, 1.4vw, 1.12rem)', lineHeight: 1.7,
-            color: INK.ink, maxWidth: '38rem',
+            color: 'rgba(239,230,208,0.9)', maxWidth: '38rem',
           }}>
             You save the things that actually moved you and write a line
             about why. Each one becomes a star on the map you just saw.
             These are the kinds of things people keep:
           </p>
         </motion.div>
-      </div>
 
-      {/* The salon hang: matted, framed, disciplined. Hover one piece and its
-          whole family (same group) leans forward with it. */}
-      <div
-        className="wall"
-        style={{
-          position: 'relative',
-          backgroundImage: 'url(/assets/redesign/exhibition-wall.webp)',
-          backgroundColor: INK.cobalt,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderTop: `3px solid ${INK.ink}`,
-          padding: 'clamp(32px, 5vw, 72px) clamp(20px, 5vw, 60px) clamp(48px, 6vw, 88px)',
-        }}
-      >
+        {/* The stage: one huge framed piece + its wall card. */}
         <div
-          className="salon-grid"
+          className="stage"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
           style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(6, 1fr)',
-            gap: 'clamp(14px, 2vw, 26px)',
+            gridTemplateColumns: 'minmax(0, 1.25fr) minmax(15rem, 0.75fr)',
+            gap: 'clamp(2rem, 4vw, 4rem)',
             alignItems: 'center',
+            marginBottom: 'clamp(2rem, 4vw, 3.5rem)',
           }}
         >
-          {WALL_SEQUENCE.map((item, i) => {
-            const active = activeGroup === item.group;
-            if (item.type === 'label') {
-              return (
-                <motion.div
-                  key={item.num}
-                  className="salon-label"
-                  initial={{ opacity: 0, y: 14 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  animate={{ scale: active ? 1.04 : 1 }}
-                  onHoverStart={() => setActiveGroup(item.group)}
-                  onHoverEnd={() => setActiveGroup(null)}
-                  viewport={{ once: true, margin: '-8%' }}
-                  transition={{ duration: 0.7, delay: (i % 6) * 0.06, ease: [0.16, 1, 0.3, 1], scale: { duration: 0.25, delay: 0 } }}
-                  style={{
-                    gridColumn: 'span 2',
-                    rotate: reduce ? 0 : item.rot,
-                    background: INK.paper,
-                    border: `2px solid ${INK.ink}`,
-                    boxShadow: active ? '8px 8px 0 rgba(0,0,0,0.45)' : '6px 6px 0 rgba(0,0,0,0.35)',
-                    padding: '1.1rem 1.2rem',
-                    transition: 'box-shadow 0.25s ease',
-                  }}
-                >
-                  <div style={{
-                    fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.6rem',
-                    letterSpacing: '0.22em', textTransform: 'uppercase',
-                    color: 'rgba(22,19,16,0.55)', marginBottom: '0.45rem',
-                  }}>
-                    {item.num}
-                  </div>
-                  <div style={{
-                    fontFamily: 'var(--serif)', fontStyle: 'italic',
-                    fontSize: '1.2rem', color: INK.ink, marginBottom: '0.4rem',
-                  }}>
-                    {item.label}
-                  </div>
-                  <p style={{
-                    fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.84rem',
-                    lineHeight: 1.55, color: 'rgba(22,19,16,0.8)',
-                  }}>
-                    {item.text}
-                  </p>
-                </motion.div>
-              );
-            }
-            return (
+          <div style={{ display: 'flex', justifyContent: 'center', minHeight: 'min(58vh, 560px)', alignItems: 'center' }}>
+            <AnimatePresence mode="wait">
               <motion.div
                 key={item.src}
-                className="salon-frame"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                animate={{ scale: active ? 1.06 : 1 }}
-                whileHover={{ y: -4 }}
-                onHoverStart={() => setActiveGroup(item.group)}
-                onHoverEnd={() => setActiveGroup(null)}
-                viewport={{ once: true, margin: '-8%' }}
-                transition={{ duration: 0.7, delay: (i % 6) * 0.06, ease: [0.16, 1, 0.3, 1], scale: { duration: 0.25, delay: 0 } }}
+                initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.035, rotate: -0.6 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 style={{
-                  gridColumn: item.wide ? 'span 2' : 'span 1',
-                  rotate: reduce ? 0 : item.rot,
-                  zIndex: active ? 2 : 1,
                   background: INK.paper,
-                  border: `2px solid ${INK.ink}`,
-                  padding: 'clamp(8px, 1vw, 14px)',
-                  boxShadow: active ? '10px 12px 0 rgba(0,0,0,0.5)' : '7px 8px 0 rgba(0,0,0,0.38)',
-                  transition: 'box-shadow 0.25s ease',
+                  border: `3px solid ${INK.ink}`,
+                  padding: 'clamp(12px, 1.4vw, 22px)',
+                  boxShadow: '14px 16px 0 rgba(0,0,0,0.45)',
+                  maxWidth: item.wide ? 'min(44rem, 100%)' : 'min(26rem, 100%)',
                 }}
               >
                 <img
                   src={item.src}
-                  alt=""
-                  style={{ width: '100%', height: 'auto', display: 'block', border: `1px solid ${INK.ink}` }}
+                  alt={`${card.label} on the wall`}
+                  style={{
+                    width: '100%',
+                    maxHeight: 'min(48vh, 470px)',
+                    objectFit: 'contain',
+                    display: 'block',
+                    border: `1px solid ${INK.ink}`,
+                    background: INK.ink,
+                  }}
                 />
               </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={card.num}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                background: INK.paper,
+                border: `2px solid ${INK.ink}`,
+                boxShadow: '8px 8px 0 rgba(0,0,0,0.4)',
+                padding: 'clamp(1.3rem, 2vw, 1.8rem)',
+                justifySelf: 'start',
+                width: '100%',
+                maxWidth: '24rem',
+              }}
+            >
+              <div style={{
+                display: 'inline-block',
+                background: card.accent,
+                border: `2px solid ${INK.ink}`,
+                padding: '0.25rem 0.6rem',
+                fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.6rem',
+                letterSpacing: '0.22em', textTransform: 'uppercase',
+                color: card.accentInk || INK.ink,
+                marginBottom: '0.9rem',
+              }}>
+                {card.num}
+              </div>
+              <div style={{
+                fontFamily: 'var(--serif)', fontStyle: 'italic',
+                fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', color: INK.ink, marginBottom: '0.5rem',
+              }}>
+                {card.label}
+              </div>
+              <p style={{
+                fontFamily: 'var(--sans)', fontWeight: 300, fontSize: '0.95rem',
+                lineHeight: 1.65, color: 'rgba(22,19,16,0.82)',
+              }}>
+                {card.text}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* The rail: every piece in the collection. Click to re-hang the wall. */}
+        <div
+          className="rail"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => { setPaused(false); setActiveGroup(null); }}
+          style={{
+            display: 'flex',
+            gap: 'clamp(10px, 1.4vw, 18px)',
+            overflowX: 'auto',
+            paddingBottom: '12px',
+          }}
+        >
+          {EXHIBIT_ITEMS.map((t, i) => {
+            const inGroup = activeGroup === t.group;
+            const isFeatured = i === featured;
+            return (
+              <motion.button
+                key={t.src}
+                onClick={() => setFeatured(i)}
+                onHoverStart={() => setActiveGroup(t.group)}
+                onHoverEnd={() => setActiveGroup(null)}
+                animate={{ scale: inGroup ? 1.07 : 1, y: inGroup ? -4 : 0 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+                aria-label={`Show this ${EXHIBIT_CARDS[t.group].label.toLowerCase()}`}
+                style={{
+                  flex: '0 0 auto',
+                  width: t.wide ? '7.5rem' : '4.6rem',
+                  background: INK.paper,
+                  border: `2px solid ${isFeatured ? EXHIBIT_CARDS[t.group].accent : INK.ink}`,
+                  outline: isFeatured ? `2px solid ${EXHIBIT_CARDS[t.group].accent}` : 'none',
+                  padding: '5px',
+                  cursor: 'pointer',
+                  boxShadow: '4px 4px 0 rgba(0,0,0,0.35)',
+                  opacity: activeGroup && !inGroup ? 0.55 : 1,
+                  transition: 'opacity 0.2s ease, border-color 0.2s ease',
+                }}
+              >
+                <img src={t.src} alt="" style={{ width: '100%', height: '4.2rem', objectFit: 'cover', display: 'block' }} />
+              </motion.button>
             );
           })}
         </div>
@@ -172,14 +207,8 @@ export default function RisoExhibition() {
 
       <style jsx>{`
         @media (max-width: 860px) {
-          .salon-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          .salon-grid :global(.salon-label) {
-            grid-column: span 2 !important;
-          }
-          .salon-grid :global(.salon-frame) {
-            grid-column: span 1 !important;
+          .stage {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>

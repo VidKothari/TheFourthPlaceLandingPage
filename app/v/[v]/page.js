@@ -9,7 +9,6 @@ import RisoFeed from '../../../components/redesign/RisoFeed';
 import RisoTasteMap from '../../../components/redesign/RisoTasteMap';
 import RisoExhibition from '../../../components/redesign/RisoExhibition';
 import RisoPractice from '../../../components/redesign/RisoPractice';
-import RisoProfile from '../../../components/redesign/RisoProfile';
 import RisoWaitlist from '../../../components/redesign/RisoWaitlist';
 import RisoFooter from '../../../components/redesign/RisoFooter';
 
@@ -43,9 +42,7 @@ export default function VersionPage({ params }) {
       <RisoExhibition />
       <InkCut from={INK.cobalt} to={INK.coral} />
       <RisoPractice />
-      <InkCut from={INK.coral} to={INK.paper} />
-      <RisoProfile />
-      <InkCut from={INK.paper} to={INK.mustard} />
+      <InkCut from={INK.coral} to={INK.mustard} />
       <RisoWaitlist waitlist={variant.waitlist} />
       <RisoFooter />
     </main>

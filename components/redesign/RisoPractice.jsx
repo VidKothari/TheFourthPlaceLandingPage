@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { INK } from './shared';
 import InkSettleHeading from './InkSettle';
@@ -33,6 +34,20 @@ const clips = [
 ];
 
 function PosterClip({ clip, index }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    const p = el.play();
+    if (p) p.catch(() => {});
+    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
+    el.addEventListener('canplay', onCanPlay);
+    return () => el.removeEventListener('canplay', onCanPlay);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -51,6 +66,7 @@ function PosterClip({ clip, index }) {
       <div style={{ border: `2px solid ${INK.ink}`, overflow: 'hidden' }}>
         {/* Kept dead simple on purpose: always autoplaying, no observers. */}
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
