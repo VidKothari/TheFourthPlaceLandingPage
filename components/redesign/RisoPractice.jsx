@@ -7,26 +7,26 @@ import InkSettleHeading from './InkSettle';
 
 const clips = [
   {
-    src: 'add-flow',
+    src: 'add-flow-loop',
     num: '01',
     title: 'Keep',
     caption: 'Add the things that moved you. Write what they did to you, not what you think of them. They become your map.',
   },
   {
     // Reverted to the original clip July 16 — the riso re-render wasn't good enough to ship.
-    src: 'in-common',
+    src: 'in-common-loop',
     num: '02',
     title: 'Meet',
     caption: 'When someone’s collection overlaps yours, you see exactly what you share — weighted by rarity, not popularity.',
   },
   {
-    src: 'tastemap-riso',
+    src: 'tastemap-riso-loop',
     num: '03',
     title: 'Merge',
     caption: 'Your collection becomes a constellation. Lay it over someone else’s, and what you share glows gold.',
   },
   {
-    src: 'recs',
+    src: 'recs-loop',
     num: '04',
     title: 'Pass it on',
     caption: 'Recommend something to a specific friend — and get a quiet note when it lands on their map.',

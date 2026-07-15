@@ -34,7 +34,7 @@ export default function VersionPage({ params }) {
       <RisoStyles />
       <RisoNav />
       <RisoHero hero={variant.hero} />
-      <RisoMarquee />
+      {/* Marquee removed July 16 per Siddharth — component kept for possible return. */}
       <RisoFeed />
       <InkCut from={INK.paper} to={INK.paperDeep} />
       <RisoTasteMap eyesTile={variant.eyesTile} />

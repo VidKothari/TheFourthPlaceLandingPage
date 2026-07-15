@@ -92,7 +92,75 @@ function HeroText({ hero }) {
   );
 }
 
+function HeroFilm({ hero }) {
+  const [showVideo, setShowVideo] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!mq.matches) setShowVideo(true);
+  }, []);
+  if (!showVideo) {
+    return (
+      <img
+        src={hero.img}
+        alt={hero.imgAlt}
+        className="hero-film-media"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: '62% center' }}
+      />
+    );
+  }
+  return (
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      poster={hero.video.poster}
+      aria-label={hero.imgAlt}
+      className="hero-film-media"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: '62% center' }}
+    >
+      <source src={hero.video.webm} type="video/webm" />
+      <source src={hero.video.mp4} type="video/mp4" />
+    </video>
+  );
+}
+
 export default function RisoHero({ hero }) {
+  if (hero.layout === 'film-bleed') {
+    return (
+      <section style={{ position: 'relative', background: hero.field, minHeight: '100dvh', overflow: 'hidden' }}>
+        <HeroFilm hero={hero} />
+        <div
+          className="mobile-padding hero-film-content"
+          style={{
+            position: 'relative',
+            minHeight: '100dvh',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '6.5rem clamp(20px, 6vw, 80px) 4rem',
+          }}
+        >
+          <div style={{ width: 'min(36rem, 100%)' }}>
+            <HeroText hero={hero} />
+          </div>
+        </div>
+        <style jsx>{`
+          @media (max-width: 860px) {
+            .hero-film-content {
+              align-items: flex-end !important;
+              padding-bottom: 3rem !important;
+            }
+            .hero-film-content > div {
+              background: rgba(200, 41, 30, 0.82);
+              padding: 1.25rem;
+              outline: 2px solid rgba(22, 19, 16, 0.6);
+            }
+          }
+        `}</style>
+      </section>
+    );
+  }
+
   if (hero.layout === 'bleed') {
     return (
       <section
