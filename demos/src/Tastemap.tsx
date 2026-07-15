@@ -5,6 +5,11 @@ import { SERIF_ITALIC, UI } from './tokens';
 const W = 900;
 const H = 1125;
 const GOLD = '#e8c46a';
+const PAPER = '#e6dabe';
+const INK = '#161310';
+const MAGENTA = '#e5399f';
+const COBALT = '#2b3fb8';
+const CHROME = 'rgba(255,255,255,0.55)';
 
 type Node = {
   x: number; y: number;       // final clustered position
@@ -91,7 +96,7 @@ export const Tastemap: React.FC = () => {
   const sharedNodes = NODES.filter((nd) => nd.shared);
 
   return (
-    <AbsoluteFill style={{ background: '#050508', fontFamily: UI, justifyContent: 'center', alignItems: 'center' }}>
+    <AbsoluteFill style={{ background: PAPER, fontFamily: UI, justifyContent: 'center', alignItems: 'center' }}>
       <svg width={W} height={H} style={{ position: 'absolute', inset: 0 }}>
         {/* intra-cluster lines, appear as clusters settle */}
         {NODES.map((a, i) =>
@@ -106,7 +111,7 @@ export const Tastemap: React.FC = () => {
               <line
                 key={`${i}-${j}`}
                 x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-                stroke={bothShared && goldIn > 0 ? GOLD : 'rgba(160,180,255,0.75)'}
+                stroke={bothShared && goldIn > 0 ? GOLD : a.owner === b.owner ? (a.owner === 'you' ? MAGENTA : COBALT) : INK}
                 strokeWidth={bothShared && goldIn > 0 ? 1.4 : 0.5}
                 opacity={(bothShared ? 0.25 + goldIn * 0.6 : 0.16) * visible * Math.max(0.15, gather)}
               />
@@ -117,7 +122,7 @@ export const Tastemap: React.FC = () => {
         {/* nodes */}
         {NODES.map((nd, i) => {
           const p = pos(nd);
-          const base = nd.owner === 'you' ? 'rgba(190,205,255,0.95)' : 'rgba(140,235,215,0.95)';
+          const base = nd.owner === 'you' ? MAGENTA : COBALT;
           const isGold = nd.shared && goldIn > 0;
           const color = isGold ? GOLD : base;
           const visible = nd.owner === 'you' ? Math.min(1, gather * 3 + 0.25) : mayaEased;
@@ -150,7 +155,9 @@ export const Tastemap: React.FC = () => {
             position: 'absolute', left: c.cx, top: c.cy - 8,
             transform: 'translate(-50%, -50%)',
             fontFamily: SERIF_ITALIC, fontStyle: 'italic', fontWeight: 300,
-            fontSize: 27, color: `rgba(255,255,255,${0.34 * labelIn})`,
+            fontSize: 27, color: INK, opacity: 0.74 * labelIn,
+            background: CHROME, border: `2px solid ${INK}`, borderRadius: 0,
+            padding: '4px 12px 6px',
             pointerEvents: 'none', whiteSpace: 'nowrap',
           }}
         >
@@ -159,18 +166,21 @@ export const Tastemap: React.FC = () => {
       ))}
 
       {/* legend */}
-      <div style={{ position: 'absolute', top: 36, left: 40, display: 'flex', gap: 26, alignItems: 'center' }}>
+      <div style={{
+        position: 'absolute', top: 36, left: 40, display: 'flex', gap: 26, alignItems: 'center',
+        border: `2px solid ${INK}`, borderRadius: 0, background: CHROME, padding: '10px 14px',
+      }}>
         <span style={{ display: 'flex', gap: 10, alignItems: 'center', opacity: Math.min(1, gather * 2) }}>
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'rgba(190,205,255,0.95)' }} />
-          <span style={{ fontSize: 15, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>you</span>
+          <span style={{ width: 9, height: 9, borderRadius: '50%', background: MAGENTA }} />
+          <span style={{ fontSize: 15, letterSpacing: '0.16em', textTransform: 'uppercase', color: INK }}>you</span>
         </span>
         <span style={{ display: 'flex', gap: 10, alignItems: 'center', opacity: mayaEased }}>
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'rgba(140,235,215,0.95)' }} />
-          <span style={{ fontSize: 15, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>maya</span>
+          <span style={{ width: 9, height: 9, borderRadius: '50%', background: COBALT }} />
+          <span style={{ fontSize: 15, letterSpacing: '0.16em', textTransform: 'uppercase', color: INK }}>maya</span>
         </span>
         <span style={{ display: 'flex', gap: 10, alignItems: 'center', opacity: goldIn }}>
           <span style={{ width: 9, height: 9, borderRadius: '50%', background: GOLD }} />
-          <span style={{ fontSize: 15, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>shared</span>
+          <span style={{ fontSize: 15, letterSpacing: '0.16em', textTransform: 'uppercase', color: INK }}>shared</span>
         </span>
       </div>
 
@@ -180,7 +190,9 @@ export const Tastemap: React.FC = () => {
           position: 'absolute', bottom: 48, left: 0, right: 0,
           textAlign: 'center', opacity: captionIn,
           fontFamily: SERIF_ITALIC, fontStyle: 'italic', fontWeight: 300,
-          fontSize: 30, color: 'rgba(255,255,255,0.6)',
+          fontSize: 30, color: INK,
+          background: CHROME, border: `2px solid ${INK}`, borderRadius: 0,
+          padding: '10px 18px 12px', margin: '0 auto', width: 'fit-content',
         }}
       >
         What you share glows gold.

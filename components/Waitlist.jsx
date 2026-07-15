@@ -92,9 +92,7 @@ export default function Waitlist() {
           marginBottom: 'clamp(40px, 6vw, 64px)',
           maxWidth: '560px',
         }}>
-          We're opening slowly and deliberately — Pune first, then Mumbai,
-          then Bengaluru. Leave your email, and we'll write to you when your
-          city opens.
+          Leave your email, and we'll write to you the moment we open.
         </p>
 
         <div style={{ width: '100%', maxWidth: '400px', position: 'relative', marginBottom: 'clamp(40px, 5vw, 60px)' }}>
@@ -250,7 +248,7 @@ export default function Waitlist() {
                   color: 'var(--text-soft)',
                   lineHeight: 1.6,
                 }}>
-                  We'll write to you when your city opens.
+                  We'll write to you as soon as we open.
                 </p>
                 {position && (
                   <p style={{
@@ -271,17 +269,6 @@ export default function Waitlist() {
           </AnimatePresence>
         </div>
 
-        <div style={{
-          fontFamily: 'var(--sans)',
-          fontSize: '0.75rem',
-          fontWeight: 400,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: 'var(--text-soft)',
-          opacity: 0.7,
-        }}>
-          Pune — Mumbai — Bengaluru
-        </div>
       </motion.div>
     </section>
   );

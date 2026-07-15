@@ -20,7 +20,7 @@ export const metadata = {
   metadataBase: new URL('https://thefourthplace.me'),
   title: 'The Fourth Place — a digital museum of yourself',
   description:
-    'Find people whose minds look like yours. A room for the films, albums, and books that made you — and a way of finding the people whose rooms rhyme with yours. Pune first.',
+    'Find people whose minds look like yours. A room for the films, albums, and books that made you — and a way of finding the people whose rooms rhyme with yours.',
   openGraph: {
     title: 'The Fourth Place',
     description:

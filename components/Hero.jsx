@@ -110,7 +110,7 @@ export default function Hero() {
           >
             The Fourth Place is a room for the films, albums, books, and games
             that made you — and a way of finding the people whose rooms rhyme
-            with yours. Pune first. Then Mumbai. Then Bengaluru.
+            with yours.
           </motion.p>
 
           <motion.div
