@@ -17,7 +17,8 @@ export const VARIANTS = {
       imgAlt: 'A boy and a girl stand side by side on poster red, each with one white and one yellow flower over their eyes',
       imgRatio: '16 / 9',
       video: {
-        webm: '/assets/redesign/hero-flowers-film.webm',
+        // mp4-only: h264 compresses the halftone grain 4x better than vp9 here.
+        webm: null,
         mp4: '/assets/redesign/hero-flowers-film.mp4',
         poster: '/assets/redesign/hero-flowers-film-poster.webp',
         aspect: '16 / 9',

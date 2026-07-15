@@ -1491,7 +1491,7 @@
     const controls = { update: () => { }, target: new THREE.Vector3() }
 
     let _drag = false, _lastX = 0, _lastY = 0, _velX = 0, _velY = 0
-    const CAM_MIN = 300, CAM_MAX = 3600
+    const CAM_MIN = 300, CAM_MAX = 2300
     let _camDist = Math.min(camera.position.length(), CAM_MAX)
 
     renderer.domElement.addEventListener("mousedown", e => {
@@ -1829,7 +1829,7 @@
       const flash = document.getElementById("zoom-flash")
 
       // Phase 1: pull back wide
-      animateCamDistTo(3400, 700, () => {
+      animateCamDistTo(2200, 700, () => {
         // Phase 2: rotate universe to face cluster + zoom in
         animateToCluster(tagIndex, () => {
           flash.classList.add("on")

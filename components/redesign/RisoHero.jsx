@@ -291,7 +291,7 @@ function HeroArt({ hero }) {
           aria-label={hero.imgAlt}
           style={{ ...cutout(), aspectRatio: hero.video.aspect || '1 / 1', objectFit: 'cover' }}
         >
-          <source src={hero.video.webm} type="video/webm" />
+          {hero.video.webm ? <source src={hero.video.webm} type="video/webm" /> : null}
           <source src={hero.video.mp4} type="video/mp4" />
         </video>
       ) : (
