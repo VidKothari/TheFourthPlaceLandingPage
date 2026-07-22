@@ -45,8 +45,8 @@ export default function RisoAnything() {
           position: relative;
           max-width: 1400px;
           margin: 0 auto;
-          height: 40vh;
-          max-height: 440px;
+          height: 62vh;
+          max-height: 700px;
           display: flex;
           align-items: center;
           gap: clamp(1.5rem, 4vw, 4rem);
@@ -61,7 +61,7 @@ export default function RisoAnything() {
         .anyt-h {
           font-family: var(--serif);
           font-weight: 400;
-          font-size: clamp(1.8rem, 3.2vw, 2.9rem);
+          font-size: clamp(2rem, 4vw, 3.55rem);
           line-height: 1.1;
           color: ${INK.paper};
           margin: 0 0 0.9rem;
@@ -73,7 +73,7 @@ export default function RisoAnything() {
         .anyt-sub {
           font-family: var(--sans);
           font-weight: 300;
-          font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+          font-size: clamp(1rem, 1.45vw, 1.25rem);
           line-height: 1.6;
           color: rgba(239, 230, 208, 0.78);
           margin: 0;
@@ -99,7 +99,7 @@ export default function RisoAnything() {
           .anyt-art {
             width: 100%;
             height: auto;
-            max-height: 34vh;
+            max-height: 46vh;
             object-position: center;
           }
         }
