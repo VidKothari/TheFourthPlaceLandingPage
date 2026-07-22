@@ -23,7 +23,8 @@
   },
   "devDependencies": {
     "eslint": "9.39.2",
-    "eslint-config-next": "16.2.11"
+    "eslint-config-next": "16.2.11",
+    "puppeteer-core": "^25.3.0"
   },
   "overrides": {
     "postcss": "8.5.10",

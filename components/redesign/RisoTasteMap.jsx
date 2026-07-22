@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
@@ -7,53 +6,97 @@ import { INK, cutout, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
 import AutoplayLoopVideo from './AutoplayLoopVideo';
 
-export default function RisoTasteMap({ eyesTile }) {
-  const [load, setLoad] = useState(false);
+// The taste map is now a recorded clip of the real Three.js scene (see
+// scripts/record-tastemap.mjs + public/tastemap-preview-riso.html?record=1):
+// the camera floats over the full constellation, then the shared tastes fly to
+// the centre and hold. It plays once when the section scrolls into view and
+// freezes on that final "what you share is the picture" frame — the poster.
+// Reduced-motion visitors stay on the poster and never fetch the video.
+function TasteMapFilm() {
   const holder = useRef(null);
-  const frame = useRef(null);
-  const mapVisible = useRef(false);
+  const videoRef = useRef(null);
+  const [motionAllowed, setMotionAllowed] = useState(false);
+  const [inView, setInView] = useState(false);
 
-  // The map hands scroll back to the page once it's fully zoomed out.
   useEffect(() => {
-    const onMessage = (e) => {
-      if (
-        e.source === frame.current?.contentWindow
-        && e.origin === window.location.origin
-        && e.data
-        && typeof e.data.tfpScrollBy === 'number'
-      ) {
-        window.scrollBy({ top: e.data.tfpScrollBy, behavior: 'auto' });
-      }
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setMotionAllowed(!media.matches);
+    sync();
+    media.addEventListener?.('change', sync);
+    return () => media.removeEventListener?.('change', sync);
   }, []);
 
-  // Once opened, keep the expensive render loop paused whenever its frame is
-  // off-screen. The map stays mounted so visitors do not lose their position.
+  // Only start the film once the map scrolls into view (not on page load).
   useEffect(() => {
-    if (!load || !holder.current) return undefined;
+    const el = holder.current;
+    if (!el) return undefined;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        mapVisible.current = entry.isIntersecting;
-        frame.current?.contentWindow?.postMessage(
-          { tfpActive: entry.isIntersecting },
-          window.location.origin,
-        );
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
       },
-      { threshold: 0.01 },
+      { threshold: 0.25 },
     );
-    observer.observe(holder.current);
+    observer.observe(el);
     return () => observer.disconnect();
-  }, [load]);
+  }, []);
 
-  const syncMapActivity = () => {
-    frame.current?.contentWindow?.postMessage(
-      { tfpActive: mapVisible.current },
-      window.location.origin,
-    );
-  };
+  // Play-once-and-hold. React SSR drops the muted attribute, so set the muted
+  // property directly and retry on canplay; pause when the tab is hidden.
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || !motionAllowed || !inView) return undefined;
+    const play = () => {
+      if (document.visibilityState !== 'visible') {
+        el.pause();
+        return;
+      }
+      el.muted = true;
+      el.defaultMuted = true;
+      el.play()?.catch(() => {});
+    };
+    el.load();
+    play();
+    el.addEventListener('canplay', play);
+    document.addEventListener('visibilitychange', play);
+    return () => {
+      el.removeEventListener('canplay', play);
+      document.removeEventListener('visibilitychange', play);
+    };
+  }, [motionAllowed, inView]);
 
+  return (
+    <div
+      ref={holder}
+      className="tastemap-frame"
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: 'min(88vh, 820px)',
+        overflow: 'hidden',
+        background: INK.ink,
+      }}
+    >
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="metadata"
+        poster="/assets/redesign/tastemap-merge-poster.webp"
+        aria-label="John and Jane's taste maps drift as a constellation, then the posters they both love gather to the centre as one shared picture"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      >
+        {motionAllowed && inView ? (
+          <source src="/assets/redesign/tastemap-merge.mp4" type="video/mp4" />
+        ) : null}
+      </video>
+    </div>
+  );
+}
+
+export default function RisoTasteMap({ eyesTile }) {
   return (
     <section
       id="tastemap"
@@ -114,9 +157,10 @@ export default function RisoTasteMap({ eyesTile }) {
               fontSize: 'clamp(0.98rem, 1.4vw, 1.12rem)', lineHeight: 1.7,
               color: INK.ink, maxWidth: '38rem',
             }}>
-              This fictional demo belongs to John and Jane. Drag it around, click
-              any poster, switch between them, and hit{' '}
-              <em style={{ fontStyle: 'italic' }}>Combined</em> to see exactly what they share.
+              This fictional demo belongs to John and Jane. Their maps drift as one
+              constellation, then the films, albums, and books they{' '}
+              <em style={{ fontStyle: 'italic' }}>both</em> love gather to the
+              center — exactly what they share.
             </p>
           </div>
 
@@ -139,59 +183,17 @@ export default function RisoTasteMap({ eyesTile }) {
           alignItems: 'stretch',
         }}>
         <motion.div
-          ref={holder}
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-5%' }}
           transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           style={{ border: `3px solid ${INK.ink}`, boxShadow: '12px 12px 0 rgba(22,19,16,0.28)', background: INK.paperDeep }}
         >
-          {load ? (
-            <iframe
-              ref={frame}
-              className="tastemap-frame"
-              src="/tastemap-preview-riso.html"
-              title="A live taste map — two people's collections as a constellation of posters"
-              loading="lazy"
-              onLoad={syncMapActivity}
-              style={{ width: '100%', height: 'min(88vh, 820px)', border: 'none', display: 'block' }}
-            />
-          ) : (
-            <div
-              className="tastemap-frame map-preview"
-              style={{
-                position: 'relative',
-                width: '100%',
-                height: 'min(88vh, 820px)',
-                overflow: 'hidden',
-                background: INK.ink,
-              }}
-            >
-              <Image
-                src="/assets/demos/tastemap-riso-loop-poster.jpg"
-                alt=""
-                fill
-                sizes="(max-width: 900px) 100vw, 72vw"
-                quality={60}
-                style={{ objectFit: 'cover', opacity: 0.58, filter: 'saturate(0.8) contrast(1.08)' }}
-              />
-              <div aria-hidden="true" className="map-preview-wash" />
-              <button type="button" className="map-load-button" onClick={() => setLoad(true)}>
-                <span>Explore the live map</span>
-                <small>Loads the interactive 3D view</small>
-              </button>
-            </div>
-          )}
+          <TasteMapFilm />
           <div style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.6rem',
+            display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '0.6rem',
             borderTop: `3px solid ${INK.ink}`, padding: '0.85rem 1.1rem', background: INK.paper,
           }}>
-            <span style={{
-              fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.75rem', lineHeight: 1.45,
-              letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(22,19,16,0.7)',
-            }}>
-              Drag to rotate · click any poster · hit Combined
-            </span>
             <span style={{
               fontFamily: 'var(--serif)', fontStyle: 'italic',
               fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)', color: INK.ink,
@@ -253,51 +255,6 @@ export default function RisoTasteMap({ eyesTile }) {
       </div>
 
       <style jsx>{`
-        .map-preview-wash {
-          position: absolute;
-          inset: 0;
-          background:
-            radial-gradient(circle at center, rgba(22, 19, 16, 0.08), rgba(22, 19, 16, 0.72)),
-            linear-gradient(135deg, rgba(229, 57, 159, 0.28), rgba(43, 63, 184, 0.34));
-        }
-        .map-load-button {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: min(22rem, calc(100% - 2rem));
-          min-height: 5.5rem;
-          display: grid;
-          place-items: center;
-          gap: 0.35rem;
-          padding: 1rem 1.5rem;
-          border: 3px solid ${INK.ink};
-          box-shadow: 8px 8px 0 rgba(22, 19, 16, 0.45);
-          background: ${INK.paper};
-          color: ${INK.ink};
-          cursor: pointer;
-          text-align: center;
-        }
-        .map-load-button span {
-          font-family: var(--serif);
-          font-size: clamp(1.25rem, 3vw, 1.7rem);
-          font-style: italic;
-        }
-        .map-load-button small {
-          font-family: var(--sans);
-          font-size: 0.75rem;
-          font-weight: 500;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-        }
-        .map-load-button:active {
-          transform: translate(calc(-50% + 2px), calc(-50% + 2px));
-          box-shadow: 6px 6px 0 rgba(22, 19, 16, 0.45);
-        }
-        .map-load-button:focus-visible {
-          outline: 3px solid ${INK.magenta};
-          outline-offset: 4px;
-        }
         @media (max-width: 900px) {
           .map-row {
             grid-template-columns: 1fr !important;

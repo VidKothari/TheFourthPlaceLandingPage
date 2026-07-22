@@ -1264,6 +1264,33 @@
 
 <body>
   <script>if (new URLSearchParams(location.search).has('bg')) document.body.classList.add('bg')</script>
+  <script>
+    /* RECORD MODE (?record=1): deterministic offline capture rig — zero effect otherwise. */
+    ;(function () {
+      if (!new URLSearchParams(location.search).has('record')) return
+      window.__RECORD__ = true
+      document.body.classList.add('record')
+      var __t = 0
+      performance.now = function () { return __t }
+      window.__setTime = function (ms) { __t = ms }
+    })()
+  </script>
+  <style>
+    /* Hide interactive chrome for recording; keep the map, cluster labels,
+       legend, and #merge-banner (informative during the merge). */
+    body.record #topbar,
+    body.record #switcher,
+    body.record #hint,
+    body.record #howto,
+    body.record #merge-banner,
+    body.record #card,
+    body.record #cluster-card,
+    body.record #tip,
+    body.record #loader,
+    body.record #zoom-flash {
+      display: none !important;
+    }
+  </style>
 
   <div id="loader">
     <div id="ll">TasteMap</div>
@@ -2294,9 +2321,7 @@
     })
     document.addEventListener("visibilitychange", scheduleAnimation)
 
-    function animate() {
-      animationFrame = 0
-      if (!hostActive || document.visibilityState !== "visible") return
+    function tick() {
       T += 0.001
 
       if (camAnim) {
@@ -2346,9 +2371,23 @@
         c.scale.setScalar(s)
       })
       composer.render()
+    }
+
+    function animate() {
+      animationFrame = 0
+      if (!hostActive || document.visibilityState !== "visible") return
+      tick()
       scheduleAnimation()
     }
-    scheduleAnimation()
+
+    if (window.__RECORD__) {
+      // Offline capture: no rAF loop; the recorder drives ticks by hand off a fake clock.
+      hostActive = true
+      window.__demoStep = tick
+      window.__demo = { setMode, animateCamDistTo, animateToCluster, resetVis, universe, camera }
+    } else {
+      scheduleAnimation()
+    }
 
     window.addEventListener("resize", () => {
       camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix()
