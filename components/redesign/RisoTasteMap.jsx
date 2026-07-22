@@ -299,6 +299,7 @@ export default function RisoTasteMap() {
           inset: 0;
           z-index: 0;
           pointer-events: none;
+          filter: blur(7px);
         }
         #tastemap .tm-scatter-slot {
           position: absolute;

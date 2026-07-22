@@ -31,7 +31,8 @@ export const VARIANTS = {
     },
     feed: { field: INK.chartreuse, onField: INK.ink }, // flagged: green too overpowering — re-ink next round
     waitlist: {
-      img: '/assets/redesign/waitlist-halo.webp',
+      // The waitlist art is the hardcoded waitlist-pulse film; only the alt
+      // text lives here.
       imgAlt: 'A figure lies starfished on a mattress, ringed by a halo of taped-up posters',
     },
     eyesTile: false,
@@ -39,8 +40,8 @@ export const VARIANTS = {
 };
 
 // The retired hero and waitlist variants were removed after the production
-// composition was consolidated. eyes-grid.webp remains available to this
-// component through the explicit eyesTile flag.
+// composition was consolidated (the eyes-grid asset was pruned in the July 23
+// asset cleanup).
 
 // The passive exhibition. Every family and artifact stays visible in the page
 // flow. Card copy: i-iii verbatim from the old hero wall labels;

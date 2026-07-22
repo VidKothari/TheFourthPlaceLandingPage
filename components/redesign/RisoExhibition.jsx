@@ -453,6 +453,9 @@ export default function RisoExhibition() {
           position: absolute;
           inset: 0;
           z-index: 1;
+          /* Soft depth-of-field on the floating wall (Siddharth: smaller than
+             the map section's 7px). Card + text sit above, unaffected. */
+          filter: blur(3px);
         }
         .exh-poster-slot {
           position: absolute;
