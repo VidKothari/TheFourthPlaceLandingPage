@@ -1287,15 +1287,15 @@
   </div>
 
   <div id="switcher">
-    <button class="stab u1 on" id="t1">Alex</button>
+    <button class="stab u1 on" id="t1">John</button>
     <div class="ssep"></div>
-    <button class="stab u2" id="t2">Jordan</button>
+    <button class="stab u2" id="t2">Jane</button>
     <div class="ssep" id="sep-mg" style="display:none"></div>
     <button class="stab mg" id="tmg" style="display:none">✦ Combined</button>
   </div>
 
   <div id="merge-banner">
-    <div id="mb-title">Alex &amp; Jordan — TasteGraph</div>
+    <div id="mb-title">John &amp; Jane — TasteGraph</div>
     <div id="mb-sub">Golden nodes = shared taste · click to discover why</div>
   </div>
 
@@ -1305,11 +1305,11 @@
   <div id="howto">
     <div class="hw">
       <div class="hw-n n1">1</div>
-      <div class="hw-t">Alex's constellation — click nodes to explore</div>
+      <div class="hw-t">John's constellation — click nodes to explore</div>
     </div>
     <div class="hw">
       <div class="hw-n n2">2</div>
-      <div class="hw-t">Switch to Jordan to see their taste universe</div>
+      <div class="hw-t">Switch to Jane to see their taste universe</div>
     </div>
     <div class="hw">
       <div class="hw-n n3">3</div>
@@ -1534,8 +1534,11 @@
     const controls = { update: () => { }, target: new THREE.Vector3() }
 
     let _drag = false, _lastX = 0, _lastY = 0, _velX = 0, _velY = 0
-    const CAM_MIN = 300, CAM_MAX = 2300
-    let _camDist = Math.min(camera.position.length(), CAM_MAX)
+    // One bounded zoom range for wheel, pinch, and scripted camera moves.
+    // Smaller distance means further zoomed in; larger means further out.
+    const CAM_MIN = 500, CAM_MAX = 2200
+    const clampCamDist = value => Math.max(CAM_MIN, Math.min(CAM_MAX, value))
+    let _camDist = clampCamDist(camera.position.length())
 
     renderer.domElement.addEventListener("mousedown", e => {
       if (e.button !== 0) return
@@ -1578,7 +1581,7 @@
         const dx = e.touches[0].clientX - e.touches[1].clientX
         const dy = e.touches[0].clientY - e.touches[1].clientY
         const d = Math.sqrt(dx * dx + dy * dy)
-        _camDist = Math.max(CAM_MIN, Math.min(CAM_MAX, _camDist + (_pinchDist - d) * 2.5))
+        _camDist = clampCamDist(_camDist + (_pinchDist - d) * 2.5)
         _pinchDist = d
       }
     }, { passive: true })
@@ -1588,11 +1591,11 @@
       // can't scroll its parent directly).
       const atMaxZoomOut = _camDist >= CAM_MAX - 1
       if (e.deltaY > 0 && atMaxZoomOut) {
-        window.parent.postMessage({ tfpScrollBy: e.deltaY }, "*")
+        window.parent.postMessage({ tfpScrollBy: e.deltaY }, window.location.origin)
         return
       }
       e.preventDefault()
-      _camDist = Math.max(CAM_MIN, Math.min(CAM_MAX, _camDist + e.deltaY * 1.5))
+      _camDist = clampCamDist(_camDist + e.deltaY * 1.5)
     }, { passive: false })
 
     const universe = new THREE.Group(); scene.add(universe)
@@ -1630,8 +1633,8 @@
       universe.add(av)
       return av
     }
-    const avatarA = makeAvatar("assets/editorial/records.webp", "Alex", "rgba(229,57,159,0.9)")
-    const avatarB = makeAvatar("assets/editorial/books.webp", "Jordan", "rgba(43,63,184,0.9)")
+    const avatarA = makeAvatar("assets/editorial/records.webp", "John", "rgba(229,57,159,0.9)")
+    const avatarB = makeAvatar("assets/editorial/books.webp", "Jane", "rgba(43,63,184,0.9)")
     avatarB.visible = false
 
     function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
@@ -1817,7 +1820,7 @@
 
       // Comfortable viewing distance: cluster is ~1150 units from origin, sit ~800 back
       const clusterDist = localPos.length()
-      const targetDist = clusterDist + 800
+      const targetDist = clampCamDist(clusterDist + 800)
 
       const startRotY = universe.rotation.y
       const startRotX = universe.rotation.x
@@ -1838,7 +1841,7 @@
           const ease = t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
           universe.rotation.y = startRotY + dY * ease
           universe.rotation.x = startRotX + dX * ease
-          _camDist = startDist + (targetDist - startDist) * ease
+          _camDist = clampCamDist(startDist + (targetDist - startDist) * ease)
           camera.position.set(0, 0, _camDist)
           camera.lookAt(0, 0, 0)
           if (t >= 1) { camAnim = null; if (onDone) onDone() }
@@ -1847,13 +1850,14 @@
     }
 
     function animateCamDistTo(targetDist, duration, onDone) {
+      targetDist = clampCamDist(targetDist)
       const startDist = _camDist
       const start = performance.now()
       camAnim = {
         update(now) {
           const t = Math.min((now - start) / duration, 1)
           const ease = t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
-          _camDist = startDist + (targetDist - startDist) * ease
+          _camDist = clampCamDist(startDist + (targetDist - startDist) * ease)
           camera.position.set(0, 0, _camDist)
           camera.lookAt(0, 0, 0)
           if (t >= 1) { camAnim = null; if (onDone) onDone() }
@@ -2271,12 +2275,29 @@
 
     /* ── ANIMATE ── */
     let T = 0
+    let animationFrame = 0
+    let hostActive = true
     // Camera always at (0,0,_camDist) looking at origin; universe rotates under it
     camera.position.set(0, 0, _camDist)
     camera.lookAt(0, 0, 0)
 
+    const scheduleAnimation = () => {
+      if (!animationFrame && hostActive && document.visibilityState === "visible") {
+        animationFrame = requestAnimationFrame(animate)
+      }
+    }
+
+    window.addEventListener("message", e => {
+      if (e.origin !== window.location.origin || typeof e.data?.tfpActive !== "boolean") return
+      hostActive = e.data.tfpActive
+      scheduleAnimation()
+    })
+    document.addEventListener("visibilitychange", scheduleAnimation)
+
     function animate() {
-      requestAnimationFrame(animate); T += 0.001
+      animationFrame = 0
+      if (!hostActive || document.visibilityState !== "visible") return
+      T += 0.001
 
       if (camAnim) {
         camAnim.update(performance.now())
@@ -2325,8 +2346,9 @@
         c.scale.setScalar(s)
       })
       composer.render()
+      scheduleAnimation()
     }
-    animate()
+    scheduleAnimation()
 
     window.addEventListener("resize", () => {
       camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix()

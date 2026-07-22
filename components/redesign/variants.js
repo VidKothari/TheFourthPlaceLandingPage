@@ -1,8 +1,8 @@
 import { INK } from './shared';
 
 // Consolidated July 16 per Siddharth's review: ONE version. The flower-exchange
-// hero is restored; the later shared-scribbles iteration remains parked in
-// public/assets/redesign/ for a possible future pass.
+// hero is restored; the retired shared-scribbles iteration was removed during
+// the July 22 asset cleanup.
 export const VARIANTS = {
   1: {
     key: 'keeper',
@@ -19,6 +19,7 @@ export const VARIANTS = {
       video: {
         // MP4-only: H.264 preserves the halftone grain efficiently here.
         webm: null,
+        mobileMp4: '/assets/redesign/hero-flowers-film-mobile.mp4',
         mp4: '/assets/redesign/hero-flowers-film.mp4',
         poster: '/assets/redesign/hero-flowers-film-poster.webp',
         aspect: '16 / 9',
@@ -35,9 +36,9 @@ export const VARIANTS = {
   },
 };
 
-// Parked assets from the retired versions (all in public/assets/redesign/):
-// hero-hands.webp (bleed layout), hero-busts.webp (split-reverse),
-// waitlist-sunburst.webp, waitlist-hands.webp, eyes-grid.webp.
+// The retired hero and waitlist variants were removed after the production
+// composition was consolidated. eyes-grid.webp remains available to this
+// component through the explicit eyesTile flag.
 
 // The passive exhibition. Every family and artifact stays visible in the page
 // flow. Card copy: i-iii verbatim from the old hero wall labels;

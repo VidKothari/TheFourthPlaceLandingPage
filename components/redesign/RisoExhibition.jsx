@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 import {
   AnimatePresence,
@@ -121,9 +122,13 @@ function ExhibitSlide({ card, items, reduce }) {
               padding: 'clamp(8px, 1vw, 14px)',
             }}
           >
-            <img
+            <Image
               src={item.src}
               alt={`${card.label} artifact ${itemIndex + 1}`}
+              fill
+              sizes={item.wide
+                ? '(max-width: 860px) 82vw, 34vw'
+                : '(max-width: 860px) 54vw, 24vw'}
               style={{
                 width: '100%', height: '100%', objectFit: 'contain',
                 display: 'block', border: `1px solid ${INK.ink}`, background: INK.ink,
@@ -357,6 +362,7 @@ export default function RisoExhibition() {
           min-width: 0;
         }
         .artifact-frame {
+          position: relative;
           width: auto;
           max-width: 100%;
           min-width: 0;
@@ -513,6 +519,48 @@ export default function RisoExhibition() {
           .artifact-frame-1,
           .artifact-frame-2 {
             transform: none;
+          }
+        }
+        @media (max-width: 860px) and (max-height: 700px) {
+          .exhibition-inner {
+            padding-top: 0.45rem;
+          }
+          .exhibition-intro {
+            margin-bottom: 0.75rem;
+          }
+          .exhibition-intro > div:first-child {
+            margin-bottom: 0.45rem;
+          }
+          .exhibition-intro h2 {
+            margin-bottom: 0.4rem;
+          }
+          .exhibit-slide {
+            gap: 0.5rem;
+          }
+          .artifact-pair {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-rows: minmax(0, 1fr);
+            align-items: stretch;
+          }
+          .artifact-frame,
+          .artifact-pair-wide .artifact-frame {
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            aspect-ratio: auto;
+          }
+        }
+        @media (max-width: 860px) and (max-height: 700px) and (orientation: landscape) {
+          .artifact-frame {
+            width: auto;
+            max-width: 100%;
+            height: 100%;
+            justify-self: center;
+            aspect-ratio: 3 / 4;
+          }
+          .artifact-pair-wide .artifact-frame {
+            width: auto;
+            aspect-ratio: 4 / 3;
           }
         }
         @media (max-width: 520px) {

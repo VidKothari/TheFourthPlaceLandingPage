@@ -1,8 +1,8 @@
 # Next round — Siddharth's review remarks (July 16, 2026)
 
 State at handoff: ONE consolidated production landing at `/` (red flower-exchange hero film +
-old v2 waitlist art, Open Floor expanded by default). Historical variant assets are parked in
-`public/assets/redesign/`. Dev server: port 3000 (kill squatters; phone via LAN IP).
+old v2 waitlist art, Open Floor expanded by default). Historical variant assets were removed in the
+July 22 cleanup after the production composition was consolidated. Dev server: port 3000 (kill squatters; phone via LAN IP).
 This landing directory is a Git repo.
 
 ## The remarks, verbatim intent → actionable spec
@@ -10,8 +10,7 @@ This landing directory is a Git repo.
 1. **Hero iteration — RESTORED July 16.**
    The selected hero is again “She shows up”: a boy places a white daisy, a girl arrives
    with hers, gives him the marigold, then takes one too. It plays once and holds on the
-   two of them against the red field. The later shared-scribbles loop remains parked in
-   `public/assets/redesign/`.
+   two of them against the red field. The later shared-scribbles experiment has been retired.
 
 2. **SCROLL section: chartreuse is TOO overpowering + bring the Mark Zuckerberg image back.**
    The old Manifesto used `public/assets/notSocial.webp` (alt "Not Social" — the Zuck

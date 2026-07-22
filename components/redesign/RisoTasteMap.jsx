@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { INK, cutout, eyebrowStyle } from './shared';
@@ -9,28 +10,49 @@ import AutoplayLoopVideo from './AutoplayLoopVideo';
 export default function RisoTasteMap({ eyesTile }) {
   const [load, setLoad] = useState(false);
   const holder = useRef(null);
-
-  useEffect(() => {
-    const el = holder.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setLoad(true); io.disconnect(); } },
-      { rootMargin: '400px' }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const frame = useRef(null);
+  const mapVisible = useRef(false);
 
   // The map hands scroll back to the page once it's fully zoomed out.
   useEffect(() => {
     const onMessage = (e) => {
-      if (e.data && typeof e.data.tfpScrollBy === 'number') {
+      if (
+        e.source === frame.current?.contentWindow
+        && e.origin === window.location.origin
+        && e.data
+        && typeof e.data.tfpScrollBy === 'number'
+      ) {
         window.scrollBy({ top: e.data.tfpScrollBy, behavior: 'auto' });
       }
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
   }, []);
+
+  // Once opened, keep the expensive render loop paused whenever its frame is
+  // off-screen. The map stays mounted so visitors do not lose their position.
+  useEffect(() => {
+    if (!load || !holder.current) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        mapVisible.current = entry.isIntersecting;
+        frame.current?.contentWindow?.postMessage(
+          { tfpActive: entry.isIntersecting },
+          window.location.origin,
+        );
+      },
+      { threshold: 0.01 },
+    );
+    observer.observe(holder.current);
+    return () => observer.disconnect();
+  }, [load]);
+
+  const syncMapActivity = () => {
+    frame.current?.contentWindow?.postMessage(
+      { tfpActive: mapVisible.current },
+      window.location.origin,
+    );
+  };
 
   return (
     <section
@@ -43,14 +65,20 @@ export default function RisoTasteMap({ eyesTile }) {
       }}
     >
       {/* Newsprint bed under everything, faded to texture. */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'url(/assets/redesign/map-newsprint.webp)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        opacity: 0.22,
-        pointerEvents: 'none',
-      }} />
+      <Image
+        aria-hidden="true"
+        src="/assets/redesign/map-newsprint.webp"
+        alt=""
+        fill
+        sizes="100vw"
+        quality={45}
+        style={{
+          objectFit: 'cover',
+          objectPosition: 'center',
+          opacity: 0.22,
+          pointerEvents: 'none',
+        }}
+      />
 
       <div style={{ position: 'relative', maxWidth: '1400px', margin: '0 auto' }}>
         <motion.div
@@ -86,16 +114,19 @@ export default function RisoTasteMap({ eyesTile }) {
               fontSize: 'clamp(0.98rem, 1.4vw, 1.12rem)', lineHeight: 1.7,
               color: INK.ink, maxWidth: '38rem',
             }}>
-              This one is live — it belongs to two people, Alex and Jordan. Drag it
-              around, click any poster, switch between them, and hit{' '}
+              This fictional demo belongs to John and Jane. Drag it around, click
+              any poster, switch between them, and hit{' '}
               <em style={{ fontStyle: 'italic' }}>Combined</em> to see exactly what they share.
             </p>
           </div>
 
           {eyesTile && (
-            <img
+            <Image
               src="/assets/redesign/eyes-grid.webp"
               alt="Four eyes printed in four different acid colorways"
+              width={1000}
+              height={1000}
+              sizes="clamp(7rem, 12vw, 10.5rem)"
               style={{ ...cutout('rgba(22,19,16,0.25)'), width: 'clamp(7rem, 12vw, 10.5rem)', flexShrink: 0 }}
             />
           )}
@@ -117,13 +148,39 @@ export default function RisoTasteMap({ eyesTile }) {
         >
           {load ? (
             <iframe
+              ref={frame}
               className="tastemap-frame"
               src="/tastemap-preview-riso.html"
               title="A live taste map — two people's collections as a constellation of posters"
+              loading="lazy"
+              onLoad={syncMapActivity}
               style={{ width: '100%', height: 'min(88vh, 820px)', border: 'none', display: 'block' }}
             />
           ) : (
-            <div className="tastemap-frame" style={{ width: '100%', height: 'min(88vh, 820px)' }} />
+            <div
+              className="tastemap-frame map-preview"
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: 'min(88vh, 820px)',
+                overflow: 'hidden',
+                background: INK.ink,
+              }}
+            >
+              <Image
+                src="/assets/demos/tastemap-riso-loop-poster.jpg"
+                alt=""
+                fill
+                sizes="(max-width: 900px) 100vw, 72vw"
+                quality={60}
+                style={{ objectFit: 'cover', opacity: 0.58, filter: 'saturate(0.8) contrast(1.08)' }}
+              />
+              <div aria-hidden="true" className="map-preview-wash" />
+              <button type="button" className="map-load-button" onClick={() => setLoad(true)}>
+                <span>Explore the live map</span>
+                <small>Loads the interactive 3D view</small>
+              </button>
+            </div>
           )}
           <div style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.6rem',
@@ -193,6 +250,51 @@ export default function RisoTasteMap({ eyesTile }) {
       </div>
 
       <style jsx>{`
+        .map-preview-wash {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(circle at center, rgba(22, 19, 16, 0.08), rgba(22, 19, 16, 0.72)),
+            linear-gradient(135deg, rgba(229, 57, 159, 0.28), rgba(43, 63, 184, 0.34));
+        }
+        .map-load-button {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: min(22rem, calc(100% - 2rem));
+          min-height: 5.5rem;
+          display: grid;
+          place-items: center;
+          gap: 0.35rem;
+          padding: 1rem 1.5rem;
+          border: 3px solid ${INK.ink};
+          box-shadow: 8px 8px 0 rgba(22, 19, 16, 0.45);
+          background: ${INK.paper};
+          color: ${INK.ink};
+          cursor: pointer;
+          text-align: center;
+        }
+        .map-load-button span {
+          font-family: var(--serif);
+          font-size: clamp(1.25rem, 3vw, 1.7rem);
+          font-style: italic;
+        }
+        .map-load-button small {
+          font-family: var(--sans);
+          font-size: 0.75rem;
+          font-weight: 500;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+        .map-load-button:active {
+          transform: translate(calc(-50% + 2px), calc(-50% + 2px));
+          box-shadow: 6px 6px 0 rgba(22, 19, 16, 0.45);
+        }
+        .map-load-button:focus-visible {
+          outline: 3px solid ${INK.magenta};
+          outline-offset: 4px;
+        }
         @media (max-width: 900px) {
           .map-row {
             grid-template-columns: 1fr !important;

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { INK, cutout, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
@@ -68,27 +69,37 @@ export default function RisoFeed() {
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           style={{ position: 'relative', paddingBottom: '3.5rem' }}
         >
-          <img
+          <Image
             src="/assets/notSocial.webp"
             alt="Not Social"
+            width={441}
+            height={566}
+            sizes="(max-width: 860px) calc(100vw - 40px), 384px"
             style={{ ...cutout(), maxWidth: '24rem' }}
           />
           {/* The pinned clipping settles into place: rotation eases 7deg -> 4deg once. */}
-          <motion.img
-            src="/assets/redesign/feed-scroll.webp"
-            alt="A hand-painted word painting reading SCROLL SCROLL SCROLL"
+          <motion.div
             initial={{ rotate: reduce ? 4 : 7 }}
             whileInView={{ rotate: 4 }}
             viewport={{ once: true, margin: '-10%' }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              ...cutout('rgba(22,19,16,0.28)'),
               position: 'absolute',
               width: 'clamp(9rem, 14vw, 13rem)',
               right: '0',
               bottom: '0',
             }}
-          />
+          >
+            <Image
+              src="/assets/redesign/feed-scroll.webp"
+              alt="A hand-painted word painting reading SCROLL SCROLL SCROLL"
+              width={1400}
+              height={1400}
+              sizes="(max-width: 860px) 9rem, 13rem"
+              quality={60}
+              style={{ ...cutout('rgba(22,19,16,0.28)') }}
+            />
+          </motion.div>
         </motion.div>
       </div>
 

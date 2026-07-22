@@ -1,10 +1,34 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
 import { INK, cutout, eyebrowStyle } from './shared';
 import InkSettleHeading from './InkSettle';
+
+const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
+
+function subscribeToMotionPreference(onChange) {
+  const media = window.matchMedia(reducedMotionQuery);
+  media.addEventListener('change', onChange);
+  return () => media.removeEventListener('change', onChange);
+}
+
+function getMotionPreference() {
+  return !window.matchMedia(reducedMotionQuery).matches;
+}
+
+function getServerMotionPreference() {
+  return false;
+}
+
+function useMotionAllowed() {
+  return useSyncExternalStore(
+    subscribeToMotionPreference,
+    getMotionPreference,
+    getServerMotionPreference,
+  );
+}
 
 function Ctas({ cta, display }) {
   return (
@@ -93,11 +117,7 @@ function HeroText({ hero }) {
 }
 
 function HeroFilm({ hero }) {
-  const [showVideo, setShowVideo] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!mq.matches) setShowVideo(true);
-  }, []);
+  const showVideo = useMotionAllowed();
   if (!showVideo) {
     return (
       <img
@@ -252,25 +272,32 @@ export default function RisoHero({ hero }) {
 
 function HeroArt({ hero }) {
   const videoRef = useRef(null);
-  const [showVideo, setShowVideo] = useState(false);
+  const motionAllowed = useMotionAllowed();
 
-  useEffect(() => {
-    if (!hero.video) return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!mq.matches) setShowVideo(true);
-  }, [hero.video]);
-
-  // Guarantee autoplay: set the muted PROPERTY and retry (React can drop the attr).
+  // Keep one stable hero element: the server paints the video poster immediately,
+  // then motion-enabled browsers start the film without first downloading a
+  // separate still image. Reduced-motion visitors remain on the poster.
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !showVideo) return;
-    el.muted = true;
-    el.defaultMuted = true;
-    el.play()?.catch(() => {});
-    const onCanPlay = () => { el.muted = true; el.play().catch(() => {}); };
-    el.addEventListener('canplay', onCanPlay);
-    return () => el.removeEventListener('canplay', onCanPlay);
-  }, [showVideo]);
+    if (!el || !hero.video) return undefined;
+    const syncPlayback = () => {
+      if (!motionAllowed || document.visibilityState !== 'visible') {
+        el.pause();
+        return;
+      }
+      el.muted = true;
+      el.defaultMuted = true;
+      el.play()?.catch(() => {});
+    };
+    if (motionAllowed) el.load();
+    syncPlayback();
+    el.addEventListener('canplay', syncPlayback);
+    document.addEventListener('visibilitychange', syncPlayback);
+    return () => {
+      el.removeEventListener('canplay', syncPlayback);
+      document.removeEventListener('visibilitychange', syncPlayback);
+    };
+  }, [hero.video, motionAllowed]);
 
   return (
     <motion.div
@@ -279,21 +306,23 @@ function HeroArt({ hero }) {
       transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
       style={{ justifySelf: 'center', width: hero.video ? 'min(36rem, 100%)' : 'min(30rem, 100%)' }}
     >
-      {showVideo ? (
+      {hero.video ? (
         /* Films opt into looping only when their first and last frames match. */
         <video
           ref={videoRef}
-          autoPlay
           muted
           loop={hero.video.loop}
           playsInline
-          preload="auto"
+          preload="metadata"
           poster={hero.video.poster}
           aria-label={hero.imgAlt}
           style={{ ...cutout(), aspectRatio: hero.video.aspect || '1 / 1', objectFit: 'cover' }}
         >
-          {hero.video.webm ? <source src={hero.video.webm} type="video/webm" /> : null}
-          <source src={hero.video.mp4} type="video/mp4" />
+          {motionAllowed && hero.video.webm ? <source src={hero.video.webm} type="video/webm" /> : null}
+          {motionAllowed && hero.video.mobileMp4 ? (
+            <source src={hero.video.mobileMp4} type="video/mp4" media="(max-width: 860px)" />
+          ) : null}
+          {motionAllowed ? <source src={hero.video.mp4} type="video/mp4" /> : null}
         </video>
       ) : (
         <img

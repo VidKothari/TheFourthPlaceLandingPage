@@ -10,6 +10,7 @@ import AutoplayLoopVideo from './AutoplayLoopVideo';
 export default function RisoWaitlist({ waitlist }) {
   const reduce = useReducedMotion();
   const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
   const [position, setPosition] = useState(null);
 
@@ -21,7 +22,7 @@ export default function RisoWaitlist({ waitlist }) {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, website }),
       });
       if (!res.ok) throw new Error('failed');
       const data = await res.json().catch(() => ({}));
@@ -35,7 +36,7 @@ export default function RisoWaitlist({ waitlist }) {
   return (
     <section
       id="waitlist"
-      className="riso-grain mobile-padding"
+      className="riso-grain mobile-padding deferred-paint"
       style={{
         background: INK.mustard,
         padding: 'clamp(72px, 11vw, 170px) clamp(20px, 5vw, 60px)',
@@ -119,6 +120,27 @@ export default function RisoWaitlist({ waitlist }) {
                   transition={{ duration: 0.6 }}
                 >
                   <div
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      left: '-10000px',
+                      width: '1px',
+                      height: '1px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <label htmlFor="waitlist-website">Website</label>
+                    <input
+                      id="waitlist-website"
+                      name="website"
+                      type="text"
+                      value={website}
+                      onChange={(event) => setWebsite(event.target.value)}
+                      autoComplete="off"
+                      tabIndex={-1}
+                    />
+                  </div>
+                  <div
                     style={{
                       display: 'flex',
                       alignItems: 'flex-end',
@@ -148,6 +170,8 @@ export default function RisoWaitlist({ waitlist }) {
                       <input
                         id="waitlist-email"
                         type="email"
+                        maxLength={254}
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => { setEmail(e.target.value); if (status === 'error') setStatus('idle'); }}
                         placeholder="your@email.com"

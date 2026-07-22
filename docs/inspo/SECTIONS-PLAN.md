@@ -14,7 +14,7 @@ The hero image IS the section — album-cover composition, headline set into the
 
 **Selected July 16 — “She shows up.”** A boy places a white daisy over one eye; a girl
 arrives with hers, gives him the marigold, then takes one too. The film plays once and holds
-on the two of them against the poster-red field. The later shared-scribbles loop is parked.
+on the two of them against the poster-red field. The later shared-scribbles loop was retired.
 
 - **Plan H-A "Flowers over eyes" — selected** (hooks: 01+12): one portrait, black ink + paper duotone on
   red, halftone; hands/flowers covering the eyes — a daisy and a marigold where sight should be.

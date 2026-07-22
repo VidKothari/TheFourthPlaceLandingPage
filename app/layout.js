@@ -1,6 +1,5 @@
 import { Cormorant_Garamond, Jost } from 'next/font/google';
 import ClientErrorBoundary from '../components/ClientErrorBoundary';
-import Loader from '../components/Loader';
 import './globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -42,7 +41,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${jost.variable}`}>
-        <Loader />
         <ClientErrorBoundary>
           {children}
         </ClientErrorBoundary>

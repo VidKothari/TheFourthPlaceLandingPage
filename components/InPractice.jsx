@@ -1,7 +1,23 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
+
+const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
+
+function subscribeToMotionPreference(onChange) {
+  const media = window.matchMedia(reducedMotionQuery);
+  media.addEventListener('change', onChange);
+  return () => media.removeEventListener('change', onChange);
+}
+
+function getMotionPreference() {
+  return !window.matchMedia(reducedMotionQuery).matches;
+}
+
+function getServerMotionPreference() {
+  return false;
+}
 
 const clips = [
   {
@@ -32,15 +48,11 @@ const clips = [
 
 function DemoClip({ clip, index }) {
   const videoRef = useRef(null);
-  const [canPlay, setCanPlay] = useState(true);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setCanPlay(!mq.matches);
-    const onChange = (e) => setCanPlay(!e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
+  const canPlay = useSyncExternalStore(
+    subscribeToMotionPreference,
+    getMotionPreference,
+    getServerMotionPreference,
+  );
 
   useEffect(() => {
     const el = videoRef.current;

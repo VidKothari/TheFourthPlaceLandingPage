@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { INK } from './shared';
 import InkSettleHeading from './InkSettle';
@@ -86,6 +87,7 @@ export default function RisoPractice() {
   return (
     <section
       id="in-practice"
+      className="deferred-paint"
       style={{
         background: '#0a0a09',
         backgroundImage: 'radial-gradient(circle at 18% 8%, rgba(26,14,46,0.9) 0%, rgba(10,10,9,0) 46%), linear-gradient(145deg, #111110 0%, #0a0a09 72%)',
@@ -93,9 +95,13 @@ export default function RisoPractice() {
     >
       {/* The real world enters: two-ink city band. */}
       <div style={{ position: 'relative', borderBottom: '1px solid rgba(255,255,255,0.12)', overflow: 'hidden' }}>
-        <img
+        <Image
           src="/assets/redesign/practice-city.webp"
           alt="A halftone city street at night"
+          width={2400}
+          height={1018}
+          sizes="100vw"
+          quality={60}
           style={{ width: '100%', height: 'clamp(120px, 22vw, 280px)', objectFit: 'cover', display: 'block', filter: 'grayscale(0.75) saturate(0.5) brightness(0.42) hue-rotate(210deg)' }}
         />
         <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(26,14,46,0.72), rgba(10,10,9,0.2) 55%, rgba(9,26,26,0.62))', mixBlendMode: 'color' }} />

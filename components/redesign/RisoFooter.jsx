@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
-import { useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
 import { INK } from './shared';
@@ -10,6 +11,7 @@ function OpenFloor() {
   const [open, setOpen] = useState(true); // expanded by default per Siddharth, July 16
   const [thought, setThought] = useState('');
   const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
   const [status, setStatus] = useState('idle');
 
   const handleSubmit = async (e) => {
@@ -20,7 +22,7 @@ function OpenFloor() {
       const res = await fetch('/api/suggestions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ thought, email: email || undefined }),
+        body: JSON.stringify({ thought, email: email || undefined, website }),
       });
       if (!res.ok) throw new Error('failed');
       setStatus('success');
@@ -76,7 +78,7 @@ function OpenFloor() {
             <div className="openfloor-grid" style={{
               paddingTop: '2rem',
               display: 'grid',
-              gridTemplateColumns: 'minmax(0, 1fr) clamp(12rem, 22vw, 17rem)',
+              gridTemplateColumns: 'minmax(0, 1fr) clamp(8.5rem, 14vw, 11rem)',
               gap: 'clamp(2rem, 5vw, 4.5rem)',
               alignItems: 'center',
             }}>
@@ -93,6 +95,27 @@ function OpenFloor() {
 
               {status !== 'success' ? (
                 <form onSubmit={handleSubmit}>
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      left: '-10000px',
+                      width: '1px',
+                      height: '1px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <label htmlFor="openfloor-website">Website</label>
+                    <input
+                      id="openfloor-website"
+                      name="website"
+                      type="text"
+                      value={website}
+                      onChange={(event) => setWebsite(event.target.value)}
+                      autoComplete="off"
+                      tabIndex={-1}
+                    />
+                  </div>
                   <label
                     htmlFor="openfloor-thought"
                     style={{
@@ -109,6 +132,8 @@ function OpenFloor() {
                     onChange={(e) => { setThought(e.target.value); if (status === 'error') setStatus('idle'); }}
                     placeholder="A feature I keep wishing for..."
                     rows={3}
+                    maxLength={1200}
+                    disabled={status === 'sending'}
                     style={{
                       width: '100%', background: 'rgba(239,230,208,0.06)', color: INK.paper,
                       border: '2px solid rgba(239,230,208,0.4)', padding: '0.8rem',
@@ -130,9 +155,12 @@ function OpenFloor() {
                   <input
                     id="openfloor-email"
                     type="email"
+                    maxLength={254}
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
+                    disabled={status === 'sending'}
                     style={{
                       width: '100%', background: 'rgba(239,230,208,0.06)', color: INK.paper,
                       border: '2px solid rgba(239,230,208,0.4)', padding: '0.8rem',
@@ -180,12 +208,21 @@ function OpenFloor() {
               )}
             </div>
 
-            <img
+            <Image
               src="/assets/redesign/openfloor-box.webp"
               alt="A halftone hand dropping a folded note into a magenta suggestion box"
+              width={900}
+              height={900}
+              sizes="(max-width: 700px) 152px, 176px"
+              quality={60}
               className="openfloor-art"
               style={{
                 width: '100%',
+                height: 'auto',
+                aspectRatio: '1 / 1',
+                objectFit: 'cover',
+                maxWidth: '11rem',
+                justifySelf: 'end',
                 border: '2px solid rgba(239,230,208,0.35)',
                 boxShadow: '6px 6px 0 rgba(0,0,0,0.45)',
                 display: 'block',
@@ -201,7 +238,8 @@ function OpenFloor() {
             grid-template-columns: 1fr !important;
           }
           :global(.openfloor-art) {
-            max-width: 13rem;
+            max-width: 9.5rem !important;
+            justify-self: center !important;
           }
         }
       `}</style>
@@ -211,6 +249,28 @@ function OpenFloor() {
 
 export default function RisoFooter() {
   const [footnoteOpen, setFootnoteOpen] = useState(false);
+  const footnoteTriggerRef = useRef(null);
+  const footnoteDialogRef = useRef(null);
+
+  useEffect(() => {
+    if (!footnoteOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const trigger = footnoteTriggerRef.current;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setFootnoteOpen(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+    footnoteDialogRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+      trigger?.focus();
+    };
+  }, [footnoteOpen]);
 
   return (
     <footer
@@ -228,8 +288,13 @@ export default function RisoFooter() {
 
         {/* The IV — decorative to everyone except the curious. Click it. */}
         <button
+          ref={footnoteTriggerRef}
+          className="footnote-trigger"
           onClick={() => setFootnoteOpen(true)}
-          aria-label="A footnote"
+          aria-label="IV — open the story behind The Fourth Place"
+          aria-haspopup="dialog"
+          aria-controls="fourth-place-footnote"
+          aria-expanded={footnoteOpen}
           style={{
             position: 'absolute',
             right: 'clamp(0.25rem, 3vw, 2rem)',
@@ -243,7 +308,7 @@ export default function RisoFooter() {
             background: 'none',
             border: 'none',
             padding: 0,
-            cursor: 'default',
+            cursor: 'pointer',
             userSelect: 'none',
             zIndex: 1,
           }}
@@ -269,6 +334,30 @@ export default function RisoFooter() {
           }}>
             The Fourth Place
           </div>
+
+          <nav
+            aria-label="Legal"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+              position: 'relative',
+              zIndex: 2,
+              fontFamily: 'var(--sans)',
+              fontSize: '0.75rem',
+              fontWeight: 400,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'rgba(239,230,208,0.72)',
+            }}
+          >
+            <a href="/privacy" style={{ textDecoration: 'underline', textUnderlineOffset: '0.25em' }}>
+              Privacy
+            </a>
+            <a href="/terms" style={{ textDecoration: 'underline', textUnderlineOffset: '0.25em' }}>
+              Terms
+            </a>
+          </nav>
 
           <div
             className="mobile-hide"
@@ -307,7 +396,9 @@ export default function RisoFooter() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            onClick={() => setFootnoteOpen(false)}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setFootnoteOpen(false);
+            }}
             style={{
               position: 'fixed',
               inset: 0,
@@ -323,11 +414,19 @@ export default function RisoFooter() {
             }}
           >
             <motion.div
+              ref={footnoteDialogRef}
+              id="fourth-place-footnote"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="footnote-title"
+              aria-describedby="footnote-description footnote-source"
+              tabIndex={-1}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               style={{
+                position: 'relative',
                 maxWidth: '26rem',
                 background: INK.paper,
                 border: `3px solid ${INK.ink}`,
@@ -336,7 +435,20 @@ export default function RisoFooter() {
                 textAlign: 'left',
               }}
             >
-              <p style={{
+              <button
+                type="button"
+                onClick={() => setFootnoteOpen(false)}
+                aria-label="Close footnote"
+                style={{
+                  position: 'absolute', top: '0.65rem', right: '0.75rem',
+                  width: '2.5rem', height: '2.5rem', border: 0,
+                  background: 'transparent', color: INK.ink,
+                  fontFamily: 'var(--sans)', fontSize: '1.5rem', cursor: 'pointer',
+                }}
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+              <p id="footnote-title" style={{
                 fontFamily: 'var(--sans)',
                 fontWeight: 500,
                 fontSize: '0.75rem',
@@ -347,7 +459,7 @@ export default function RisoFooter() {
               }}>
                 Footnote iv.
               </p>
-              <p style={{
+              <p id="footnote-description" style={{
                 fontFamily: 'var(--serif)',
                 fontWeight: 400,
                 fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
@@ -359,7 +471,7 @@ export default function RisoFooter() {
                 café — where you are surrounded by people, and still unmet.
                 <em style={{ fontStyle: 'italic' }}> The fourth is the one you carry inside you.</em>
               </p>
-              <p style={{
+              <p id="footnote-source" style={{
                 fontFamily: 'var(--sans)',
                 fontWeight: 300,
                 fontSize: '0.875rem',
@@ -371,6 +483,12 @@ export default function RisoFooter() {
           </motion.div>
         )}
       </AnimatePresence>
+      <style jsx>{`
+        .footnote-trigger:focus-visible {
+          outline: 2px solid ${INK.paper};
+          outline-offset: 6px;
+        }
+      `}</style>
     </footer>
   );
 }

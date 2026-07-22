@@ -19,7 +19,7 @@ otherwise. Recurring device preserved: each section heading ends in an italicize
 
 ## Taste Map (II)
 - H2: "Every collection becomes *a constellation.*"
-- Body: "This one is live — it belongs to two people, Alex and Jordan. Drag it around, click any poster, switch between them, and hit *Combined* to see exactly what they share."
+- Body: "This fictional demo belongs to John and Jane. Drag it around, click any poster, switch between them, and hit *Combined* to see exactly what they share."
 - Bar: "Drag to rotate · click any poster · hit Combined" · Close: *"What you share is the picture."*
 
 ## In Practice (IV)
