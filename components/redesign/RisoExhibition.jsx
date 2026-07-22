@@ -85,17 +85,21 @@ const FAMILY_ENTRIES = {
 // Ten scatter slots in viewport-percent coordinates (poster top-left anchor +
 // width as % of viewport width). Kept in the LEFT and RIGHT thirds plus the
 // top/bottom corners so the centre column (header + card) stays clear.
+// Slots spread across the WHOLE stage — side columns plus the top and bottom
+// centre bands (partially offscreen), so the field surrounds the card instead
+// of stacking up on the flanks. The centre card (z 5) rides above anything
+// that conveys past it.
 const SLOTS = [
-  { left: -4, top: 2, w: 22 },
-  { left: -6, top: 38, w: 25 },
-  { left: 2, top: 70, w: 20 },
-  { left: 16, top: 14, w: 17 },
-  { left: 13, top: 56, w: 19 },
-  { left: 80, top: 1, w: 22 },
-  { left: 83, top: 36, w: 25 },
-  { left: 78, top: 66, w: 20 },
-  { left: 66, top: 12, w: 17 },
-  { left: 68, top: 55, w: 19 },
+  { left: -4, top: 3, w: 20 },
+  { left: -6, top: 44, w: 23 },
+  { left: 3, top: 74, w: 19 },
+  { left: 24, top: -6, w: 17 },
+  { left: 56, top: -5, w: 18 },
+  { left: 82, top: 6, w: 20 },
+  { left: 84, top: 46, w: 23 },
+  { left: 76, top: 72, w: 20 },
+  { left: 30, top: 84, w: 17 },
+  { left: 55, top: 86, w: 18 },
 ];
 
 // Mobile slots: six posters peeking in from the screen edges — above the
@@ -220,18 +224,23 @@ function ExhibitHeader({ reduce, activeGroup }) {
           color: INK.paper,
           textWrap: 'balance',
           margin: 0,
-          // Crisp ground-colour "stroke" + soft halo: keeps the headline
-          // legible when a paper poster drifts underneath it. (text-shadow is
-          // inherited, so the swapping <em> gets it too.)
+          // Two dense ground-colour rings (1px + 2px, 8 directions each with
+          // diagonal in-fill so curves don't scallop) build a real ink stroke
+          // WITHOUT -webkit-text-stroke, which would eat Cormorant's thin
+          // serifs. A four-stage halo then carves darkness out around the
+          // glyphs so the headline is legible over ANY poster that conveys
+          // underneath it. text-shadow inherits, so the swapping <em> wears the
+          // identical treatment.
           textShadow:
-            '-1.5px 0 0 #0a0a09, 1.5px 0 0 #0a0a09, 0 -1.5px 0 #0a0a09, 0 1.5px 0 #0a0a09, 0 0 22px rgba(10,10,9,0.95), 0 0 48px rgba(10,10,9,0.8)',
+            '0 -1px 0 #0a0a09, 0.7px -0.7px 0 #0a0a09, 1px 0 0 #0a0a09, 0.7px 0.7px 0 #0a0a09, 0 1px 0 #0a0a09, -0.7px 0.7px 0 #0a0a09, -1px 0 0 #0a0a09, -0.7px -0.7px 0 #0a0a09, 0 -2px 0 #0a0a09, 1.4px -1.4px 0 #0a0a09, 2px 0 0 #0a0a09, 1.4px 1.4px 0 #0a0a09, 0 2px 0 #0a0a09, -1.4px 1.4px 0 #0a0a09, -2px 0 0 #0a0a09, -1.4px -1.4px 0 #0a0a09, 0 0 6px rgba(10,10,9,1), 0 0 16px rgba(10,10,9,0.95), 0 2px 28px rgba(10,10,9,0.9), 0 0 56px rgba(10,10,9,0.75)',
         }}
       >
-        Add your favourite{' '}
+        <span style={{ whiteSpace: 'nowrap' }}>Add your favourite</span>
         <AnimatePresence mode="wait" initial={false}>
           <motion.em
             key={word}
-            style={{ fontStyle: 'italic', color: INK.paper, display: 'inline-block' }}
+            className="exh-swap"
+            style={{ fontStyle: 'italic', color: INK.paper, display: 'block' }}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
@@ -281,8 +290,10 @@ function PosterLayer({ slots, posters, groupKey, activeIndex, reduce }) {
           const jx = (hash01(activeIndex, i, 1) - 0.5) * 3;
           const jy = (hash01(activeIndex, i, 2) - 0.5) * 3;
           const rot = (hash01(activeIndex, i, 3) - 0.5) * 6;
-          const driftDur = 8 + hash01(activeIndex, i, 4) * 4;
-          const driftDelay = hash01(activeIndex, i, 5) * -8;
+          // Conveyor pacing: ~20s journeys (~13px/s), each poster started
+          // mid-flight (negative delay) so nothing reads as "starting".
+          const driftDur = 17 + hash01(activeIndex, i, 4) * 7;
+          const driftDelay = hash01(activeIndex, i, 5) * -10;
           return (
             <motion.div
               key={`${groupKey}-${i}`}
@@ -303,10 +314,7 @@ function PosterLayer({ slots, posters, groupKey, activeIndex, reduce }) {
                 }
               >
                 <div className="exh-poster-mat" style={{ transform: `rotate(${rot}deg)` }}>
-                  <div
-                    className="exh-poster-img"
-                    style={{ aspectRatio: item.wide ? '16 / 10' : '3 / 4' }}
-                  >
+                  <div className="exh-poster-img">
                     <img src={item.src} alt="" loading="lazy" />
                   </div>
                 </div>
@@ -447,17 +455,19 @@ export default function RisoExhibition() {
         }
         .exh-poster-drift {
           animation-name: exh-drift;
-          animation-timing-function: ease-in-out;
+          animation-timing-function: linear;
           animation-iteration-count: infinite;
-          animation-direction: alternate;
         }
-        /* A slow figure-of-motion: mostly vertical with a small lateral lean so
-           the wall feels adrift, never animated-at-you. Long durations +
-           alternate direction keep it below the threshold of "noticing". */
+        /* The revolve: a looping conveyor. Each poster fades in on the right,
+           travels leftward at constant speed (X advances evenly across the
+           keyframes), fades out at the end of its run, and comes around again.
+           Negative delays start every poster mid-flight so the field reads as
+           a current you walked in on. */
         @keyframes exh-drift {
-          0%   { transform: translate(-3px, -10px); }
-          55%  { transform: translate(2px, 3px); }
-          100% { transform: translate(4px, 10px); }
+          0%   { transform: translate(64px, 0px); opacity: 0; }
+          12%  { transform: translate(30px, -2px); opacity: 1; }
+          88%  { transform: translate(-186px, 2px); opacity: 1; }
+          100% { transform: translate(-220px, 0px); opacity: 0; }
         }
         .exh-poster-mat {
           background: #141312;
@@ -465,15 +475,15 @@ export default function RisoExhibition() {
           border: 1px solid rgba(255, 255, 255, 0.1);
           box-sizing: border-box;
         }
+        /* Natural poster shape: each image renders at its source aspect ratio.
+           The slot width % sets the size; height follows the artwork. No crop. */
         .exh-poster-img {
           width: 100%;
-          overflow: hidden;
         }
         .exh-poster-img img {
           display: block;
           width: 100%;
-          height: 100%;
-          object-fit: cover;
+          height: auto;
         }
 
         /* Centre column */
@@ -506,11 +516,28 @@ export default function RisoExhibition() {
           line-height: 1.5;
           color: rgba(239, 230, 208, 0.92);
           margin: 0;
-          text-shadow: -1px 0 0 #0a0a09, 1px 0 0 #0a0a09, 0 -1px 0 #0a0a09,
-            0 1px 0 #0a0a09, 0 0 16px rgba(10, 10, 9, 0.95), 0 0 34px rgba(10, 10, 9, 0.8);
+          /* Same carve-out approach as the h2, scaled to the smaller sans:
+             1px + 1.5px 8-direction ink rings for a crisp stroke, then a
+             four-stage halo. Shadows only — no -webkit-text-stroke, no box. */
+          text-shadow: 0 -1px 0 #0a0a09, 0.7px -0.7px 0 #0a0a09, 1px 0 0 #0a0a09,
+            0.7px 0.7px 0 #0a0a09, 0 1px 0 #0a0a09, -0.7px 0.7px 0 #0a0a09,
+            -1px 0 0 #0a0a09, -0.7px -0.7px 0 #0a0a09, 0 -1.5px 0 #0a0a09,
+            1.06px -1.06px 0 #0a0a09, 1.5px 0 0 #0a0a09, 1.06px 1.06px 0 #0a0a09,
+            0 1.5px 0 #0a0a09, -1.06px 1.06px 0 #0a0a09, -1.5px 0 0 #0a0a09,
+            -1.06px -1.06px 0 #0a0a09, 0 0 5px rgba(10, 10, 9, 1),
+            0 0 13px rgba(10, 10, 9, 0.95), 0 1px 24px rgba(10, 10, 9, 0.9),
+            0 0 44px rgba(10, 10, 9, 0.72);
         }
         .exh-card-hold {
           width: 100%;
+        }
+        /* Desktop: the swapping family word never wraps — long ones (YouTube
+           Videos and Channels) overflow the centre column symmetrically, which
+           the halo keeps legible over the posters. Mobile still wraps. */
+        @media (min-width: 861px) {
+          .exh-swap {
+            white-space: nowrap;
+          }
         }
 
         /* ---------- The Add-to-collection card ---------- */

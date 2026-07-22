@@ -61,28 +61,45 @@ export const EXHIBIT_CARDS = {
 // landscape source art (articles / videos). Every filename verified present in
 // public/assets on 2026-07-22.
 export const EXHIBIT_ITEMS = [
-  // Film
-  { src: '/assets/movie3.webp', group: 'films', size: 'lg' },
-  { src: '/assets/movie14.webp', group: 'films', size: 'md' },
-  { src: '/assets/movie1.webp', group: 'films', size: 'md' },
-  { src: '/assets/movie5.webp', group: 'films', size: 'sm' },
-  { src: '/assets/movie8.webp', group: 'films', size: 'sm' },
-  { src: '/assets/movie12.webp', group: 'films', size: 'sm' },
-  { src: '/assets/movie17.webp', group: 'films', size: 'sm' },
-  { src: '/assets/movie2.webp', group: 'films', size: 'sm' },
-  { src: '/assets/movie4.webp', group: 'films', size: 'sm' },
-  { src: '/assets/movie6.webp', group: 'films', size: 'sm' },
-  // Artists / Albums / Songs
-  { src: '/assets/music4.webp', group: 'albums', size: 'lg' },
-  { src: '/assets/music9.webp', group: 'albums', size: 'md' },
-  { src: '/assets/music1.webp', group: 'albums', size: 'md' },
-  { src: '/assets/music2.webp', group: 'albums', size: 'sm' },
-  { src: '/assets/music6.webp', group: 'albums', size: 'sm' },
-  { src: '/assets/music7.webp', group: 'albums', size: 'sm' },
-  { src: '/assets/music10.webp', group: 'albums', size: 'sm' },
-  { src: '/assets/music3.webp', group: 'albums', size: 'sm' },
-  { src: '/assets/music5.webp', group: 'albums', size: 'sm' },
-  { src: '/assets/music8.webp', group: 'albums', size: 'sm' },
+  // Film / TV / Anime — real posters (Wikipedia infobox art), 2026-07-22.
+  // Siddharth's exact list: movies (in order), then TV, then anime. Posters now
+  // render at their natural shape (RisoExhibition dropped the forced aspect), so
+  // no `wide` flags. Desktop shows the first 10 (10 slots, posters[i % len]).
+  // Movies
+  { src: '/assets/redesign/posters/fight-club.webp', group: 'films', size: 'lg' },
+  { src: '/assets/redesign/posters/the-godfather.webp', group: 'films', size: 'md' },
+  { src: '/assets/redesign/posters/project-x.webp', group: 'films', size: 'md' },
+  { src: '/assets/redesign/posters/obsession.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/la-la-land.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/eternal-sunshine.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/up.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/the-wolf-of-wall-street.webp', group: 'films', size: 'sm' },
+  // TV
+  { src: '/assets/redesign/posters/game-of-thrones.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/the-office.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/how-i-met-your-mother.webp', group: 'films', size: 'sm' },
+  // Anime
+  { src: '/assets/redesign/posters/one-piece.webp', group: 'films', size: 'sm' },
+  { src: '/assets/redesign/posters/spirited-away.webp', group: 'films', size: 'sm' },
+  // Artists / Albums / Songs — real album art + artist press photos, 2026-07-23.
+  // Album covers first (Siddharth's order), then artist photos. Natural shapes.
+  // Album covers
+  { src: '/assets/redesign/posters/aalas-ka-pedh.webp', group: 'albums', size: 'lg' },
+  { src: '/assets/redesign/posters/graduation.webp', group: 'albums', size: 'md' },
+  { src: '/assets/redesign/posters/actual-life.webp', group: 'albums', size: 'md' },
+  { src: '/assets/redesign/posters/wish-you-were-here.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/dark-side-of-the-moon.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/am.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/damn.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/american-idiot.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/currents.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/kids.webp', group: 'albums', size: 'sm' },
+  // Artist photos
+  { src: '/assets/redesign/posters/nirvana.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/linkin-park.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/the-weeknd.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/kanye-west.webp', group: 'albums', size: 'sm' },
+  { src: '/assets/redesign/posters/skrillex.webp', group: 'albums', size: 'sm' },
   // Book
   { src: '/assets/book7.webp', group: 'books', size: 'lg' },
   { src: '/assets/book2.webp', group: 'books', size: 'md' },
@@ -119,15 +136,18 @@ export const EXHIBIT_ITEMS = [
   { src: '/assets/youtubeVid4.webp', group: 'videos', wide: true, size: 'sm' },
   { src: '/assets/youtubeVid6.webp', group: 'videos', wide: true, size: 'sm' },
   { src: '/assets/youtubeVid8.webp', group: 'videos', wide: true, size: 'sm' },
-  // Game
-  { src: '/assets/game5.jpg', group: 'games', size: 'lg' },
-  { src: '/assets/game11.jpg', group: 'games', size: 'md' },
-  { src: '/assets/game1.jpg', group: 'games', size: 'md' },
-  { src: '/assets/game2.jpg', group: 'games', size: 'sm' },
-  { src: '/assets/game4.jpg', group: 'games', size: 'sm' },
-  { src: '/assets/game7.jpg', group: 'games', size: 'sm' },
-  { src: '/assets/game9.jpg', group: 'games', size: 'sm' },
-  { src: '/assets/game3.jpg', group: 'games', size: 'sm' },
-  { src: '/assets/game6.jpg', group: 'games', size: 'sm' },
-  { src: '/assets/game8.jpg', group: 'games', size: 'sm' },
+  // Game — real cover / key art (Wikipedia infobox + official key art), 2026-07-23.
+  // Siddharth's order. Natural shapes; game covers are fair-use res (~250-290px).
+  { src: '/assets/redesign/posters/god-of-war.webp', group: 'games', size: 'lg' },
+  { src: '/assets/redesign/posters/valorant.webp', group: 'games', size: 'md' },
+  { src: '/assets/redesign/posters/red-dead-redemption-2.webp', group: 'games', size: 'md' },
+  { src: '/assets/redesign/posters/uncharted-4.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/forza-horizon-6.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/minecraft.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/portal-2.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/the-witcher-3.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/marvels-spider-man.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/god-hand.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/ghost-of-tsushima.webp', group: 'games', size: 'sm' },
+  { src: '/assets/redesign/posters/assassins-creed-ii.webp', group: 'games', size: 'sm' },
 ];
