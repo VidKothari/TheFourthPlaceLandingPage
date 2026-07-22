@@ -8,14 +8,15 @@ import AutoplayLoopVideo from './AutoplayLoopVideo';
 
 const clips = [
   {
-    // Reverted to the original clip July 16 — the riso re-render wasn't good enough to ship.
-    src: 'in-common-loop',
+    // July 23: rebuilt in Remotion as a 1:1 recreation of the app profile card.
+    src: 'meet-riso-loop',
     num: '02',
     title: 'Meet',
     caption: 'When someone’s collection overlaps yours, you see exactly what you share — weighted by rarity, not popularity.',
   },
   {
-    src: 'tastemap-riso-loop',
+    // July 23: reworked to mirror the real TasteMap — poster grid, gold shared frames, converge.
+    src: 'merge-riso-loop',
     num: '03',
     title: 'Merge',
     caption: 'Your collection becomes a constellation. Lay it over someone else’s, and what you share glows gold.',

@@ -7,6 +7,8 @@ import { Tastemap } from './Tastemap';
 import { LoopClose } from './LoopClose';
 import { ProfileShare } from './ProfileShare';
 import { CheckLater } from './CheckLater';
+import { Meet } from './Meet';
+import { Merge } from './Merge';
 
 // -Loop variants close back to frame 0 so the clips loop seamlessly on the page.
 const AddFlowLoop: React.FC = () => (
@@ -39,6 +41,16 @@ const CheckLaterLoop: React.FC = () => (
     <CheckLater />
   </LoopClose>
 );
+const MeetLoop: React.FC = () => (
+  <LoopClose fadeFrames={16}>
+    <Meet />
+  </LoopClose>
+);
+const MergeLoop: React.FC = () => (
+  <LoopClose fadeFrames={16}>
+    <Merge />
+  </LoopClose>
+);
 
 export const Root: React.FC = () => (
   <>
@@ -54,5 +66,9 @@ export const Root: React.FC = () => (
     <Composition id="ProfileShareLoop" component={ProfileShareLoop} durationInFrames={225} fps={30} width={900} height={1125} />
     <Composition id="CheckLater" component={CheckLater} durationInFrames={165} fps={30} width={900} height={1125} />
     <Composition id="CheckLaterLoop" component={CheckLaterLoop} durationInFrames={165} fps={30} width={900} height={1125} />
+    <Composition id="Meet" component={Meet} durationInFrames={165} fps={30} width={900} height={1125} />
+    <Composition id="MeetLoop" component={MeetLoop} durationInFrames={165} fps={30} width={900} height={1125} />
+    <Composition id="Merge" component={Merge} durationInFrames={165} fps={30} width={900} height={1125} />
+    <Composition id="MergeLoop" component={MergeLoop} durationInFrames={165} fps={30} width={900} height={1125} />
   </>
 );
