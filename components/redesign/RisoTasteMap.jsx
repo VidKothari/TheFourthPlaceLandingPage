@@ -201,14 +201,14 @@ export default function RisoTasteMap({ eyesTile }) {
           </div>
         </motion.div>
 
-        {/* The share card: your map travels. Cobalt, like the card in the artwork. */}
+        {/* The share card: your map travels. Paper object; cobalt demoted to stamp + rule. */}
         <motion.aside
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-5%' }}
           transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            background: INK.cobalt,
+            background: INK.paper,
             border: `3px solid ${INK.ink}`,
             boxShadow: '12px 12px 0 rgba(22,19,16,0.28)',
             padding: 'clamp(1.4rem, 2.2vw, 2rem)',
@@ -227,18 +227,21 @@ export default function RisoTasteMap({ eyesTile }) {
             <source src="/assets/demos/profile-share-loop.webm" type="video/webm" />
             <source src="/assets/demos/profile-share-loop.mp4" type="video/mp4" />
           </AutoplayLoopVideo>
-          <div>
-            <h3 style={{
-              fontFamily: 'var(--serif)', fontWeight: 400,
-              fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', lineHeight: 1.2,
-              color: INK.paper, marginBottom: '0.6rem', fontStyle: 'italic',
-            }}>
-              Your map travels.
-            </h3>
+          <div style={{ borderTop: `3px solid ${INK.cobalt}`, paddingTop: '1.1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.6rem' }}>
+              <span aria-hidden="true" style={{ width: '7px', height: '7px', background: INK.cobalt, flexShrink: 0 }} />
+              <h3 style={{
+                fontFamily: 'var(--serif)', fontWeight: 400,
+                fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', lineHeight: 1.2,
+                color: INK.ink, fontStyle: 'italic',
+              }}>
+                Your map travels.
+              </h3>
+            </div>
             <p style={{
               fontFamily: 'var(--sans)', fontWeight: 300,
               fontSize: '0.95rem', lineHeight: 1.65,
-              color: 'rgba(239,230,208,0.88)',
+              color: 'rgba(22,19,16,0.78)',
             }}>
               Your map and profile share as one link — drop it in a bio, a story,
               a chat. No screenshots, no explaining: anyone can walk through what

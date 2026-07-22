@@ -38,7 +38,7 @@ export default function RisoWaitlist({ waitlist }) {
       id="waitlist"
       className="riso-grain mobile-padding deferred-paint"
       style={{
-        background: INK.mustard,
+        background: INK.paper,
         padding: 'clamp(72px, 11vw, 170px) clamp(20px, 5vw, 60px)',
       }}
     >
@@ -77,8 +77,21 @@ export default function RisoWaitlist({ waitlist }) {
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div style={{ ...eyebrowStyle(INK.ink), opacity: 0.65, marginBottom: '1.5rem' }}>
-            The Waitlist
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
+            <span
+              style={{
+                ...eyebrowStyle(INK.paper),
+                fontSize: '0.7rem',
+                display: 'inline-block',
+                background: INK.ink,
+                color: INK.paper,
+                padding: '0.3rem 0.65rem',
+              }}
+            >
+              The Waitlist
+            </span>
+            {/* mustard demoted from field to stamp. */}
+            <span aria-hidden="true" style={{ width: '7px', height: '7px', background: INK.mustard }} />
           </div>
           <InkSettleHeading
             as="h2"
@@ -145,7 +158,7 @@ export default function RisoWaitlist({ waitlist }) {
                       display: 'flex',
                       alignItems: 'flex-end',
                       width: '100%',
-                      background: INK.paper,
+                      background: INK.paperDeep,
                       border: `3px solid ${INK.ink}`,
                       boxShadow: '7px 7px 0 rgba(22,19,16,0.3)',
                       padding: '0.9rem 1rem',
@@ -239,7 +252,7 @@ export default function RisoWaitlist({ waitlist }) {
                   key="success"
                   style={{
                     textAlign: 'left',
-                    background: INK.paper,
+                    background: INK.paperDeep,
                     border: `3px solid ${INK.ink}`,
                     boxShadow: '7px 7px 0 rgba(22,19,16,0.3)',
                     padding: '1.6rem 1.5rem',

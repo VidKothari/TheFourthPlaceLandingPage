@@ -13,6 +13,13 @@ export const INK = {
   paperDeep: '#e6dabe',
   ink: '#161310',
   bodyOnRed: '#fdf8ec',
+  // base/surface/bedRed come verbatim from the app's theme tokens
+  // (app/lib/theme.tsx + riso.tsx in the sibling app repo).
+  base: '#0a0a09',      // app gallery ground
+  surface: '#141312',
+  bedRed: '#1e1210',
+  textOnDark: 'rgba(255,255,255,0.85)',
+  bodyOnDark: 'rgba(255,255,255,0.62)',
 };
 
 // Hard cut between two field colors: outgoing ink, registration rule, incoming ink.

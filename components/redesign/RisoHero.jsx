@@ -3,8 +3,7 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import { MoveRight } from 'lucide-react';
-import { INK, cutout, eyebrowStyle } from './shared';
-import InkSettleHeading from './InkSettle';
+import { INK, eyebrowStyle } from './shared';
 
 const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
 
@@ -41,7 +40,7 @@ function Ctas({ cta, display }) {
           height: '3.1rem', padding: '0 2rem',
           background: cta.bg, color: cta.fg,
           border: `2px solid ${INK.ink}`,
-          boxShadow: '5px 5px 0 rgba(22,19,16,0.35)',
+          boxShadow: '5px 5px 0 rgba(239,230,208,0.14)',
           fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.875rem',
           letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none',
         }}
@@ -63,7 +62,7 @@ function Ctas({ cta, display }) {
       <style jsx>{`
         .riso-cta:active {
           transform: translate(2px, 2px);
-          box-shadow: 3px 3px 0 rgba(22, 19, 16, 0.35) !important;
+          box-shadow: 3px 3px 0 rgba(239, 230, 208, 0.14) !important;
         }
       `}</style>
     </div>
@@ -79,26 +78,34 @@ function HeroText({ hero }) {
       transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
     >
-      <div style={{ ...eyebrowStyle(display), opacity: 0.85, marginBottom: '1.6rem' }}>
+      <div
+        style={{
+          ...eyebrowStyle(INK.ink),
+          fontSize: '0.7rem',
+          display: 'inline-block',
+          alignSelf: 'flex-start',
+          background: INK.paper,
+          color: INK.ink,
+          padding: '0.3rem 0.65rem',
+          marginBottom: '1.6rem',
+        }}
+      >
         A digital museum of yourself
       </div>
-      <InkSettleHeading
-        as="h1"
-        ink={INK.magenta}
+      <h1
         style={{
           fontFamily: 'var(--serif)',
-          fontWeight: 400,
+          fontWeight: 300,
           fontSize: 'clamp(2.5rem, 5.2vw, 4.4rem)',
           lineHeight: 1.08,
           color: display,
           marginBottom: '1.4rem',
           textWrap: 'balance',
-          paddingBottom: '0.1em',
         }}
       >
         Find people whose minds<br />
         <em style={{ fontStyle: 'italic' }}>look like yours.</em>
-      </InkSettleHeading>
+      </h1>
       <p style={{
         fontFamily: 'var(--sans)',
         fontWeight: 300,
@@ -112,6 +119,15 @@ function HeroText({ hero }) {
         made you — and a way of finding the people whose rooms rhyme with yours.
       </p>
       <Ctas cta={hero.cta} display={display} />
+      {/* printer's colour bar — the app's media-type inks. */}
+      <div
+        aria-hidden="true"
+        style={{ display: 'flex', gap: '6px', marginTop: '2.6rem', opacity: 0.9 }}
+      >
+        {['#c6e02e', '#2b3fb8', '#e5399f', '#c8291e', '#e8c53a', '#ef6a55'].map((c) => (
+          <span key={c} style={{ width: '6px', height: '6px', background: c }} />
+        ))}
+      </div>
     </motion.div>
   );
 }
@@ -233,7 +249,7 @@ export default function RisoHero({ hero }) {
   const reverse = hero.layout === 'split-reverse';
   return (
     <section
-      className="riso-grain"
+      className="riso-halftone"
       style={{ background: hero.field, minHeight: '100dvh', display: 'flex', alignItems: 'center' }}
     >
       <div
@@ -306,31 +322,54 @@ function HeroArt({ hero }) {
       transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
       style={{ justifySelf: 'center', width: hero.video ? 'min(36rem, 100%)' : 'min(30rem, 100%)' }}
     >
-      {hero.video ? (
-        /* Films opt into looping only when their first and last frames match. */
-        <video
-          ref={videoRef}
-          muted
-          loop={hero.video.loop}
-          playsInline
-          preload="metadata"
-          poster={hero.video.poster}
-          aria-label={hero.imgAlt}
-          style={{ ...cutout(), aspectRatio: hero.video.aspect || '1 / 1', objectFit: 'cover' }}
-        >
-          {motionAllowed && hero.video.webm ? <source src={hero.video.webm} type="video/webm" /> : null}
-          {motionAllowed && hero.video.mobileMp4 ? (
-            <source src={hero.video.mobileMp4} type="video/mp4" media="(max-width: 860px)" />
-          ) : null}
-          {motionAllowed ? <source src={hero.video.mp4} type="video/mp4" /> : null}
-        </video>
-      ) : (
-        <img
-          src={hero.img}
-          alt={hero.imgAlt}
-          style={{ ...cutout(), aspectRatio: hero.imgRatio, objectFit: 'cover' }}
-        />
-      )}
+      {/* The bed is how the app mats art: artwork floats on a deep tint of its ink. */}
+      <div
+        style={{
+          background: INK.bedRed,
+          padding: 'clamp(10px, 1.4vw, 18px)',
+          border: '1px solid rgba(255,255,255,0.13)',
+        }}
+      >
+        {hero.video ? (
+          /* Films opt into looping only when their first and last frames match. */
+          <video
+            ref={videoRef}
+            muted
+            loop={hero.video.loop}
+            playsInline
+            preload="metadata"
+            poster={hero.video.poster}
+            aria-label={hero.imgAlt}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: 'auto',
+              aspectRatio: hero.video.aspect || '1 / 1',
+              objectFit: 'cover',
+              border: '1px solid rgba(255,255,255,0.10)',
+            }}
+          >
+            {motionAllowed && hero.video.webm ? <source src={hero.video.webm} type="video/webm" /> : null}
+            {motionAllowed && hero.video.mobileMp4 ? (
+              <source src={hero.video.mobileMp4} type="video/mp4" media="(max-width: 860px)" />
+            ) : null}
+            {motionAllowed ? <source src={hero.video.mp4} type="video/mp4" /> : null}
+          </video>
+        ) : (
+          <img
+            src={hero.img}
+            alt={hero.imgAlt}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: 'auto',
+              aspectRatio: hero.imgRatio,
+              objectFit: 'cover',
+              border: '1px solid rgba(255,255,255,0.10)',
+            }}
+          />
+        )}
+      </div>
     </motion.div>
   );
 }
