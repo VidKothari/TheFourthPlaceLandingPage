@@ -1348,7 +1348,7 @@
     </div>
     <div class="hw">
       <div class="hw-n n3">3</div>
-      <div class="hw-t">Hit Merge — shared nodes glow gold &amp; pulse</div>
+      <div class="hw-t">Hit Merge — shared nodes get a gold foil frame</div>
     </div>
   </div>
 
@@ -1433,14 +1433,6 @@
     const ALEX_DESAT = _mix(0xe5399f, 0xe4ddce, 0.4)
     const JORDAN_DESAT = _mix(0x2b3fb8, 0xe4ddce, 0.4)
     const GOLD_DESAT = new THREE.Color(0xcaa24a)
-    const GLOW_TEX = (() => {
-      const s = 128, cv = document.createElement("canvas"); cv.width = cv.height = s
-      const g = cv.getContext("2d")
-      const r = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2)
-      r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.4, "rgba(255,255,255,0.5)"); r.addColorStop(1, "rgba(255,255,255,0)")
-      g.fillStyle = r; g.fillRect(0, 0, s, s)
-      return new THREE.CanvasTexture(cv)
-    })()
 
     const ALL = [
       { id: "blade-runner", title: "Blade Runner 2049", type: "Movie", year: 2017, rating: 9.1, tags: ["sci-fi", "philosophy"], desc: "A haunting neo-noir asking what it means to be human in a world of artificial beings." },
@@ -1561,8 +1553,6 @@
 
     const composer = new EffectComposer(renderer)
     composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.0, 0.4, 1.0)
-    composer.addPass(bloom)
 
     // Stub — no OrbitControls. We rotate the universe group on drag, zoom camera on scroll.
     // This eliminates any orbit-target lock entirely.
@@ -1674,28 +1664,16 @@
 
     function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
 
-    const clusters = [], nebulas = []
+    const clusters = []
     TAGS.forEach((tag, i) => {
       const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2, r = 1150
       const x = r * Math.sin(phi) * Math.cos(theta), y = r * Math.sin(phi) * Math.sin(theta), z = r * Math.cos(phi)
       const m = new THREE.Mesh(new THREE.SphereGeometry(14, 24, 24), new THREE.MeshBasicMaterial({ color: desatColor(COLORS[i]).getHex() }))
       m.position.set(x, y, z); m.userData.tag = tag; m.userData.tagIndex = i; m.userData.isClusterNode = true
       universe.add(m); clusters.push(m)
-      const pos = [], col = []
-      for (let j = 0; j < 45000; j++) {
-        pos.push(x + gauss() * 315, y + gauss() * 168, z + gauss() * 315)
-        const c = desatColor(COLORS[i]); col.push(c.r, c.g, c.b)
-      }
-      const geo = new THREE.BufferGeometry()
-      geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3))
-      geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3))
-      const tex = new THREE.TextureLoader().load("https://threejs.org/examples/textures/sprites/disc.png")
-      const mat = new THREE.PointsMaterial({ size: 5.5, vertexColors: true, transparent: true, opacity: 0.06, blending: THREE.NormalBlending, depthWrite: false, map: tex })
-      const cloud = new THREE.Points(geo, mat); universe.add(cloud); nebulas.push(cloud)
     })
 
     const nodes = []
-    const halos = []
     const texLoader = new THREE.TextureLoader()
     const _thumb = p => "assets/thumbs/" + p + ".webp"
     function _pool(prefix, n) { const a = []; for (let i = 1; i <= n; i++) a.push(_thumb(prefix + i)); return a }
@@ -1720,41 +1698,48 @@
       mesh.renderOrder = 1
       const ci = TAGS.indexOf(d.tags[0]); const cidx = ci < 0 ? 0 : ci
       const desat = desatColor(COLORS[cidx])
-      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW_TEX, color: desat, transparent: true, depthWrite: false, opacity: 0.5, blending: THREE.NormalBlending }))
-      const hs = Math.max(w, h) * 2.0
-      halo.scale.set(hs, hs, 1); halo.renderOrder = -1; halo.raycast = () => { }
-      mesh.userData = { ...d, poster: posterPath, isShared, halo, clusterColorDesat: desat, baseW: w, baseH: h, target: new THREE.Vector3(), homePos: new THREE.Vector3() }
-      universe.add(halo); universe.add(mesh)
-      nodes.push(mesh); halos.push(halo)
+      mesh.userData = { ...d, poster: posterPath, isShared, clusterColorDesat: desat, baseW: w, baseH: h, target: new THREE.Vector3(), homePos: new THREE.Vector3() }
+      universe.add(mesh)
+      nodes.push(mesh)
     })
     nodes.forEach(n => {
       const ci = TAGS.indexOf(n.userData.tags[0]); const cl = clusters[ci < 0 ? 0 : ci]
       const sp2 = n.userData.isShared ? 680 : 860
       n.position.set(cl.position.x + THREE.MathUtils.randFloatSpread(sp2), cl.position.y + THREE.MathUtils.randFloatSpread(sp2), cl.position.z + THREE.MathUtils.randFloatSpread(sp2))
-      n.userData.halo.position.copy(n.position)
       n.userData.homePos.copy(n.position)
       n.userData.target.copy(n.position)
     })
 
-    /* Shared-item decorations (merged mode): ink frame + SHARED chip + gathered layout */
+    /* Shared-item decorations (merged mode): crisp old-gold foil frame + SHARED chip + gathered layout.
+       Old-gold #c9a94e (desaturated, foil not neon); no glow — a thin stamped edge only. */
+    const GOLD_FOIL = "#c9a94e", GOLD_FOIL_DEEP = "#a8863a"
     function frameTex(aspect) {
-      const w = 256, h = Math.round(256 * aspect)
+      // High-res canvas so the thin stroke stays crisp when the sprite scales up.
+      const w = 512, h = Math.round(512 * aspect)
       const cv = document.createElement("canvas"); cv.width = w; cv.height = h
       const g = cv.getContext("2d")
-      g.strokeStyle = "rgba(255,255,255,0.85)"; g.lineWidth = 16
-      g.strokeRect(8, 8, w - 16, h - 16)
+      // One tight, low-alpha edge-light just outside the crisp line (foil catch),
+      // then the crisp hairline frame itself. No blur, no halo.
+      g.strokeStyle = "rgba(201,169,78,0.18)"; g.lineWidth = 20
+      g.strokeRect(20, 20, w - 40, h - 40)
+      g.strokeStyle = GOLD_FOIL; g.lineWidth = 9
+      g.strokeRect(20, 20, w - 40, h - 40)
       return new THREE.CanvasTexture(cv)
     }
     const FRAME_P = frameTex(1.46), FRAME_S = frameTex(1)
     const BADGE_TEX = (() => {
-      const cv = document.createElement("canvas"); cv.width = 288; cv.height = 84
+      // Foil-stamp chip: subtle gold sheen, dark ink lettering, thin deep-gold rule.
+      const W = 432, H = 120
+      const cv = document.createElement("canvas"); cv.width = W; cv.height = H
       const g = cv.getContext("2d")
-      g.fillStyle = "#d8b24a"; g.fillRect(0, 0, 288, 84)
-      g.strokeStyle = "#111110"; g.lineWidth = 6; g.strokeRect(3, 3, 282, 78)
-      g.fillStyle = "#ffffff"; g.textAlign = "center"; g.textBaseline = "middle"
+      const grad = g.createLinearGradient(0, 0, 0, H)
+      grad.addColorStop(0, "#d5b559"); grad.addColorStop(0.5, GOLD_FOIL); grad.addColorStop(1, "#bd9c42")
+      g.fillStyle = grad; g.fillRect(0, 0, W, H)
+      g.strokeStyle = GOLD_FOIL_DEEP; g.lineWidth = 3; g.strokeRect(5, 5, W - 10, H - 10)
+      g.fillStyle = "#1b1a18"; g.textAlign = "center"; g.textBaseline = "middle"
       try { g.letterSpacing = "10px" } catch (e) { }
-      g.font = "700 38px Jost, sans-serif"
-      g.fillText("SHARED", 149, 46)
+      g.font = "600 46px Jost, sans-serif"
+      g.fillText("✦ SHARED", W / 2 + 5, H / 2 + 2)
       return new THREE.CanvasTexture(cv)
     })()
     const sharedNodes = nodes.filter(n => n.userData.isShared)
@@ -1767,7 +1752,7 @@
       const frame = new THREE.Sprite(new THREE.SpriteMaterial({ map: u.baseH > u.baseW ? FRAME_P : FRAME_S, transparent: true, depthWrite: false, depthTest: false }))
       frame.scale.set(mw * 1.12, mh * 1.12, 1); frame.renderOrder = 3; frame.visible = false; frame.raycast = () => { }
       const badge = new THREE.Sprite(new THREE.SpriteMaterial({ map: BADGE_TEX, transparent: true, depthWrite: false, depthTest: false }))
-      const bw = 78, bh = 78 * 84 / 288
+      const bw = 78, bh = 78 * 120 / 432
       badge.scale.set(bw, bh, 1)
       badge.center.set(0.5, 1 + (mh / 2 + 8) / bh)
       badge.renderOrder = 3; badge.visible = false; badge.raycast = () => { }
@@ -1802,8 +1787,8 @@
       })
     })
     nodes.filter(n => n.userData.isShared).forEach(n => {
-      addEdge(avatarA, n, 0xd8b24a, 0.55, "shared")
-      addEdge(avatarB, n, 0xd8b24a, 0.55, "shared")
+      addEdge(avatarA, n, 0xc9a94e, 0.24, "shared")
+      addEdge(avatarB, n, 0xc9a94e, 0.24, "shared")
     })
     function updateEdgeGeometries() {
       edges.forEach(e => {
@@ -1820,7 +1805,7 @@
     const legItems = []
     TAGS.forEach((tag, i) => {
       const el = document.createElement("div"); el.className = "leg"
-      el.innerHTML = `<div class="leg-dot" style="background:${TCSS[i]};box-shadow:0 0 8px ${TCSS[i]}66"></div><span class="leg-lbl">${tag}</span>`
+      el.innerHTML = `<div class="leg-dot" style="background:${TCSS[i]}"></div><span class="leg-lbl">${tag}</span>`
       el.addEventListener("click", () => zoomToCluster(i))
       legEl.appendChild(el)
       legItems.push(el)
@@ -1908,15 +1893,10 @@
       focusedTag = TAGS[tagIndex]
       applyNodeVisibility()
 
-      const flash = document.getElementById("zoom-flash")
-
       // Phase 1: pull back wide
       animateCamDistTo(2200, 700, () => {
         // Phase 2: rotate universe to face cluster + zoom in
-        animateToCluster(tagIndex, () => {
-          flash.classList.add("on")
-          setTimeout(() => flash.classList.remove("on"), 180)
-        })
+        animateToCluster(tagIndex)
       })
     }
 
@@ -1958,34 +1938,21 @@
     function getNodeBaseColor(n) {
       return new THREE.Color(0xffffff)
     }
-    function haloColorFor(n) {
-      const id = n.userData.id
-      if (mode === "merged") {
-        if (SHARED_IDS.has(id)) return GOLD_DESAT
-        if (ALEX_IDS.has(id)) return ALEX_DESAT
-        return JORDAN_DESAT
-      }
-      return n.userData.clusterColorDesat
-    }
-
     function applyNodeVisibility() {
       nodes.forEach(n => {
         const u = n.userData
         const id = u.id
-        const halo = u.halo
         let modeVisible
         if (mode === "alex") modeVisible = ALEX_IDS.has(id)
         else if (mode === "jordan") modeVisible = JORDAN_IDS.has(id)
         else modeVisible = true
         n.visible = modeVisible
-        if (halo) halo.visible = modeVisible
         if (u.frame) u.frame.visible = false
         if (u.badge) u.badge.visible = false
         if (!modeVisible) return
 
         const isS = SHARED_IDS.has(id) && mode === "merged"
         n.material.color.setRGB(1, 1, 1)
-        if (halo && !isS) halo.material.color.copy(haloColorFor(n))
 
         let vis = 1
         if (focusedNode) {
@@ -1996,10 +1963,8 @@
         // merged mode: non-shared items recede so shared taste is countable
         if (mode === "merged" && !isS && vis === 1) { vis = 0.3; n.material.color.setHex(0xbbbbb8) }
         n.material.opacity = vis; n.material.transparent = true
-        if (halo) halo.material.opacity = vis < 0.5 ? 0.03 : (mode === "merged" && !isS ? 0.12 : 0.5)
         const sc = isS ? 1.4 : 1
         n.scale.set(u.baseW * sc, u.baseH * sc, 1)
-        if (halo) { const hs = Math.max(u.baseW, u.baseH) * sc * 2.0; halo.scale.set(hs, hs, 1) }
         if (isS && vis >= 0.5) { if (u.frame) u.frame.visible = true; if (u.badge) u.badge.visible = true }
       })
       clusters.forEach((c, i) => {
@@ -2010,15 +1975,6 @@
           c.material.opacity = TAGS[i] === focusedTag ? 1 : 0.07; c.material.transparent = true
         } else {
           c.material.opacity = 1; c.material.transparent = false
-        }
-      })
-      nebulas.forEach((nb, i) => {
-        if (focusedNode) {
-          nb.material.opacity = focusedNode.userData.tags.includes(TAGS[i]) ? 0.07 : 0.01
-        } else if (focusedTag) {
-          nb.material.opacity = TAGS[i] === focusedTag ? 0.07 : 0.01
-        } else {
-          nb.material.opacity = 0.06
         }
       })
       edges.forEach(e => {
@@ -2033,7 +1989,16 @@
         })
         if (!endVisible) { e.visible = false; return }
         if (kind === "long") {
-          e.visible = !!(focusedNode && (a === focusedNode || b === focusedNode))
+          // node → cluster-hub spokes: visible at rest (low) so nothing floats
+          // unanchored; brighter on focus. Hidden in merged (items regroup).
+          if (mode === "merged") { e.visible = false; return }
+          if (focusedNode) {
+            e.visible = (a === focusedNode || b === focusedNode); e.material.opacity = 0.42
+          } else if (focusedTag) {
+            e.visible = ends.some(o => o.userData.tags.includes(focusedTag)); e.material.opacity = 0.22
+          } else {
+            e.visible = true; e.material.opacity = 0.22
+          }
           return
         }
         // near-neighbour edges
@@ -2042,10 +2007,10 @@
           e.visible = (a === focusedNode || b === focusedNode)
         } else if (focusedTag) {
           e.visible = ends.some(o => o.userData.tags.includes(focusedTag))
-          e.material.opacity = 0.16
+          e.material.opacity = 0.2
         } else {
           e.visible = true
-          e.material.opacity = mode === "merged" ? 0.07 : 0.12
+          e.material.opacity = mode === "merged" ? 0.07 : 0.26
         }
       })
     }
@@ -2080,7 +2045,7 @@
         return b.rating - a.rating
       })
 
-      document.getElementById("cc-dot").style.cssText = `background:${color};box-shadow:0 0 14px ${color}88;width:10px;height:10px;border-radius:50%`
+      document.getElementById("cc-dot").style.cssText = `background:${color};width:10px;height:10px;border-radius:50%`
       document.getElementById("cc-tag").textContent = tag
       document.getElementById("cc-tag").style.color = color
       document.getElementById("cc-count").textContent = `${items.length} works in this cluster`
@@ -2359,21 +2324,11 @@
       nodes.forEach(n => {
         const u = n.userData
         if (u.target && n.position.distanceToSquared(u.target) > 0.25) n.position.lerp(u.target, 0.07)
-        if (u.halo) u.halo.position.copy(n.position)
         if (u.frame) u.frame.position.copy(n.position)
         if (u.badge) u.badge.position.copy(n.position)
       })
       updateEdgeGeometries()
       if (performance.now() < settleUntil && !_drag && !camAnim) { universe.rotation.x *= 0.9; universe.rotation.y *= 0.9 }
-      if (mode === "merged") {
-        const pulse = 0.6 + Math.sin(T * 2.8) * 0.4
-        nodes.forEach(n => {
-          if (n.userData.isShared && n.visible && n.userData.halo) {
-            n.userData.halo.material.color.setRGB(0.79 * pulse + 0.12, 0.62 * pulse + 0.08, 0.29 * pulse + 0.04)
-            n.userData.halo.material.opacity = 0.3 + pulse * 0.45
-          }
-        })
-      }
       clusters.forEach((c, i) => {
         const s = 1 + Math.sin(T * 1.6 + i * 0.8) * 0.08
         c.scale.setScalar(s)

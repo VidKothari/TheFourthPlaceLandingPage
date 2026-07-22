@@ -20,8 +20,8 @@ export default function RisoLanding({ variant }) {
       <InkCut from={INK.base} to={INK.paper} />
       {/* Marquee remains available as a component but is intentionally off-page. */}
       <RisoFeed />
-      <InkCut from={INK.paper} to={INK.paperDeep} />
-      <RisoTasteMap eyesTile={variant.eyesTile} />
+      <InkCut from={INK.paper} to={INK.base} />
+      <RisoTasteMap />
       <RisoExhibition />
       <RisoAnything />
       <RisoPractice />

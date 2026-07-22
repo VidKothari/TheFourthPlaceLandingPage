@@ -18,7 +18,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const FRAMES_DIR = path.join(__dirname, '.frames');
 const OUT_DIR = path.join(ROOT, 'public', 'assets', 'redesign');
-const URL = 'http://localhost:3000/tastemap-preview-riso.html?record=1';
+// PORTRAIT=1 records a phone-composed cut from the DARK map (used inside the
+// taste-map section's share phone). The perspective camera's fov is vertical,
+// so a portrait viewport narrows the horizontal field — camera distances are
+// scaled up to compensate (see cues).
+const PORTRAIT = !!process.env.PORTRAIT;
+const URL = PORTRAIT
+  ? 'http://localhost:3000/tastemap-preview-dark.html?record=1'
+  : 'http://localhost:3000/tastemap-preview-riso.html?record=1';
 const FFMPEG = '/opt/homebrew/bin/ffmpeg';
 
 const CHROME_CANDIDATES = [
@@ -31,7 +38,9 @@ if (!executablePath) throw new Error('No Chrome for Testing binary found in pupp
 
 const TEST = process.argv.includes('--test');
 
-const VIEWPORT = { width: 1600, height: 1200, deviceScaleFactor: 1 };
+const VIEWPORT = PORTRAIT
+  ? { width: 900, height: 1500, deviceScaleFactor: 1 }
+  : { width: 1600, height: 1200, deviceScaleFactor: 1 };
 const FPS = 30;
 const TOTAL = 250;               // ~8.3s
 const MS_PER_FRAME = 1000 / FPS; // 33.333
@@ -52,12 +61,21 @@ const ROT_X_AMP = 0.09;
 // The constellation is hollow — nodes sit in clusters ~1150 out from an empty
 // centre — so the float breathes within 1600–1850 (never dive into the middle).
 // The merge then pulls into the shared core.
-const cues = [
-  { f: 0,   run: (d) => d.animateCamDistTo(1600, 1600) },
-  { f: 60,  run: (d) => d.animateCamDistTo(1820, 1500) },
-  { f: 105, run: (d) => d.setMode('merged') },
-  { f: 118, run: (d) => d.animateCamDistTo(1450, 1600) },
-];
+const cues = PORTRAIT
+  ? [
+      // Portrait: distances scaled for the narrow horizontal field; the merge
+      // frames the shared grid tight (avatars breathe at the edges).
+      { f: 0,   run: (d) => d.animateCamDistTo(2450, 1600) },
+      { f: 60,  run: (d) => d.animateCamDistTo(2750, 1500) },
+      { f: 105, run: (d) => d.setMode('merged') },
+      { f: 118, run: (d) => d.animateCamDistTo(2050, 1600) },
+    ]
+  : [
+      { f: 0,   run: (d) => d.animateCamDistTo(1600, 1600) },
+      { f: 60,  run: (d) => d.animateCamDistTo(1820, 1500) },
+      { f: 105, run: (d) => d.setMode('merged') },
+      { f: 118, run: (d) => d.animateCamDistTo(1450, 1600) },
+    ];
 
 async function main() {
   fs.rmSync(FRAMES_DIR, { recursive: true, force: true });
@@ -114,8 +132,8 @@ async function main() {
   console.log('canvas non-trivial:', notBlack);
 
   if (TEST) {
-    // Drive to a representative mid-merge frame and grab one shot.
-    await driveTo(page, 130);
+    // Drive to a representative frame (TESTF env, default mid-merge) and shoot.
+    await driveTo(page, parseInt(process.env.TESTF || '130', 10));
     await page.screenshot({ path: path.join(FRAMES_DIR, 'test.png') });
     console.log('wrote test.png');
     await browser.close();
@@ -164,15 +182,16 @@ async function stepFrame(page, f, fired) {
 }
 
 function encode() {
-  const mp4 = path.join(OUT_DIR, 'tastemap-merge.mp4');
-  const poster = path.join(OUT_DIR, 'tastemap-merge-poster.webp');
+  const base = PORTRAIT ? 'tastemap-merge-phone' : 'tastemap-merge';
+  const mp4 = path.join(OUT_DIR, `${base}.mp4`);
+  const poster = path.join(OUT_DIR, `${base}-poster.webp`);
   const crf = process.env.CRF || '29'; // ~2.4MB at 1600x1200 — under the 2.5MB budget.
 
   console.log('encoding mp4 (crf', crf, ')...');
   run(FFMPEG, [
     '-y', '-framerate', String(FPS),
     '-i', path.join(FRAMES_DIR, 'f%04d.png'),
-    '-vf', 'scale=1600:-2:flags=lanczos',
+    '-vf', PORTRAIT ? 'scale=900:-2:flags=lanczos' : 'scale=1600:-2:flags=lanczos',
     '-c:v', 'libx264', '-pix_fmt', 'yuv420p',
     '-crf', crf, '-preset', 'slow',
     '-movflags', '+faststart',
@@ -184,7 +203,7 @@ function encode() {
   run(FFMPEG, [
     '-y',
     '-i', path.join(FRAMES_DIR, `f${pad(TOTAL - 1)}.png`),
-    '-vf', 'scale=1600:-2:flags=lanczos',
+    '-vf', PORTRAIT ? 'scale=900:-2:flags=lanczos' : 'scale=1600:-2:flags=lanczos',
     '-c:v', 'libwebp', '-quality', '85',
     poster,
   ]);

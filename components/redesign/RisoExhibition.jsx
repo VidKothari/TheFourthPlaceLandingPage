@@ -236,19 +236,24 @@ function ExhibitHeader({ reduce, activeGroup }) {
         }}
       >
         <span style={{ whiteSpace: 'nowrap' }}>Add your favourite</span>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.em
-            key={word}
-            className="exh-swap"
-            style={{ fontStyle: 'italic', color: INK.paper, display: 'block' }}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={{ duration: reduce ? 0.2 : 0.28, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {word}
-          </motion.em>
-        </AnimatePresence>
+        {/* Fixed-height holder: the swapping word is absolutely positioned so
+            the header never collapses mid-swap and nothing below shifts —
+            regardless of word length or the exit/enter gap. */}
+        <span className="exh-swap-hold">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.em
+              key={word}
+              className="exh-swap"
+              style={{ fontStyle: 'italic', color: INK.paper }}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+              transition={{ duration: reduce ? 0.2 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="exh-swap-inner">{word}</span>
+            </motion.em>
+          </AnimatePresence>
+        </span>
       </h2>
       <p className="exh-sub">Save what stayed with you. Say why.</p>
     </motion.header>
@@ -531,12 +536,36 @@ export default function RisoExhibition() {
         .exh-card-hold {
           width: 100%;
         }
-        /* Desktop: the swapping family word never wraps — long ones (YouTube
-           Videos and Channels) overflow the centre column symmetrically, which
-           the halo keeps legible over the posters. Mobile still wraps. */
-        @media (min-width: 861px) {
+        /* The swap word lives on one reserved line: the holder keeps a fixed
+           height, the word is absolute (out of flow) and never wraps — long
+           ones (YouTube Videos and Channels) overflow the centre column
+           symmetrically, which the halo keeps legible over the posters. */
+        .exh-swap-hold {
+          display: block;
+          position: relative;
+          height: 1.2em;
+        }
+        .exh-swap {
+          position: absolute;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+        }
+        /* Intrinsic-width inner span: flex centering overflows BOTH sides
+           equally (text-align: center spills one side when wider than the
+           box — the misalignment Siddharth flagged). */
+        .exh-swap-inner {
+          flex: 0 0 auto;
+          white-space: nowrap;
+        }
+        @media (max-width: 860px) {
+          /* Slightly smaller swap line on phones so the longest word still
+             fits one line; left-aligned to match the mobile header. */
           .exh-swap {
-            white-space: nowrap;
+            font-size: 0.86em;
+            line-height: 1.2;
+            justify-content: flex-start;
           }
         }
 
