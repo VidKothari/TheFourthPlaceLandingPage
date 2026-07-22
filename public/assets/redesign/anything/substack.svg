@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400">
+  <rect width="300" height="400" fill="#efe6d0"/>
+  <!-- official Substack mark + wordmark -->
+  <g transform="translate(28,24) scale(1.5)" fill="#FF6719">
+    <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>
+  </g>
+  <text x="76" y="52" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="bold" fill="#161310">Substack</text>
+  <!-- publication name -->
+  <rect x="28" y="84" width="120" height="8" fill="rgba(22,19,16,0.25)"/>
+  <!-- headline -->
+  <text x="28" y="136" font-family="Georgia, serif" font-size="30" fill="#161310">The rooms</text>
+  <text x="28" y="172" font-family="Georgia, serif" font-size="30" fill="#161310">we keep.</text>
+  <!-- body bars -->
+  <g fill="rgba(22,19,16,0.18)">
+    <rect x="28" y="200" width="244" height="7"/>
+    <rect x="28" y="216" width="244" height="7"/>
+    <rect x="28" y="232" width="198" height="7"/>
+    <rect x="28" y="256" width="244" height="7"/>
+    <rect x="28" y="272" width="226" height="7"/>
+    <rect x="28" y="288" width="150" height="7"/>
+  </g>
+  <rect x="28" y="318" width="244" height="1" fill="rgba(22,19,16,0.2)"/>
+  <rect x="28" y="338" width="126" height="38" fill="#FF6719"/>
+  <text x="91" y="362" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#efe6d0">Subscribe</text>
+</svg>

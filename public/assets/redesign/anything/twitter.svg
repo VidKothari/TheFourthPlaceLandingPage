@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400">
+  <rect width="300" height="400" fill="#efe6d0"/>
+  <!-- official Twitter bird -->
+  <g transform="translate(240,22) scale(1.4)" fill="#1d9bf0">
+    <path d="M21.543 7.104c.015.211.015.423.015.636 0 6.507-4.954 14.01-14.01 14.01v-.003A13.94 13.94 0 0 1 0 19.539a9.88 9.88 0 0 0 7.287-2.041 4.93 4.93 0 0 1-4.6-3.42 4.916 4.916 0 0 0 2.223-.084A4.926 4.926 0 0 1 .96 9.167v-.062a4.887 4.887 0 0 0 2.235.616A4.928 4.928 0 0 1 1.67 3.148 13.98 13.98 0 0 0 11.82 8.292a4.929 4.929 0 0 1 8.39-4.49 9.868 9.868 0 0 0 3.128-1.196 4.941 4.941 0 0 1-2.165 2.724A9.828 9.828 0 0 0 24 4.555a10.019 10.019 0 0 1-2.457 2.549z"/>
+  </g>
+  <!-- author row -->
+  <circle cx="46" cy="74" r="18" fill="rgba(22,19,16,0.25)"/>
+  <rect x="76" y="60" width="100" height="9" fill="rgba(22,19,16,0.3)"/>
+  <circle cx="190" cy="64" r="8" fill="#1d9bf0"/>
+  <path d="M186 64 l3 3 l6 -6" fill="none" stroke="#efe6d0" stroke-width="2"/>
+  <rect x="76" y="76" width="70" height="7" fill="rgba(22,19,16,0.15)"/>
+  <!-- tweet text -->
+  <text x="28" y="130" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#161310">some albums are</text>
+  <text x="28" y="153" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#161310">load-bearing</text>
+  <g fill="rgba(22,19,16,0.18)">
+    <rect x="28" y="176" width="244" height="7"/>
+    <rect x="28" y="192" width="208" height="7"/>
+  </g>
+  <!-- quoted card -->
+  <rect x="28" y="222" width="244" height="92" fill="none" stroke="rgba(22,19,16,0.25)"/>
+  <rect x="44" y="240" width="120" height="7" fill="rgba(22,19,16,0.25)"/>
+  <rect x="44" y="256" width="196" height="6" fill="rgba(22,19,16,0.15)"/>
+  <rect x="44" y="270" width="196" height="6" fill="rgba(22,19,16,0.15)"/>
+  <rect x="44" y="284" width="140" height="6" fill="rgba(22,19,16,0.15)"/>
+  <!-- actions -->
+  <g fill="none" stroke="rgba(22,19,16,0.5)" stroke-width="2">
+    <path d="M38 348 a12 12 0 1 1 -4 23 l-8 4 2 -9 a12 12 0 0 1 10 -18 z"/>
+    <path d="M104 352 h20 l-5 -6 m5 6 l-5 6 M136 366 h-20 l5 -6 m-5 6 l5 6"/>
+    <path d="M196 350 c-6 -7 -16 -4 -16 4 c0 7 9 12 16 18 c7 -6 16 -11 16 -18 c0 -8 -10 -11 -16 -4 z"/>
+  </g>
+</svg>

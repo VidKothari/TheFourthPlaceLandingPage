@@ -1,7 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client';
-import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   AnimatePresence,
   motion,
@@ -9,135 +7,315 @@ import {
   useReducedMotion,
   useScroll,
 } from 'framer-motion';
-import { INK, eyebrowStyle } from './shared';
-import InkSettleHeading from './InkSettle';
+import { INK } from './shared';
 import { EXHIBIT_CARDS, EXHIBIT_ITEMS } from './variants';
-import AutoplayLoopVideo from './AutoplayLoopVideo';
 
-const keepClip = {
-  src: 'add-flow-loop',
-  title: 'Keep',
-  caption: 'Add the things that moved you. Write what they did to you, not what you think of them. They become your map.',
+// ---------------------------------------------------------------------------
+// THE EXHIBITION — floating gallery of posters + a faithful recreation of the
+// app's "Add to collection" card at dead centre.
+//
+// As you scroll, the sticky viewport scrubs through the six media families
+// (see EXHIBIT_CARDS order). On each family the ~10 posters scattered around
+// the edges swap out (framer-motion stagger), and the centre card crossfades
+// to that family's example item — mirroring the real app UI 1:1 in HTML/CSS.
+// The card is pure scenography: pointer-events none, decorative controls
+// aria-hidden.
+//
+// Kept from the previous version: section id="thread" (riso-halftone, INK.base
+// ground, 3px ink borderTop), the sticky-scrub skeleton (scrub height =
+// families × 100svh, sticky viewport at top 4.5rem), scrollYProgress→idx
+// wiring, useReducedMotion, and the AnimatePresence crossfade.
+// ---------------------------------------------------------------------------
+
+// One curated example per family, in EXHIBIT_CARDS order. Titles/posterSrc/tags
+// were visually verified against the artwork and are kept as-is. `label` is the
+// app's own TYPE_LABELS name and `accent` its TYPE_ACCENT ink — the card is the
+// app's UI, so it wears the app's chip + cover border colours.
+// Scrub order + the headline word per family — Siddharth's exact list:
+// "Add your favourite <x>" where only <x> changes.
+const FAMILY_ORDER = ['films', 'albums', 'books', 'videos', 'games', 'spirals'];
+const HEADLINE_WORDS = {
+  films: 'Films and TV',
+  albums: 'Songs/Albums/Artists',
+  books: 'Books',
+  videos: 'YouTube Videos and Channels',
+  games: 'Games',
+  spirals: 'Articles',
 };
 
-function KeepPoster({ reduce, compact = false }) {
+const FAMILY_ENTRIES = {
+  films: {
+    accent: '#ef6a55',
+    title: 'Donnie Darko',
+    posterSrc: '/assets/movie3.webp',
+    tags: ['Time', 'Fate', 'Adolescence'],
+  },
+  albums: {
+    accent: '#2b3fb8',
+    title: 'Arctic Monkeys, AM',
+    posterSrc: '/assets/music2.webp',
+    tags: ['Nighttime', 'Longing', 'Ache'],
+  },
+  books: {
+    accent: '#ef6a55',
+    title: 'Crime and Punishment',
+    posterSrc: '/assets/book1.webp',
+    tags: ['Guilt', 'Conscience', 'Redemption'],
+  },
+  spirals: {
+    accent: '#e8c53a',
+    title: 'Olga Karlatos',
+    posterSrc: '/assets/wikipedia1.webp',
+    tags: ['Curiosity', 'Detours', 'Obscurity'],
+  },
+  videos: {
+    accent: '#c8291e',
+    title: 'Johnny Cash - Hurt',
+    posterSrc: '/assets/youtubeVid7.webp',
+    tags: ['Grief', 'Regret', 'Time'],
+  },
+  games: {
+    accent: '#c6e02e',
+    title: 'Elden Ring',
+    posterSrc: '/assets/game1.jpg',
+    tags: ['Solitude', 'Ruin', 'Persistence'],
+  },
+};
+
+// Ten scatter slots in viewport-percent coordinates (poster top-left anchor +
+// width as % of viewport width). Kept in the LEFT and RIGHT thirds plus the
+// top/bottom corners so the centre column (header + card) stays clear.
+const SLOTS = [
+  { left: -4, top: 2, w: 22 },
+  { left: -6, top: 38, w: 25 },
+  { left: 2, top: 70, w: 20 },
+  { left: 16, top: 14, w: 17 },
+  { left: 13, top: 56, w: 19 },
+  { left: 80, top: 1, w: 22 },
+  { left: 83, top: 36, w: 25 },
+  { left: 78, top: 66, w: 20 },
+  { left: 66, top: 12, w: 17 },
+  { left: 68, top: 55, w: 19 },
+];
+
+// Mobile slots: six posters peeking in from the screen edges — above the
+// headline and below the card, some partially offscreen (the sticky viewport
+// clips them). The centre column (z 5) stays readable on top.
+const MOBILE_SLOTS = [
+  { left: -18, top: -7, w: 60 },
+  { left: 62, top: -2, w: 56 },
+  { left: -26, top: 32, w: 54 },
+  { left: 76, top: 40, w: 54 },
+  { left: -10, top: 80, w: 56 },
+  { left: 52, top: 84, w: 60 },
+];
+
+// Deterministic hash → [0,1). No Math.random(): the scatter must be identical
+// on server and client (SSR) and stable across renders. familyIndex + slot +
+// a channel seed derive independent jitter for x, y and rotation.
+function hash01(a, b, c) {
+  let h = (a * 73856093) ^ (b * 19349663) ^ (c * 83492791);
+  h = Math.imul(h ^ (h >>> 13), 0x5bd1e995);
+  h = (h ^ (h >>> 15)) >>> 0;
+  return (h % 100000) / 100000;
+}
+
+// Group EXHIBIT_ITEMS by family once. Order preserved.
+function groupItems() {
+  const by = {};
+  for (const item of EXHIBIT_ITEMS) {
+    (by[item.group] ??= []).push(item);
+  }
+  return by;
+}
+
+const microStyle = {
+  fontFamily: 'var(--sans)',
+  fontWeight: 500,
+  fontSize: '10px',
+  letterSpacing: '2px',
+  textTransform: 'uppercase',
+  color: 'rgba(255,255,255,0.42)',
+  display: 'block',
+};
+
+// ── The app's AddCollectionCard, recreated in HTML. Pure scenography. ────────
+function AddCard({ entry, quote, reduce }) {
   return (
-    <motion.article
-      initial={reduce ? false : { opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-10%' }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className={`keep-poster ${compact ? 'keep-poster-compact' : ''}`}
-      style={{
-        background: INK.paper,
-        border: `3px solid ${INK.ink}`,
-        boxShadow: '12px 14px 0 rgba(0,0,0,0.42)',
-        padding: 'clamp(0.8rem, 1.6vw, 1.35rem)',
-      }}
-    >
-      <div className="keep-media" style={{ border: `2px solid ${INK.ink}`, overflow: 'hidden', background: INK.ink }}>
-        <AutoplayLoopVideo
-          preload="metadata"
-          poster={`/assets/demos/${keepClip.src}-poster.jpg`}
-          style={{ width: '100%', height: 'auto', aspectRatio: '4 / 5', objectFit: 'contain', display: 'block' }}
-        >
-          <source src={`/assets/demos/${keepClip.src}.webm`} type="video/webm" />
-          <source src={`/assets/demos/${keepClip.src}.mp4`} type="video/mp4" />
-        </AutoplayLoopVideo>
+    <div className="exh-card" aria-hidden="true">
+      {/* Header — cover + type placard + title */}
+      <div className="exh-card-head">
+        <img
+          className="exh-cover"
+          src={entry.posterSrc}
+          alt=""
+          style={{ borderColor: entry.accent }}
+          loading="lazy"
+        />
+        <div className="exh-head-text">
+          <div className="exh-title">{entry.title}</div>
+        </div>
       </div>
-      <div className="keep-copy" style={{ padding: 'clamp(1.1rem, 2.5vw, 2rem) clamp(0.2rem, 1vw, 0.8rem) 0.35rem' }}>
-        <h3 style={{
-          fontFamily: 'var(--serif)', fontWeight: 400,
-          fontSize: 'clamp(1.7rem, 3vw, 2.6rem)',
-          color: INK.ink, marginBottom: '0.55rem',
-        }}>
-          {keepClip.title}
-        </h3>
-        <p style={{
-          fontFamily: 'var(--sans)', fontWeight: 300,
-          fontSize: 'clamp(0.9rem, 1.2vw, 1rem)', lineHeight: 1.65,
-          color: 'rgba(22,19,16,0.82)', maxWidth: '42rem',
-        }}>
-          {keepClip.caption}
-        </p>
+
+      {/* Note — the family quote rendered as the user's mid-typed note */}
+      <div className="exh-field">
+        <span style={microStyle}>What does this mean to you?</span>
+        <div className="exh-note">
+          {quote}
+          <span className={`exh-caret ${reduce ? 'is-static' : ''}`} />
+        </div>
       </div>
-    </motion.article>
+
+      {/* Tags */}
+      <div className="exh-field">
+        <span style={microStyle}>Clusters / Tags</span>
+        <div className="exh-tags">
+          {entry.tags.map((t) => (
+            <span className="exh-tag-wrap" key={t}>
+              <span className="exh-inktag">{t}</span>
+              <span className="exh-tag-x">×</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Visibility */}
+      <div className="exh-field">
+        <span style={microStyle}>Visibility</span>
+        <div className="exh-vis">
+          <span className="exh-vis-cell is-on">Public</span>
+          <span className="exh-vis-cell">Friends</span>
+          <span className="exh-vis-cell">Private</span>
+        </div>
+      </div>
+
+      {/* CTAs */}
+      <div className="exh-cta-row">
+        <span className="exh-ticket exh-ticket-outline">Cancel</span>
+        <span className="exh-ticket exh-ticket-filled">Add to collection</span>
+      </div>
+    </div>
   );
 }
 
-function ExhibitSlide({ card, items, reduce }) {
+// ── Header — one title, one subheading. The family word is the only thing
+// that changes: "Add your favourite <x>", x in mustard italic (the section's
+// single ink pop, inherited from the old heading's mustard ghost).
+function ExhibitHeader({ reduce, activeGroup }) {
+  const word = HEADLINE_WORDS[activeGroup];
   return (
-    <motion.article
-      key={card.num}
-      className="exhibit-slide"
-      initial={reduce ? false : { opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -14 }}
-      transition={{ duration: reduce ? 0 : 0.35, ease: [0.16, 1, 0.3, 1] }}
+    <motion.header
+      className="exh-header"
+      initial={reduce ? false : { opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-10%' }}
+      transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div
-        className="exhibit-label exhibit-slide-label"
+      <h2
         style={{
-          background: INK.paper,
-          border: `2px solid ${INK.ink}`,
-          boxShadow: '8px 8px 0 rgba(0,0,0,0.4)',
-          padding: 'clamp(1.1rem, 1.8vw, 1.65rem)',
+          fontFamily: 'var(--serif)',
+          fontWeight: 400,
+          fontSize: 'clamp(2rem, 4.1vw, 3.55rem)',
+          lineHeight: 1.08,
+          color: INK.paper,
+          textWrap: 'balance',
+          margin: 0,
+          // Crisp ground-colour "stroke" + soft halo: keeps the headline
+          // legible when a paper poster drifts underneath it. (text-shadow is
+          // inherited, so the swapping <em> gets it too.)
+          textShadow:
+            '-1.5px 0 0 #0a0a09, 1.5px 0 0 #0a0a09, 0 -1.5px 0 #0a0a09, 0 1.5px 0 #0a0a09, 0 0 22px rgba(10,10,9,0.95), 0 0 48px rgba(10,10,9,0.8)',
         }}
       >
-        <div className="exhibit-label-heading">
-          <div style={{
-            display: 'inline-block', background: card.accent,
-            border: `2px solid ${INK.ink}`, padding: '0.25rem 0.6rem',
-            fontFamily: 'var(--sans)', fontWeight: 500, fontSize: '0.75rem',
-            letterSpacing: '0.22em', textTransform: 'uppercase',
-            color: card.accentInk || INK.ink, marginBottom: '0.6rem',
-          }}>
-            {card.num}
-          </div>
-          <h3 style={{
-            fontFamily: 'var(--serif)', fontStyle: 'italic', fontWeight: 400,
-            fontSize: 'clamp(1.45rem, 2.3vw, 2.2rem)', lineHeight: 1.05,
-            color: INK.ink, textWrap: 'balance',
-          }}>
-            {card.label}
-          </h3>
-        </div>
-        <p style={{
-          fontFamily: 'var(--sans)', fontWeight: 300, fontSize: 'clamp(0.875rem, 1vw, 0.95rem)',
-          lineHeight: 1.6, color: 'rgba(22,19,16,0.82)',
-        }}>
-          {card.text}
-        </p>
-      </div>
-
-      <div className={`artifact-pair exhibit-slide-artifacts ${items[0]?.wide ? 'artifact-pair-wide' : ''}`}>
-        {items.map((item, itemIndex) => (
-          <div
-            className={`artifact-frame artifact-frame-${itemIndex + 1}`}
-            key={item.src}
-            style={{
-              background: INK.paper,
-              border: `3px solid ${INK.ink}`,
-              boxShadow: '11px 13px 0 rgba(0,0,0,0.42)',
-              padding: 'clamp(8px, 1vw, 14px)',
-            }}
+        Add your favourite{' '}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.em
+            key={word}
+            style={{ fontStyle: 'italic', color: INK.paper, display: 'inline-block' }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+            transition={{ duration: reduce ? 0.2 : 0.28, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Image
-              src={item.src}
-              alt={`${card.label} artifact ${itemIndex + 1}`}
-              fill
-              sizes={item.wide
-                ? '(max-width: 860px) 82vw, 34vw'
-                : '(max-width: 860px) 54vw, 24vw'}
+            {word}
+          </motion.em>
+        </AnimatePresence>
+      </h2>
+      <p className="exh-sub">Save what stayed with you. Say why.</p>
+    </motion.header>
+  );
+}
+
+// Poster stagger container + child variants.
+const layerVar = {
+  enter: { transition: { staggerChildren: 0.04 } },
+  exit: { transition: { staggerChildren: 0.02, staggerDirection: -1 } },
+};
+const posterVar = {
+  initial: { opacity: 0, y: 12, scale: 0.98 },
+  enter: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  exit: { opacity: 0, transition: { duration: 0.25 } },
+};
+const posterVarReduce = {
+  initial: { opacity: 0 },
+  enter: { opacity: 1, transition: { duration: 0.3 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
+};
+
+// One family's worth of floating posters for a given slot set. Shared by the
+// desktop scatter and the mobile edge-peek layer.
+function PosterLayer({ slots, posters, groupKey, activeIndex, reduce }) {
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={groupKey}
+        className="exh-poster-layer"
+        variants={layerVar}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+      >
+        {slots.map((slot, i) => {
+          const item = posters[i % posters.length];
+          if (!item) return null;
+          const jx = (hash01(activeIndex, i, 1) - 0.5) * 3;
+          const jy = (hash01(activeIndex, i, 2) - 0.5) * 3;
+          const rot = (hash01(activeIndex, i, 3) - 0.5) * 6;
+          const driftDur = 8 + hash01(activeIndex, i, 4) * 4;
+          const driftDelay = hash01(activeIndex, i, 5) * -8;
+          return (
+            <motion.div
+              key={`${groupKey}-${i}`}
+              className="exh-poster-slot"
+              variants={reduce ? posterVarReduce : posterVar}
               style={{
-                width: '100%', height: '100%', objectFit: 'contain',
-                display: 'block', border: `1px solid ${INK.ink}`, background: INK.ink,
+                left: `${slot.left + jx}%`,
+                top: `${slot.top + jy}%`,
+                width: `${slot.w}%`,
               }}
-            />
-          </div>
-        ))}
-      </div>
-    </motion.article>
+            >
+              <div
+                className="exh-poster-drift"
+                style={
+                  reduce
+                    ? undefined
+                    : { animationDuration: `${driftDur}s`, animationDelay: `${driftDelay}s` }
+                }
+              >
+                <div className="exh-poster-mat" style={{ transform: `rotate(${rot}deg)` }}>
+                  <div
+                    className="exh-poster-img"
+                    style={{ aspectRatio: item.wide ? '16 / 10' : '3 / 4' }}
+                  >
+                    <img src={item.src} alt="" loading="lazy" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -145,12 +323,11 @@ export default function RisoExhibition() {
   const reduce = useReducedMotion();
   const containerRef = useRef(null);
   const [idx, setIdx] = useState(0);
-  const [mobileKeepOpen, setMobileKeepOpen] = useState(false);
-  const families = Object.entries(EXHIBIT_CARDS).map(([group, card]) => ({
-    group,
-    card,
-    items: EXHIBIT_ITEMS.filter((item) => item.group === group),
-  }));
+  const families = useMemo(
+    () => FAMILY_ORDER.map((group) => ({ group, card: EXHIBIT_CARDS[group] })),
+    []
+  );
+  const grouped = useMemo(() => groupItems(), []);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
@@ -161,15 +338,14 @@ export default function RisoExhibition() {
   });
 
   const activeFamily = families[idx] || families[0];
+  const activeIndex = families.findIndex((f) => f.group === activeFamily.group);
+  const posters = grouped[activeFamily.group] || [];
 
   return (
     <section
       id="thread"
-      style={{
-        background: '#0a0a09',
-        backgroundImage: 'linear-gradient(135deg, #1a0e2e 0%, #0e1828 52%, #091a1a 100%)',
-        borderTop: `3px solid ${INK.ink}`,
-      }}
+      className="exhibition-section riso-halftone"
+      style={{ background: INK.base, borderTop: `3px solid ${INK.ink}` }}
     >
       <div
         ref={containerRef}
@@ -177,54 +353,65 @@ export default function RisoExhibition() {
         style={{ height: `${families.length * 100}svh` }}
       >
         <div className="exhibition-viewport">
-          <div className="exhibition-inner">
-            <motion.header
-              className="exhibition-intro"
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-10%' }}
-              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div style={{ ...eyebrowStyle(INK.paper), opacity: 0.75, fontFamily: 'var(--font-mono)' }}>
-                III. The Exhibition
-              </div>
-              <InkSettleHeading
-                as="h2"
-                ink={INK.mustard}
-                style={{
-                  fontFamily: 'var(--serif)', fontWeight: 400,
-                  fontSize: 'clamp(2rem, 4.1vw, 3.55rem)', lineHeight: 1.03,
-                  color: INK.paper, textWrap: 'balance',
-                }}
-              >
-                What you can <em style={{ fontStyle: 'italic' }}>add.</em>
-              </InkSettleHeading>
-              <p>
-                Save what stayed with you. Say why.
-              </p>
-            </motion.header>
+          {/* ---------- DESKTOP: floating scatter + centre card ---------- */}
+          <div className="exh-stage">
+            <PosterLayer
+              slots={SLOTS}
+              posters={posters}
+              groupKey={activeFamily.group}
+              activeIndex={activeIndex}
+              reduce={reduce}
+            />
 
-            <div className="exhibition-composition">
-              <aside className={`keep-column ${mobileKeepOpen ? 'is-open' : ''}`}>
-                <button
-                  type="button"
-                  className="mobile-keep-toggle"
-                  onClick={() => setMobileKeepOpen((open) => !open)}
-                  aria-expanded={mobileKeepOpen}
-                  aria-label={mobileKeepOpen ? 'Hide the Keep card' : 'Show the Keep card'}
-                >
-                  <span aria-hidden="true">{mobileKeepOpen ? '›' : '‹'}</span>
-                </button>
-                <KeepPoster reduce={reduce} compact />
-              </aside>
-              <div className="exhibition-stage">
+            {/* Centre column — header + crossfading card */}
+            <div className="exh-center">
+              <ExhibitHeader reduce={reduce} activeGroup={activeFamily.group} />
+              <div className="exh-card-hold">
                 <AnimatePresence mode="wait" initial={false}>
-                  <ExhibitSlide
+                  <motion.div
                     key={activeFamily.group}
-                    card={activeFamily.card}
-                    items={activeFamily.items}
-                    reduce={reduce}
-                  />
+                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                    transition={{ duration: reduce ? 0.2 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <AddCard
+                      entry={FAMILY_ENTRIES[activeFamily.group]}
+                      quote={activeFamily.card.text}
+                      reduce={reduce}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+
+          {/* ---------- MOBILE: same scrub, posters peek from the edges ---------- */}
+          <div className="exh-stage-m">
+            <PosterLayer
+              slots={MOBILE_SLOTS}
+              posters={posters}
+              groupKey={activeFamily.group}
+              activeIndex={activeIndex}
+              reduce={reduce}
+            />
+            <div className="exh-center-m">
+              <ExhibitHeader reduce={reduce} activeGroup={activeFamily.group} />
+              <div className="exh-card-hold">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={activeFamily.group}
+                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                    transition={{ duration: reduce ? 0.2 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <AddCard
+                      entry={FAMILY_ENTRIES[activeFamily.group]}
+                      quote={activeFamily.card.text}
+                      reduce={reduce}
+                    />
+                  </motion.div>
                 </AnimatePresence>
               </div>
             </div>
@@ -242,330 +429,302 @@ export default function RisoExhibition() {
           height: calc(100svh - 4.5rem);
           overflow: hidden;
         }
-        .exhibition-inner {
+
+        /* ---------- Desktop stage ---------- */
+        .exh-stage {
+          position: relative;
           width: 100%;
-          max-width: 1400px;
           height: 100%;
-          margin: 0 auto;
-          padding: clamp(1rem, 2.2vh, 1.5rem) clamp(20px, 5vw, 60px) clamp(1.1rem, 2.5vh, 1.8rem);
+        }
+        .exh-poster-layer {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+        }
+        .exh-poster-slot {
+          position: absolute;
+          will-change: transform, opacity;
+        }
+        .exh-poster-drift {
+          animation-name: exh-drift;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+        }
+        /* A slow figure-of-motion: mostly vertical with a small lateral lean so
+           the wall feels adrift, never animated-at-you. Long durations +
+           alternate direction keep it below the threshold of "noticing". */
+        @keyframes exh-drift {
+          0%   { transform: translate(-3px, -10px); }
+          55%  { transform: translate(2px, 3px); }
+          100% { transform: translate(4px, 10px); }
+        }
+        .exh-poster-mat {
+          background: #141312;
+          padding: 5px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
           box-sizing: border-box;
+        }
+        .exh-poster-img {
+          width: 100%;
+          overflow: hidden;
+        }
+        .exh-poster-img img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        /* Centre column */
+        .exh-center {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 5;
+          width: min(35rem, 94vw);
           display: flex;
           flex-direction: column;
-          gap: clamp(0.8rem, 1.8vh, 1.25rem);
+          align-items: center;
+          gap: clamp(1.1rem, 2.4vh, 2rem);
+          pointer-events: none;
         }
-        .exhibition-intro {
-          flex: 0 0 auto;
+        .exh-header {
+          text-align: center;
           display: grid;
-          gap: 0;
-          max-width: 46rem;
-          margin-bottom: clamp(1.5rem, 3vh, 2.25rem);
+          gap: 0.5rem;
+          width: 100%;
         }
-        .exhibition-intro > div:first-child {
-          margin-bottom: clamp(0.9rem, 1.8vh, 1.25rem);
+        .exh-header h2 {
+          margin: 0;
         }
-        .exhibition-intro h2 {
-          margin-bottom: clamp(0.9rem, 1.7vh, 1.2rem);
-        }
-        .exhibition-intro p {
-          max-width: 38rem;
+        .exh-sub {
           font-family: var(--sans);
           font-weight: 300;
-          font-size: clamp(0.88rem, 1.25vw, 1.05rem);
-          line-height: 1.55;
-          color: rgba(239,230,208,0.9);
+          font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+          line-height: 1.5;
+          color: rgba(239, 230, 208, 0.92);
+          margin: 0;
+          text-shadow: -1px 0 0 #0a0a09, 1px 0 0 #0a0a09, 0 -1px 0 #0a0a09,
+            0 1px 0 #0a0a09, 0 0 16px rgba(10, 10, 9, 0.95), 0 0 34px rgba(10, 10, 9, 0.8);
         }
-        .exhibition-composition {
-          position: relative;
-          flex: 1 1 auto;
-          min-height: 0;
-          display: grid;
-          grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 2.3fr);
-          gap: clamp(1.5rem, 3vw, 3.5rem);
-          align-items: stretch;
-        }
-        .keep-column {
-          min-width: 0;
-          min-height: 0;
-          max-width: 19rem;
-        }
-        .keep-poster {
+        .exh-card-hold {
           width: 100%;
         }
-        .keep-media {
-          min-height: 0;
-        }
-        .keep-poster-compact {
-          height: 100%;
-          max-height: 100%;
-          padding: clamp(0.65rem, 1vw, 0.95rem) !important;
-          box-shadow: 9px 10px 0 rgba(0,0,0,0.42) !important;
+
+        /* ---------- The Add-to-collection card ---------- */
+        .exh-card {
+          background: #0f0f0e;
+          width: 100%;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          padding: 32px;
           box-sizing: border-box;
+          pointer-events: none;
+        }
+        .exh-card-head {
           display: flex;
-          flex-direction: column;
-          overflow: hidden;
+          gap: 20px;
+          margin-bottom: 32px;
+          align-items: flex-start;
         }
-        .keep-poster-compact .keep-media {
-          flex: 1 1 auto;
+        .exh-cover {
+          width: 76px;
+          height: 76px;
+          flex-shrink: 0;
+          border-width: 2px;
+          border-style: solid;
+          object-fit: cover;
+          display: block;
         }
-        .keep-poster-compact .keep-media video {
-          width: 100% !important;
-          height: 100% !important;
-          aspect-ratio: auto !important;
-          object-fit: contain !important;
-        }
-        .keep-poster-compact .keep-copy {
-          flex: 0 0 auto;
-          padding: clamp(0.65rem, 1.1vh, 0.95rem) 0.15rem 0.1rem !important;
-        }
-        .keep-poster-compact .keep-copy h3 {
-          font-size: clamp(1.35rem, 2vw, 1.9rem) !important;
-        }
-        .keep-poster-compact .keep-copy p {
-          font-size: clamp(0.875rem, 0.9vw, 0.9rem) !important;
-          line-height: 1.5 !important;
-        }
-        .exhibition-stage {
-          min-width: 0;
-          min-height: 0;
-        }
-        .exhibit-slide {
-          display: grid;
-          grid-template-rows: auto minmax(0, 1fr);
-          gap: clamp(0.9rem, 1.8vh, 1.35rem);
-          width: 100%;
-          height: 100%;
-          min-height: 0;
-        }
-        .exhibit-slide-label {
-          display: grid;
-          grid-template-columns: minmax(10rem, 0.8fr) minmax(14rem, 1.2fr);
-          gap: clamp(1.25rem, 3vw, 3rem);
-          align-items: center;
-        }
-        .exhibit-label-heading {
+        .exh-head-text {
+          flex: 1;
           min-width: 0;
         }
-        .exhibit-slide-artifacts {
-          width: 100%;
-          height: 100%;
-          min-height: 0;
-          padding: 0 14px 14px 0;
-          box-sizing: border-box;
+        .exh-title {
+          font-family: var(--serif);
+          font-weight: 300;
+          font-size: 28px;
+          line-height: 34px;
+          color: rgba(255, 255, 255, 0.92);
         }
-        .artifact-pair {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          grid-template-rows: minmax(0, 1fr);
-          gap: clamp(1rem, 2.5vw, 2.3rem);
-          align-items: stretch;
-          justify-items: center;
-          min-width: 0;
+        .exh-field {
+          margin-bottom: 28px;
         }
-        .artifact-frame {
-          position: relative;
-          width: auto;
-          max-width: 100%;
-          min-width: 0;
-          min-height: 0;
-          height: 100%;
-          aspect-ratio: 3 / 4;
-          box-sizing: border-box;
-          overflow: hidden;
+        .exh-note {
+          font-family: var(--sans);
+          font-weight: 400;
+          font-size: 16px;
+          line-height: 27px;
+          color: rgba(255, 255, 255, 0.88);
+          border-bottom: 0.5px solid rgba(255, 255, 255, 0.22);
+          padding-top: 8px;
+          padding-bottom: 12px;
+          min-height: 84px;
         }
-        .artifact-pair-wide .artifact-frame {
-          aspect-ratio: 4 / 3;
+        .exh-caret {
+          display: inline-block;
+          width: 1px;
+          height: 1.1em;
+          margin-left: 2px;
+          vertical-align: text-bottom;
+          background: ${INK.paper};
+          animation: exh-blink 1.1s steps(2, start) infinite;
         }
-        .artifact-frame-1 {
-          transform: rotate(-0.35deg);
-        }
-        .artifact-frame-2 {
-          transform: rotate(0.45deg);
-        }
-        .mobile-keep-toggle {
+        .exh-caret.is-static {
           display: none;
         }
-        @media (max-width: 860px) {
-          .exhibition-inner {
-            padding: 0.7rem 12px 0.8rem;
-            gap: 0.65rem;
-          }
-          .exhibition-intro {
-            padding-right: 1.75rem;
-            margin-bottom: 1.5rem;
-          }
-          .exhibition-intro > div:first-child {
-            font-size: 0.75rem !important;
-            margin-bottom: 0.75rem;
-          }
-          .exhibition-intro h2 {
-            font-size: clamp(1.7rem, 8.5vw, 2.25rem) !important;
-            margin-bottom: 0.7rem;
-          }
-          .exhibition-intro p {
-            max-width: 32rem;
-            font-size: clamp(0.875rem, 3.6vw, 0.95rem);
-            line-height: 1.5;
-          }
-          .exhibition-composition {
-            display: block;
-          }
-          .exhibition-stage,
-          .exhibit-slide {
-            height: 100%;
-          }
-          .exhibit-slide {
-            gap: 0.65rem;
-          }
-          .exhibit-slide-label {
-            grid-template-columns: minmax(7.5rem, 0.85fr) minmax(0, 1.15fr);
-            gap: 0.75rem;
-            padding: 0.65rem 0.75rem !important;
-            box-shadow: 5px 6px 0 rgba(0,0,0,0.4) !important;
-          }
-          .exhibit-label-heading > div {
-            font-size: 0.75rem !important;
-            padding: 0.18rem 0.38rem !important;
-            margin-bottom: 0.35rem !important;
-          }
-          .exhibit-label-heading h3 {
-            font-size: clamp(1rem, 4.8vw, 1.3rem) !important;
-          }
-          .exhibit-slide-label p {
-            font-size: clamp(0.875rem, 3.5vw, 0.95rem) !important;
-            line-height: 1.45 !important;
-          }
-          .keep-column {
-            position: absolute;
-            top: 5.75rem;
-            right: -12px;
-            width: calc(min(8.25rem, 34vw) + 2.65rem);
-            max-width: none;
-            z-index: 12;
-            display: flex;
-            align-items: flex-start;
-            transform: translateX(calc(100% - 2.65rem));
-            transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
-          }
-          .keep-column.is-open {
-            transform: translateX(0);
-          }
-          .mobile-keep-toggle {
-            flex: 0 0 2.65rem;
-            display: grid;
-            place-items: center;
-            width: 2.65rem;
-            height: 3.25rem;
-            padding: 0;
-            border: 2px solid ${INK.ink};
-            border-right: 0;
-            border-radius: 999px 0 0 999px;
-            background: ${INK.paper};
-            color: ${INK.ink};
-            font-family: var(--font-mono);
-            font-size: 1.65rem;
-            font-weight: 500;
-            line-height: 1;
-            cursor: pointer;
-            box-shadow: -4px 5px 0 rgba(0,0,0,0.32);
-          }
-          .mobile-keep-toggle:focus-visible {
-            outline: 3px solid ${INK.paper};
-            outline-offset: 2px;
-          }
-          .keep-column .keep-poster {
-            flex: 0 0 min(8.25rem, 34vw);
-            height: auto;
-            max-height: none;
-            padding: 0.35rem !important;
-            border-width: 2px !important;
-            border-left: 0 !important;
-            box-shadow: 5px 6px 0 rgba(0,0,0,0.42) !important;
-          }
-          .keep-column .keep-media {
-            flex: none;
-            aspect-ratio: 4 / 5;
-          }
-          .keep-column .keep-media video {
-            height: auto !important;
-            aspect-ratio: 4 / 5 !important;
-          }
-          .keep-column .keep-copy {
-            padding: 0.35rem 0.05rem 0.05rem !important;
-          }
-          .keep-column .keep-copy h3 {
-            font-size: 1rem !important;
-            margin-bottom: 0.2rem !important;
-          }
-          .keep-column .keep-copy p {
-            font-size: 0.875rem !important;
-            line-height: 1.45 !important;
-          }
-          .artifact-pair {
-            gap: 0.6rem;
-            padding: 0 8px 8px 0;
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: repeat(2, auto);
-            align-items: start;
-          }
-          .artifact-frame {
-            width: clamp(8rem, calc((100svh - 20rem) * 0.375), 54vw);
-            height: auto;
-            padding: 5px !important;
-            box-shadow: 6px 7px 0 rgba(0,0,0,0.42) !important;
-          }
-          .artifact-pair-wide .artifact-frame {
-            width: clamp(10rem, calc((100svh - 20rem) * 0.666), 82vw);
-          }
-          .artifact-frame-1,
-          .artifact-frame-2 {
-            transform: none;
-          }
+        @keyframes exh-blink {
+          0%, 50% { opacity: 1; }
+          50.01%, 100% { opacity: 0; }
         }
-        @media (max-width: 860px) and (max-height: 700px) {
-          .exhibition-inner {
-            padding-top: 0.45rem;
+        .exh-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 10px;
+        }
+        .exh-tag-wrap {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .exh-inktag {
+          border: 1px solid rgba(239, 230, 208, 0.55);
+          color: rgba(239, 230, 208, 0.9);
+          font-family: var(--sans);
+          font-weight: 500;
+          font-size: 10px;
+          letter-spacing: 1.8px;
+          text-transform: uppercase;
+          padding: 3px 8px;
+        }
+        .exh-tag-x {
+          font-size: 15px;
+          line-height: 17px;
+          color: rgba(255, 255, 255, 0.45);
+        }
+        .exh-vis {
+          display: flex;
+          margin-top: 10px;
+        }
+        .exh-vis-cell {
+          flex: 1;
+          border: 0.5px solid rgba(255, 255, 255, 0.15);
+          padding: 12px 0;
+          text-align: center;
+          font-family: var(--sans);
+          font-weight: 500;
+          font-size: 11px;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.5);
+        }
+        .exh-vis-cell + .exh-vis-cell {
+          margin-left: -0.5px;
+        }
+        .exh-vis-cell.is-on {
+          background: ${INK.paper};
+          border-color: ${INK.paper};
+          color: #111;
+        }
+        .exh-cta-row {
+          border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+          padding-top: 20px;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 12px;
+        }
+        .exh-ticket {
+          font-family: var(--sans);
+          font-size: 12px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          padding: 12px 26px;
+        }
+        .exh-ticket-outline {
+          border: 1px solid rgba(239, 230, 208, 0.45);
+          color: rgba(239, 230, 208, 0.7);
+          font-weight: 500;
+        }
+        .exh-ticket-filled {
+          background: ${INK.paper};
+          color: #111;
+          font-weight: 700;
+        }
+
+        /* ---------- Mobile: same scrub, edge-peek posters ---------- */
+        .exh-stage-m {
+          display: none;
+        }
+
+        @media (max-width: 860px) {
+          .exh-stage {
+            display: none;
           }
-          .exhibition-intro {
-            margin-bottom: 0.75rem;
-          }
-          .exhibition-intro > div:first-child {
-            margin-bottom: 0.45rem;
-          }
-          .exhibition-intro h2 {
-            margin-bottom: 0.4rem;
-          }
-          .exhibit-slide {
-            gap: 0.5rem;
-          }
-          .artifact-pair {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            grid-template-rows: minmax(0, 1fr);
-            align-items: stretch;
-          }
-          .artifact-frame,
-          .artifact-pair-wide .artifact-frame {
+          .exh-stage-m {
+            display: block;
+            position: relative;
             width: 100%;
             height: 100%;
-            max-height: 100%;
-            aspect-ratio: auto;
+          }
+          .exh-center-m {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: clamp(0.9rem, 2.5vh, 1.4rem);
+            padding: 0 clamp(14px, 4vw, 24px);
+            pointer-events: none;
+          }
+          .exh-header {
+            text-align: left;
+          }
+          .exh-header h2 {
+            font-size: clamp(1.7rem, 7.5vw, 2.25rem) !important;
+          }
+          .exh-sub {
+            font-size: clamp(0.9rem, 3.6vw, 1rem);
+          }
+          .exh-card-hold {
+            max-width: 560px;
+          }
+          /* Compact card scale so header + card fit one phone viewport */
+          .exh-card {
+            padding: 20px;
+          }
+          .exh-cover {
+            width: 60px;
+            height: 60px;
+          }
+          .exh-title {
+            font-size: 23px;
+            line-height: 28px;
+          }
+          .exh-card-head {
+            gap: 14px;
+            margin-bottom: 20px;
+          }
+          .exh-field {
+            margin-bottom: 18px;
+          }
+          .exh-note {
+            font-size: 15px;
+            line-height: 24px;
+            min-height: 0;
+          }
+          .exh-ticket {
+            font-size: 11px;
+            padding: 10px 20px;
           }
         }
-        @media (max-width: 860px) and (max-height: 700px) and (orientation: landscape) {
-          .artifact-frame {
-            width: auto;
-            max-width: 100%;
-            height: 100%;
-            justify-self: center;
-            aspect-ratio: 3 / 4;
-          }
-          .artifact-pair-wide .artifact-frame {
-            width: auto;
-            aspect-ratio: 4 / 3;
-          }
-        }
-        @media (max-width: 520px) {
-          .exhibition-intro p {
-            max-width: 22rem;
+        /* Very short phones: shed the subheading so the card never clips */
+        @media (max-width: 860px) and (max-height: 660px) {
+          .exh-sub {
+            display: none;
           }
         }
       `}</style>
